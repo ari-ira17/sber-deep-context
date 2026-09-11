@@ -1,0 +1,98 @@
+{
+  "total": 10,
+  "passed": 10,
+  "partial": 0,
+  "failed": 0,
+  "results": {
+    "CAL-091": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p718/visuals/oblachny-sad-decision-cases-partial-refund.png",
+      "format": "png",
+      "parser": "png_ocr",
+      "ocr_used": true,
+      "confidence": "normal",
+      "text_length": 188
+    },
+    "CAL-092": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p718/business/oblachny-sad-source-contracts-event-delta.pdf",
+      "format": "pdf",
+      "parser": "pdf",
+      "ocr_used": false,
+      "confidence": "normal",
+      "text_length": 308
+    },
+    "CAL-093": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p718/business/oblachny-sad-decision-cases-timezone.md",
+      "format": "md",
+      "parser": "text",
+      "ocr_used": false,
+      "confidence": "normal",
+      "text_length": 1033
+    },
+    "CAL-094": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p718/business/oblachny-sad-source-contracts-reconciliation.docx",
+      "format": "docx",
+      "parser": "docx",
+      "ocr_used": false,
+      "confidence": "normal",
+      "text_length": 1012
+    },
+    "CAL-095": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p718/business/oblachny-sad-decision-cases-full-refund.txt",
+      "format": "txt",
+      "parser": "text",
+      "ocr_used": false,
+      "confidence": "normal",
+      "text_length": 376
+    },
+    "CAL-096": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p718/business/oblachny-sad-dimension-specs-quality-state.csv",
+      "format": "csv",
+      "parser": "csv",
+      "ocr_used": false,
+      "confidence": "normal",
+      "text_length": 368
+    },
+    "CAL-097": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p718/business/oblachny-sad-source-contracts-permissions.json",
+      "format": "json",
+      "parser": "json",
+      "ocr_used": false,
+      "confidence": "normal",
+      "text_length": 498
+    },
+    "CAL-098": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p715/technical/mozaika-decision-cases-audience-spike.py",
+      "format": "py",
+      "parser": "text",
+      "ocr_used": false,
+      "confidence": "normal",
+      "text_length": 434
+    },
+    "CAL-099": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p716/technical/mahoviq-dimension-specs-lifecycle.cs",
+      "format": "cs",
+      "parser": "text",
+      "ocr_used": false,
+      "confidence": "normal",
+      "text_length": 408
+    },
+    "CAL-100": {
+      "status": "PASS",
+      "path": "knowledge_attachments/p718/technical/oblachny-sad-source-contracts-retention.asm",
+      "format": "asm",
+      "parser": "text",
+      "ocr_used": false,
+      "confidence": "normal",
+      "text_length": 582
+    }
+  }
+}
