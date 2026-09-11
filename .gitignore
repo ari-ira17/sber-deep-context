@@ -174,3 +174,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+/meridian_hackathon_knowledge_base
+
