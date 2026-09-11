@@ -1,5 +1,5 @@
 # sber-deep-context
-
+```text
 app/
 ├── __init__.py
 ├── agents/        # Код для Router Agent и Answer Agent (Deep Agents)
@@ -26,3 +26,4 @@ scripts/           # Служебные скрипты (например, соз
 └── .gitkeep
 tests/             # Тесты и прогон 100 калибровочных вопросов
 └── __init__.py
+```
