@@ -1,0 +1,1813 @@
+{
+  "title": "Результаты калибровочного тестирования",
+  "total_questions": 100,
+  "product_code_accuracy": 1.0,
+  "need_attachment_accuracy": 1.0,
+  "slug_extraction_accuracy": 1.0,
+  "citations_coverage": 1.0,
+  "recall_at_5_target_met": true,
+  "average_latency_sec": 0.0008,
+  "is_mock": true,
+  "details": [
+    {
+      "id": "CAL-001",
+      "question": "Подготовьте краткую карточку продукта «Искра»: назовите его код, напра...",
+      "expected_slug": "iskra-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P701",
+      "extracted_code": "P701",
+      "code_match": true,
+      "citations": [
+        "искра-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-002",
+      "question": "Вы расследуете обработку событий продукта «Искра». Укажите, к какому н...",
+      "expected_slug": "iskra-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P701",
+      "code_match": true,
+      "citations": [
+        "искра-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-003",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Искра»: ...",
+      "expected_slug": "iskra-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P701",
+      "extracted_code": "P701",
+      "code_match": true,
+      "citations": [
+        "искра-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-004",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "iskra-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P701",
+      "extracted_code": "P701",
+      "code_match": true,
+      "citations": [
+        "искра-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-005",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ис...",
+      "expected_slug": "iskra-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P701",
+      "code_match": true,
+      "citations": [
+        "искра-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-006",
+      "question": "Подготовьте краткую карточку продукта «Росинка»: назовите его код, нап...",
+      "expected_slug": "rosinka-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P702",
+      "extracted_code": "P702",
+      "code_match": true,
+      "citations": [
+        "росинка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-007",
+      "question": "Вы расследуете обработку событий продукта «Росинка». Укажите, к какому...",
+      "expected_slug": "rosinka-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P702",
+      "code_match": true,
+      "citations": [
+        "росинка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-008",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Росинка»...",
+      "expected_slug": "rosinka-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P702",
+      "extracted_code": "P702",
+      "code_match": true,
+      "citations": [
+        "росинка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-009",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "rosinka-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P702",
+      "extracted_code": "P702",
+      "code_match": true,
+      "citations": [
+        "росинка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-010",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ро...",
+      "expected_slug": "rosinka-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P702",
+      "code_match": true,
+      "citations": [
+        "росинка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-011",
+      "question": "Подготовьте краткую карточку продукта «Янтарь»: назовите его код, напр...",
+      "expected_slug": "yantar-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P703",
+      "extracted_code": "P703",
+      "code_match": true,
+      "citations": [
+        "янтарь-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0015
+    },
+    {
+      "id": "CAL-012",
+      "question": "Вы расследуете обработку событий продукта «Янтарь». Укажите, к какому ...",
+      "expected_slug": "yantar-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P703",
+      "code_match": true,
+      "citations": [
+        "янтарь-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-013",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Янтарь»:...",
+      "expected_slug": "yantar-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P703",
+      "extracted_code": "P703",
+      "code_match": true,
+      "citations": [
+        "янтарь-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-014",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "yantar-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P703",
+      "extracted_code": "P703",
+      "code_match": true,
+      "citations": [
+        "янтарь-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-015",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ян...",
+      "expected_slug": "yantar-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P703",
+      "code_match": true,
+      "citations": [
+        "янтарь-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-016",
+      "question": "Подготовьте краткую карточку продукта «Мостик»: назовите его код, напр...",
+      "expected_slug": "mostik-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P704",
+      "extracted_code": "P704",
+      "code_match": true,
+      "citations": [
+        "мостик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-017",
+      "question": "Вы расследуете обработку событий продукта «Мостик». Укажите, к какому ...",
+      "expected_slug": "mostik-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P704",
+      "code_match": true,
+      "citations": [
+        "мостик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-018",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Мостик»:...",
+      "expected_slug": "mostik-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P704",
+      "extracted_code": "P704",
+      "code_match": true,
+      "citations": [
+        "мостик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-019",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "mostik-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P704",
+      "extracted_code": "P704",
+      "code_match": true,
+      "citations": [
+        "мостик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-020",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Мо...",
+      "expected_slug": "mostik-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P704",
+      "code_match": true,
+      "citations": [
+        "мостик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-021",
+      "question": "Подготовьте краткую карточку продукта «Тихая Гавань»: назовите его код...",
+      "expected_slug": "tihaya-gavan-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P705",
+      "extracted_code": "P705",
+      "code_match": true,
+      "citations": [
+        "тихая гавань-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-022",
+      "question": "Вы расследуете обработку событий продукта «Тихая Гавань». Укажите, к к...",
+      "expected_slug": "tihaya-gavan-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P705",
+      "code_match": true,
+      "citations": [
+        "тихая гавань-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-023",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Тихая Га...",
+      "expected_slug": "tihaya-gavan-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P705",
+      "extracted_code": "P705",
+      "code_match": true,
+      "citations": [
+        "тихая гавань-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-024",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "tihaya-gavan-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P705",
+      "extracted_code": "P705",
+      "code_match": true,
+      "citations": [
+        "тихая гавань-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-025",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ти...",
+      "expected_slug": "tihaya-gavan-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P705",
+      "code_match": true,
+      "citations": [
+        "тихая гавань-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-026",
+      "question": "Подготовьте краткую карточку продукта «Лавка»: назовите его код, напра...",
+      "expected_slug": "lavka-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P706",
+      "extracted_code": "P706",
+      "code_match": true,
+      "citations": [
+        "лавка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-027",
+      "question": "Вы расследуете обработку событий продукта «Лавка». Укажите, к какому н...",
+      "expected_slug": "lavka-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P706",
+      "code_match": true,
+      "citations": [
+        "лавка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-028",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Лавка»: ...",
+      "expected_slug": "lavka-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P706",
+      "extracted_code": "P706",
+      "code_match": true,
+      "citations": [
+        "лавка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-029",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "lavka-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P706",
+      "extracted_code": "P706",
+      "code_match": true,
+      "citations": [
+        "лавка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-030",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ла...",
+      "expected_slug": "lavka-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P706",
+      "code_match": true,
+      "citations": [
+        "лавка-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-031",
+      "question": "Подготовьте краткую карточку продукта «Комета»: назовите его код, напр...",
+      "expected_slug": "kometa-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P707",
+      "extracted_code": "P707",
+      "code_match": true,
+      "citations": [
+        "комета-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0022
+    },
+    {
+      "id": "CAL-032",
+      "question": "Вы расследуете обработку событий продукта «Комета». Укажите, к какому ...",
+      "expected_slug": "kometa-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P707",
+      "code_match": true,
+      "citations": [
+        "комета-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0005
+    },
+    {
+      "id": "CAL-033",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Комета»:...",
+      "expected_slug": "kometa-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P707",
+      "extracted_code": "P707",
+      "code_match": true,
+      "citations": [
+        "комета-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-034",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "kometa-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P707",
+      "extracted_code": "P707",
+      "code_match": true,
+      "citations": [
+        "комета-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-035",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ко...",
+      "expected_slug": "kometa-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P707",
+      "code_match": true,
+      "citations": [
+        "комета-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-036",
+      "question": "Подготовьте краткую карточку продукта «Призма»: назовите его код, напр...",
+      "expected_slug": "prizma-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P708",
+      "extracted_code": "P708",
+      "code_match": true,
+      "citations": [
+        "призма-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-037",
+      "question": "Вы расследуете обработку событий продукта «Призма». Укажите, к какому ...",
+      "expected_slug": "prizma-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P708",
+      "code_match": true,
+      "citations": [
+        "призма-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-038",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Призма»:...",
+      "expected_slug": "prizma-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P708",
+      "extracted_code": "P708",
+      "code_match": true,
+      "citations": [
+        "призма-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-039",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "prizma-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P708",
+      "extracted_code": "P708",
+      "code_match": true,
+      "citations": [
+        "призма-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-040",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Пр...",
+      "expected_slug": "prizma-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P708",
+      "code_match": true,
+      "citations": [
+        "призма-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-041",
+      "question": "Подготовьте краткую карточку продукта «Орбитариум»: назовите его код, ...",
+      "expected_slug": "orbitarium-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P709",
+      "extracted_code": "P709",
+      "code_match": true,
+      "citations": [
+        "орбитариум-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-042",
+      "question": "Вы расследуете обработку событий продукта «Орбитариум». Укажите, к как...",
+      "expected_slug": "orbitarium-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P709",
+      "code_match": true,
+      "citations": [
+        "орбитариум-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-043",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Орбитари...",
+      "expected_slug": "orbitarium-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P709",
+      "extracted_code": "P709",
+      "code_match": true,
+      "citations": [
+        "орбитариум-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-044",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "orbitarium-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P709",
+      "extracted_code": "P709",
+      "code_match": true,
+      "citations": [
+        "орбитариум-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-045",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ор...",
+      "expected_slug": "orbitarium-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P709",
+      "code_match": true,
+      "citations": [
+        "орбитариум-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-046",
+      "question": "Подготовьте краткую карточку продукта «Парус»: назовите его код, напра...",
+      "expected_slug": "parus-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P710",
+      "extracted_code": "P710",
+      "code_match": true,
+      "citations": [
+        "парус-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-047",
+      "question": "Вы расследуете обработку событий продукта «Парус». Укажите, к какому н...",
+      "expected_slug": "parus-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P710",
+      "code_match": true,
+      "citations": [
+        "парус-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-048",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Парус»: ...",
+      "expected_slug": "parus-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P710",
+      "extracted_code": "P710",
+      "code_match": true,
+      "citations": [
+        "парус-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-049",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "parus-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P710",
+      "extracted_code": "P710",
+      "code_match": true,
+      "citations": [
+        "парус-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0048
+    },
+    {
+      "id": "CAL-050",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Па...",
+      "expected_slug": "parus-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P710",
+      "code_match": true,
+      "citations": [
+        "парус-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-051",
+      "question": "Подготовьте краткую карточку продукта «Бастион»: назовите его код, нап...",
+      "expected_slug": "bastion-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P711",
+      "extracted_code": "P711",
+      "code_match": true,
+      "citations": [
+        "бастион-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0013
+    },
+    {
+      "id": "CAL-052",
+      "question": "Вы расследуете обработку событий продукта «Бастион». Укажите, к какому...",
+      "expected_slug": "bastion-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P711",
+      "code_match": true,
+      "citations": [
+        "бастион-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0016
+    },
+    {
+      "id": "CAL-053",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Бастион»...",
+      "expected_slug": "bastion-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P711",
+      "extracted_code": "P711",
+      "code_match": true,
+      "citations": [
+        "бастион-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-054",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "bastion-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P711",
+      "extracted_code": "P711",
+      "code_match": true,
+      "citations": [
+        "бастион-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-055",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ба...",
+      "expected_slug": "bastion-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P711",
+      "code_match": true,
+      "citations": [
+        "бастион-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-056",
+      "question": "Подготовьте краткую карточку продукта «Ритм»: назовите его код, направ...",
+      "expected_slug": "ritm-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P712",
+      "extracted_code": "P712",
+      "code_match": true,
+      "citations": [
+        "ритм-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-057",
+      "question": "Вы расследуете обработку событий продукта «Ритм». Укажите, к какому на...",
+      "expected_slug": "ritm-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P712",
+      "code_match": true,
+      "citations": [
+        "ритм-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-058",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Ритм»: у...",
+      "expected_slug": "ritm-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P712",
+      "extracted_code": "P712",
+      "code_match": true,
+      "citations": [
+        "ритм-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-059",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "ritm-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P712",
+      "extracted_code": "P712",
+      "code_match": true,
+      "citations": [
+        "ритм-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-060",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ри...",
+      "expected_slug": "ritm-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P712",
+      "code_match": true,
+      "citations": [
+        "ритм-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-061",
+      "question": "Подготовьте краткую карточку продукта «Зонтик»: назовите его код, напр...",
+      "expected_slug": "zontik-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P713",
+      "extracted_code": "P713",
+      "code_match": true,
+      "citations": [
+        "зонтик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-062",
+      "question": "Вы расследуете обработку событий продукта «Зонтик». Укажите, к какому ...",
+      "expected_slug": "zontik-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P713",
+      "code_match": true,
+      "citations": [
+        "зонтик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0076
+    },
+    {
+      "id": "CAL-063",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Зонтик»:...",
+      "expected_slug": "zontik-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P713",
+      "extracted_code": "P713",
+      "code_match": true,
+      "citations": [
+        "зонтик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-064",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "zontik-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P713",
+      "extracted_code": "P713",
+      "code_match": true,
+      "citations": [
+        "зонтик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-065",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Зо...",
+      "expected_slug": "zontik-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P713",
+      "code_match": true,
+      "citations": [
+        "зонтик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-066",
+      "question": "Подготовьте краткую карточку продукта «Созвездие»: назовите его код, н...",
+      "expected_slug": "sozvezdie-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P714",
+      "extracted_code": "P714",
+      "code_match": true,
+      "citations": [
+        "созвездие-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-067",
+      "question": "Вы расследуете обработку событий продукта «Созвездие». Укажите, к како...",
+      "expected_slug": "sozvezdie-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P714",
+      "code_match": true,
+      "citations": [
+        "созвездие-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0044
+    },
+    {
+      "id": "CAL-068",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Созвезди...",
+      "expected_slug": "sozvezdie-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P714",
+      "extracted_code": "P714",
+      "code_match": true,
+      "citations": [
+        "созвездие-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.001
+    },
+    {
+      "id": "CAL-069",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "sozvezdie-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P714",
+      "extracted_code": "P714",
+      "code_match": true,
+      "citations": [
+        "созвездие-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0011
+    },
+    {
+      "id": "CAL-070",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Со...",
+      "expected_slug": "sozvezdie-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P714",
+      "code_match": true,
+      "citations": [
+        "созвездие-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-071",
+      "question": "Подготовьте краткую карточку продукта «Мозаика»: назовите его код, нап...",
+      "expected_slug": "mozaika-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P715",
+      "extracted_code": "P715",
+      "code_match": true,
+      "citations": [
+        "мозаика-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-072",
+      "question": "Вы расследуете обработку событий продукта «Мозаика». Укажите, к какому...",
+      "expected_slug": "mozaika-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P715",
+      "code_match": true,
+      "citations": [
+        "мозаика-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0025
+    },
+    {
+      "id": "CAL-073",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Мозаика»...",
+      "expected_slug": "mozaika-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P715",
+      "extracted_code": "P715",
+      "code_match": true,
+      "citations": [
+        "мозаика-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-074",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "mozaika-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P715",
+      "extracted_code": "P715",
+      "code_match": true,
+      "citations": [
+        "мозаика-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-075",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Мо...",
+      "expected_slug": "mozaika-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P715",
+      "code_match": true,
+      "citations": [
+        "мозаика-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.002
+    },
+    {
+      "id": "CAL-076",
+      "question": "Подготовьте краткую карточку продукта «Маховик»: назовите его код, нап...",
+      "expected_slug": "mahoviq-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P716",
+      "extracted_code": "P716",
+      "code_match": true,
+      "citations": [
+        "маховик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-077",
+      "question": "Вы расследуете обработку событий продукта «Маховик». Укажите, к какому...",
+      "expected_slug": "mahoviq-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P716",
+      "code_match": true,
+      "citations": [
+        "маховик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-078",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Маховик»...",
+      "expected_slug": "mahoviq-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P716",
+      "extracted_code": "P716",
+      "code_match": true,
+      "citations": [
+        "маховик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-079",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "mahoviq-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P716",
+      "extracted_code": "P716",
+      "code_match": true,
+      "citations": [
+        "маховик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0032
+    },
+    {
+      "id": "CAL-080",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Ма...",
+      "expected_slug": "mahoviq-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P716",
+      "code_match": true,
+      "citations": [
+        "маховик-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0012
+    },
+    {
+      "id": "CAL-081",
+      "question": "Подготовьте краткую карточку продукта «Пергамент»: назовите его код, н...",
+      "expected_slug": "pergament-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P717",
+      "extracted_code": "P717",
+      "code_match": true,
+      "citations": [
+        "пергамент-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-082",
+      "question": "Вы расследуете обработку событий продукта «Пергамент». Укажите, к како...",
+      "expected_slug": "pergament-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P717",
+      "code_match": true,
+      "citations": [
+        "пергамент-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-083",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Пергамен...",
+      "expected_slug": "pergament-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P717",
+      "extracted_code": "P717",
+      "code_match": true,
+      "citations": [
+        "пергамент-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-084",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "pergament-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P717",
+      "extracted_code": "P717",
+      "code_match": true,
+      "citations": [
+        "пергамент-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-085",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Пе...",
+      "expected_slug": "pergament-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P717",
+      "code_match": true,
+      "citations": [
+        "пергамент-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-086",
+      "question": "Подготовьте краткую карточку продукта «Облачный Сад»: назовите его код...",
+      "expected_slug": "oblachny-sad-passport",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P718",
+      "extracted_code": "P718",
+      "code_match": true,
+      "citations": [
+        "облачный сад-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-087",
+      "question": "Вы расследуете обработку событий продукта «Облачный Сад». Укажите, к к...",
+      "expected_slug": "oblachny-sad-events",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P718",
+      "code_match": true,
+      "citations": [
+        "облачный сад-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-088",
+      "question": "Составьте контекст для эскалации по качеству данных продукта «Облачный...",
+      "expected_slug": "oblachny-sad-quality",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P718",
+      "extracted_code": "P718",
+      "code_match": true,
+      "citations": [
+        "облачный сад-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0058
+    },
+    {
+      "id": "CAL-089",
+      "question": "Опишите, на каких основаниях следует использовать страницу о свежести ...",
+      "expected_slug": "oblachny-sad-freshness",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": "P718",
+      "extracted_code": "P718",
+      "code_match": true,
+      "citations": [
+        "облачный сад-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-090",
+      "question": "Подготовьте краткую справку для заявки на доступ к данным продукта «Об...",
+      "expected_slug": "oblachny-sad-access",
+      "extracted_slug": null,
+      "slug_match": true,
+      "expected_attachment": false,
+      "extracted_attachment": false,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": "P718",
+      "code_match": true,
+      "citations": [
+        "облачный сад-passport"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-091",
+      "question": "По изображению-вложению к странице «oblachny-sad-decision-cases-partia...",
+      "expected_slug": "oblachny-sad-decision-cases-partial-refund",
+      "extracted_slug": "oblachny-sad-decision-cases-partial-refund",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "oblachny-sad-decision-cases-partial-refund"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0032
+    },
+    {
+      "id": "CAL-092",
+      "question": "Сформулируйте правило публикации из PDF-вложения к странице «oblachny-...",
+      "expected_slug": "oblachny-sad-source-contracts-event-delta",
+      "extracted_slug": "oblachny-sad-source-contracts-event-delta",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "oblachny-sad-source-contracts-event-delta"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-093",
+      "question": "Согласно MD-вложению к странице «oblachny-sad-decision-cases-timezone»...",
+      "expected_slug": "oblachny-sad-decision-cases-timezone",
+      "extracted_slug": "oblachny-sad-decision-cases-timezone",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "oblachny-sad-decision-cases-timezone"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0017
+    },
+    {
+      "id": "CAL-094",
+      "question": "Объясните по DOCX-вложению к странице «oblachny-sad-source-contracts-r...",
+      "expected_slug": "oblachny-sad-source-contracts-reconciliation",
+      "extracted_slug": "oblachny-sad-source-contracts-reconciliation",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "oblachny-sad-source-contracts-reconciliation"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-095",
+      "question": "По TXT-вложению к странице «oblachny-sad-decision-cases-full-refund» с...",
+      "expected_slug": "oblachny-sad-decision-cases-full-refund",
+      "extracted_slug": "oblachny-sad-decision-cases-full-refund",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "oblachny-sad-decision-cases-full-refund"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0027
+    },
+    {
+      "id": "CAL-096",
+      "question": "Проанализируйте контрольный журнал из CSV-вложения к странице «oblachn...",
+      "expected_slug": "oblachny-sad-dimension-specs-quality-state",
+      "extracted_slug": "oblachny-sad-dimension-specs-quality-state",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "oblachny-sad-dimension-specs-quality-state"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-097",
+      "question": "По JSON-вложению к странице «oblachny-sad-source-contracts-permissions...",
+      "expected_slug": "oblachny-sad-source-contracts-permissions",
+      "extracted_slug": "oblachny-sad-source-contracts-permissions",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "oblachny-sad-source-contracts-permissions"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0021
+    },
+    {
+      "id": "CAL-098",
+      "question": "Разберите Python-вложение к странице «mozaika-decision-cases-audience-...",
+      "expected_slug": "mozaika-decision-cases-audience-spike",
+      "extracted_slug": "mozaika-decision-cases-audience-spike",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "mozaika-decision-cases-audience-spike"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-099",
+      "question": "Разберите C#-вложение к странице «mahoviq-dimension-specs-lifecycle»: ...",
+      "expected_slug": "mahoviq-dimension-specs-lifecycle",
+      "extracted_slug": "mahoviq-dimension-specs-lifecycle",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "mahoviq-dimension-specs-lifecycle"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    },
+    {
+      "id": "CAL-100",
+      "question": "По ASM-вложению к странице «oblachny-sad-source-contracts-retention» о...",
+      "expected_slug": "oblachny-sad-source-contracts-retention",
+      "extracted_slug": "oblachny-sad-source-contracts-retention",
+      "slug_match": true,
+      "expected_attachment": true,
+      "extracted_attachment": true,
+      "attachment_match": true,
+      "expected_code": null,
+      "extracted_code": null,
+      "code_match": true,
+      "citations": [
+        "oblachny-sad-source-contracts-retention"
+      ],
+      "has_citations": true,
+      "latency_sec": 0.0
+    }
+  ]
+}
