@@ -135,29 +135,34 @@ class AnswerAgent:
         return self._build_output(response.content, documents)
 
     def _format_context(self, documents: List[DocumentContext]) -> str:
-        """Format documents into clean, structured context for the LLM."""
-        chunks = []
-        for i, doc in enumerate(documents, start=1):
-            meta_line = f"ID: {doc.doc_id} | Slug: {doc.slug}"
-            if doc.product_name or doc.product_code:
-                meta_line += f" | Продукт: {doc.product_name or ''} ({doc.product_code or ''})"
-            if doc.section:
-                meta_line += f" | Раздел: {doc.section}"
-
-            doc_text = (
-                f"--- ДОКУМЕНТ {i} ---\n"
-                f"{meta_line}\n"
-                f"Заголовок: {doc.title}\n"
-                f"Содержание:\n{doc.content.strip()}\n"
-            )
-
+        """Format documents into secure XML-isolated context for the LLM."""
+        doc_nodes = []
+        for doc in documents:
+            attachment_part = ""
             if doc.attachment_text and doc.attachment_text.strip():
-                fmt = f" ({doc.attachment_format})" if doc.attachment_format else ""
-                doc_text += f"\n[Вложение{fmt}]:\n{doc.attachment_text.strip()}\n"
+                fmt = doc.attachment_format or "text"
+                attachment_part = (
+                    f"\n  <attachment format=\"{fmt}\" path=\"{doc.attachment_path or ''}\">\n"
+                    f"{doc.attachment_text.strip()}\n"
+                    f"  </attachment>"
+                )
 
-            chunks.append(doc_text)
+            doc_node = (
+                f'<document id="{doc.doc_id}" slug="{doc.slug}" product="{doc.product_name or ""}" '
+                f'code="{doc.product_code or ""}" section="{doc.section or ""}">\n'
+                f"  <title>{doc.title}</title>\n"
+                f"  <content>\n{doc.content.strip()}\n  </content>"
+                f"{attachment_part}\n"
+                f"</document>"
+            )
+            doc_nodes.append(doc_node)
 
-        return "\n\n".join(chunks)
+        body = "\n\n".join(doc_nodes)
+        return (
+            f'<meridian_context type="knowledge_base_retrieval" untrusted_data="true">\n'
+            f"{body}\n"
+            f"</meridian_context>"
+        )
 
     def _build_output(
         self,
