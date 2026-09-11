@@ -172,7 +172,8 @@ cython_debug/
 .ruff_cache/
 
 # PyPI configuration file
-.pypirc
-
 /meridian_hackathon_knowledge_base
-
+/meridian_hackathon_knowledge_base.zip
+__MACOSX/
+.env
+.env.*
