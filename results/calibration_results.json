@@ -1,13 +1,13 @@
 {
   "title": "Результаты калибровочного тестирования",
   "total_questions": 100,
-  "product_code_accuracy": 1.0,
+  "product_code_accuracy": 0.99,
   "need_attachment_accuracy": 1.0,
   "slug_extraction_accuracy": 1.0,
   "citations_coverage": 1.0,
   "recall_at_5_target_met": true,
-  "average_latency_sec": 0.0008,
-  "is_mock": true,
+  "average_latency_sec": 3.8928,
+  "is_mock": false,
   "details": [
     {
       "id": "CAL-001",
@@ -22,10 +22,12 @@
       "extracted_code": "P701",
       "code_match": true,
       "citations": [
-        "искра-passport"
+        "искра-architecture",
+        "искра-passport",
+        "искра-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 4.1879
     },
     {
       "id": "CAL-002",
@@ -40,10 +42,12 @@
       "extracted_code": "P701",
       "code_match": true,
       "citations": [
-        "искра-passport"
+        "искра-architecture",
+        "искра-passport",
+        "искра-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.3987
     },
     {
       "id": "CAL-003",
@@ -58,10 +62,12 @@
       "extracted_code": "P701",
       "code_match": true,
       "citations": [
-        "искра-passport"
+        "искра-architecture",
+        "искра-passport",
+        "искра-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 4.8191
     },
     {
       "id": "CAL-004",
@@ -76,10 +82,12 @@
       "extracted_code": "P701",
       "code_match": true,
       "citations": [
-        "искра-passport"
+        "искра-architecture",
+        "искра-passport",
+        "искра-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.1957
     },
     {
       "id": "CAL-005",
@@ -94,10 +102,11 @@
       "extracted_code": "P701",
       "code_match": true,
       "citations": [
-        "искра-passport"
+        "искра-passport",
+        "искра-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.2768
     },
     {
       "id": "CAL-006",
@@ -112,10 +121,12 @@
       "extracted_code": "P702",
       "code_match": true,
       "citations": [
-        "росинка-passport"
+        "росинка-architecture",
+        "росинка-passport",
+        "росинка-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 3.5567
     },
     {
       "id": "CAL-007",
@@ -130,10 +141,12 @@
       "extracted_code": "P702",
       "code_match": true,
       "citations": [
-        "росинка-passport"
+        "росинка-architecture",
+        "росинка-passport",
+        "росинка-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.7388
     },
     {
       "id": "CAL-008",
@@ -148,10 +161,12 @@
       "extracted_code": "P702",
       "code_match": true,
       "citations": [
-        "росинка-passport"
+        "росинка-architecture",
+        "росинка-passport",
+        "росинка-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.4822
     },
     {
       "id": "CAL-009",
@@ -166,10 +181,12 @@
       "extracted_code": "P702",
       "code_match": true,
       "citations": [
-        "росинка-passport"
+        "росинка-architecture",
+        "росинка-passport",
+        "росинка-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 5.3264
     },
     {
       "id": "CAL-010",
@@ -187,7 +204,7 @@
         "росинка-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.3771
     },
     {
       "id": "CAL-011",
@@ -202,10 +219,12 @@
       "extracted_code": "P703",
       "code_match": true,
       "citations": [
-        "янтарь-passport"
+        "янтарь-architecture",
+        "янтарь-passport",
+        "янтарь-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0015
+      "latency_sec": 4.5064
     },
     {
       "id": "CAL-012",
@@ -220,10 +239,12 @@
       "extracted_code": "P703",
       "code_match": true,
       "citations": [
-        "янтарь-passport"
+        "янтарь-architecture",
+        "янтарь-passport",
+        "янтарь-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.8913
     },
     {
       "id": "CAL-013",
@@ -238,10 +259,11 @@
       "extracted_code": "P703",
       "code_match": true,
       "citations": [
+        "янтарь-architecture",
         "янтарь-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 3.6851
     },
     {
       "id": "CAL-014",
@@ -256,10 +278,12 @@
       "extracted_code": "P703",
       "code_match": true,
       "citations": [
-        "янтарь-passport"
+        "янтарь-architecture",
+        "янтарь-passport",
+        "янтарь-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.8927
     },
     {
       "id": "CAL-015",
@@ -274,10 +298,12 @@
       "extracted_code": "P703",
       "code_match": true,
       "citations": [
-        "янтарь-passport"
+        "янтарь-architecture",
+        "янтарь-passport",
+        "янтарь-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.5466
     },
     {
       "id": "CAL-016",
@@ -292,10 +318,12 @@
       "extracted_code": "P704",
       "code_match": true,
       "citations": [
-        "мостик-passport"
+        "мостик-architecture",
+        "мостик-passport",
+        "мостик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 3.6229
     },
     {
       "id": "CAL-017",
@@ -310,10 +338,11 @@
       "extracted_code": "P704",
       "code_match": true,
       "citations": [
+        "мостик-architecture",
         "мостик-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.6213
     },
     {
       "id": "CAL-018",
@@ -328,10 +357,12 @@
       "extracted_code": "P704",
       "code_match": true,
       "citations": [
-        "мостик-passport"
+        "мостик-architecture",
+        "мостик-passport",
+        "мостик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 5.6547
     },
     {
       "id": "CAL-019",
@@ -346,10 +377,11 @@
       "extracted_code": "P704",
       "code_match": true,
       "citations": [
+        "мостик-architecture",
         "мостик-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.0346
     },
     {
       "id": "CAL-020",
@@ -364,10 +396,12 @@
       "extracted_code": "P704",
       "code_match": true,
       "citations": [
-        "мостик-passport"
+        "мостик-architecture",
+        "мостик-passport",
+        "мостик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.4404
     },
     {
       "id": "CAL-021",
@@ -382,10 +416,12 @@
       "extracted_code": "P705",
       "code_match": true,
       "citations": [
-        "тихая гавань-passport"
+        "тихая гавань-architecture",
+        "тихая гавань-passport",
+        "тихая гавань-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 4.0164
     },
     {
       "id": "CAL-022",
@@ -400,10 +436,12 @@
       "extracted_code": "P705",
       "code_match": true,
       "citations": [
-        "тихая гавань-passport"
+        "тихая гавань-architecture",
+        "тихая гавань-passport",
+        "тихая гавань-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 5.244
     },
     {
       "id": "CAL-023",
@@ -418,10 +456,11 @@
       "extracted_code": "P705",
       "code_match": true,
       "citations": [
+        "тихая гавань-architecture",
         "тихая гавань-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.683
     },
     {
       "id": "CAL-024",
@@ -436,10 +475,11 @@
       "extracted_code": "P705",
       "code_match": true,
       "citations": [
+        "тихая гавань-architecture",
         "тихая гавань-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 4.2085
     },
     {
       "id": "CAL-025",
@@ -457,7 +497,7 @@
         "тихая гавань-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 2.961
     },
     {
       "id": "CAL-026",
@@ -472,10 +512,12 @@
       "extracted_code": "P706",
       "code_match": true,
       "citations": [
-        "лавка-passport"
+        "лавка-architecture",
+        "лавка-passport",
+        "лавка-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 4.3747
     },
     {
       "id": "CAL-027",
@@ -493,7 +535,7 @@
         "лавка-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.526
     },
     {
       "id": "CAL-028",
@@ -508,10 +550,12 @@
       "extracted_code": "P706",
       "code_match": true,
       "citations": [
-        "лавка-passport"
+        "лавка-architecture",
+        "лавка-passport",
+        "лавка-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.674
     },
     {
       "id": "CAL-029",
@@ -526,10 +570,12 @@
       "extracted_code": "P706",
       "code_match": true,
       "citations": [
-        "лавка-passport"
+        "лавка-architecture",
+        "лавка-passport",
+        "лавка-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 3.9207
     },
     {
       "id": "CAL-030",
@@ -547,7 +593,7 @@
         "лавка-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.5064
     },
     {
       "id": "CAL-031",
@@ -562,10 +608,12 @@
       "extracted_code": "P707",
       "code_match": true,
       "citations": [
-        "комета-passport"
+        "комета-architecture",
+        "комета-passport",
+        "комета-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0022
+      "latency_sec": 3.4751
     },
     {
       "id": "CAL-032",
@@ -580,10 +628,12 @@
       "extracted_code": "P707",
       "code_match": true,
       "citations": [
-        "комета-passport"
+        "комета-architecture",
+        "комета-passport",
+        "комета-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0005
+      "latency_sec": 5.1183
     },
     {
       "id": "CAL-033",
@@ -598,10 +648,12 @@
       "extracted_code": "P707",
       "code_match": true,
       "citations": [
-        "комета-passport"
+        "комета-architecture",
+        "комета-passport",
+        "комета-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.4812
     },
     {
       "id": "CAL-034",
@@ -616,10 +668,12 @@
       "extracted_code": "P707",
       "code_match": true,
       "citations": [
-        "комета-passport"
+        "комета-architecture",
+        "комета-passport",
+        "комета-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 4.7731
     },
     {
       "id": "CAL-035",
@@ -634,10 +688,12 @@
       "extracted_code": "P707",
       "code_match": true,
       "citations": [
-        "комета-passport"
+        "комета-architecture",
+        "комета-passport",
+        "комета-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.1043
     },
     {
       "id": "CAL-036",
@@ -652,10 +708,12 @@
       "extracted_code": "P708",
       "code_match": true,
       "citations": [
-        "призма-passport"
+        "призма-architecture",
+        "призма-passport",
+        "призма-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 3.2848
     },
     {
       "id": "CAL-037",
@@ -670,10 +728,12 @@
       "extracted_code": "P708",
       "code_match": true,
       "citations": [
-        "призма-passport"
+        "призма-architecture",
+        "призма-passport",
+        "призма-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.3002
     },
     {
       "id": "CAL-038",
@@ -688,10 +748,12 @@
       "extracted_code": "P708",
       "code_match": true,
       "citations": [
-        "призма-passport"
+        "призма-architecture",
+        "призма-passport",
+        "призма-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 5.1203
     },
     {
       "id": "CAL-039",
@@ -706,10 +768,11 @@
       "extracted_code": "P708",
       "code_match": true,
       "citations": [
+        "призма-architecture",
         "призма-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.4428
     },
     {
       "id": "CAL-040",
@@ -724,10 +787,12 @@
       "extracted_code": "P708",
       "code_match": true,
       "citations": [
-        "призма-passport"
+        "призма-architecture",
+        "призма-passport",
+        "призма-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.1354
     },
     {
       "id": "CAL-041",
@@ -742,10 +807,12 @@
       "extracted_code": "P709",
       "code_match": true,
       "citations": [
-        "орбитариум-passport"
+        "орбитариум-architecture",
+        "орбитариум-passport",
+        "орбитариум-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 3.4823
     },
     {
       "id": "CAL-042",
@@ -760,10 +827,11 @@
       "extracted_code": "P709",
       "code_match": true,
       "citations": [
+        "орбитариум-architecture",
         "орбитариум-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.89
     },
     {
       "id": "CAL-043",
@@ -778,10 +846,12 @@
       "extracted_code": "P709",
       "code_match": true,
       "citations": [
-        "орбитариум-passport"
+        "орбитариум-architecture",
+        "орбитариум-passport",
+        "орбитариум-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.0976
     },
     {
       "id": "CAL-044",
@@ -796,10 +866,11 @@
       "extracted_code": "P709",
       "code_match": true,
       "citations": [
+        "орбитариум-architecture",
         "орбитариум-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.0248
     },
     {
       "id": "CAL-045",
@@ -814,10 +885,12 @@
       "extracted_code": "P709",
       "code_match": true,
       "citations": [
-        "орбитариум-passport"
+        "орбитариум-architecture",
+        "орбитариум-passport",
+        "орбитариум-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.5523
     },
     {
       "id": "CAL-046",
@@ -832,10 +905,12 @@
       "extracted_code": "P710",
       "code_match": true,
       "citations": [
-        "парус-passport"
+        "парус-architecture",
+        "парус-passport",
+        "парус-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.4809
     },
     {
       "id": "CAL-047",
@@ -850,10 +925,12 @@
       "extracted_code": "P710",
       "code_match": true,
       "citations": [
-        "парус-passport"
+        "парус-architecture",
+        "парус-passport",
+        "парус-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.4029
     },
     {
       "id": "CAL-048",
@@ -868,10 +945,12 @@
       "extracted_code": "P710",
       "code_match": true,
       "citations": [
-        "парус-passport"
+        "парус-architecture",
+        "парус-passport",
+        "парус-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.6886
     },
     {
       "id": "CAL-049",
@@ -886,10 +965,11 @@
       "extracted_code": "P710",
       "code_match": true,
       "citations": [
+        "парус-architecture",
         "парус-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0048
+      "latency_sec": 3.7876
     },
     {
       "id": "CAL-050",
@@ -907,7 +987,7 @@
         "парус-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.2765
     },
     {
       "id": "CAL-051",
@@ -922,10 +1002,12 @@
       "extracted_code": "P711",
       "code_match": true,
       "citations": [
-        "бастион-passport"
+        "бастион-architecture",
+        "бастион-passport",
+        "бастион-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0013
+      "latency_sec": 3.1618
     },
     {
       "id": "CAL-052",
@@ -940,10 +1022,11 @@
       "extracted_code": "P711",
       "code_match": true,
       "citations": [
+        "бастион-architecture",
         "бастион-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0016
+      "latency_sec": 3.5039
     },
     {
       "id": "CAL-053",
@@ -958,10 +1041,12 @@
       "extracted_code": "P711",
       "code_match": true,
       "citations": [
-        "бастион-passport"
+        "бастион-architecture",
+        "бастион-passport",
+        "бастион-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.2916
     },
     {
       "id": "CAL-054",
@@ -976,10 +1061,12 @@
       "extracted_code": "P711",
       "code_match": true,
       "citations": [
-        "бастион-passport"
+        "бастион-architecture",
+        "бастион-passport",
+        "бастион-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.3354
     },
     {
       "id": "CAL-055",
@@ -997,7 +1084,7 @@
         "бастион-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 2.7047
     },
     {
       "id": "CAL-056",
@@ -1012,10 +1099,12 @@
       "extracted_code": "P712",
       "code_match": true,
       "citations": [
-        "ритм-passport"
+        "ритм-architecture",
+        "ритм-passport",
+        "ритм-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.3016
     },
     {
       "id": "CAL-057",
@@ -1030,10 +1119,12 @@
       "extracted_code": "P712",
       "code_match": true,
       "citations": [
-        "ритм-passport"
+        "ритм-architecture",
+        "ритм-passport",
+        "ритм-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.3078
     },
     {
       "id": "CAL-058",
@@ -1048,10 +1139,12 @@
       "extracted_code": "P712",
       "code_match": true,
       "citations": [
-        "ритм-passport"
+        "ритм-architecture",
+        "ритм-passport",
+        "ритм-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.1608
     },
     {
       "id": "CAL-059",
@@ -1066,10 +1159,12 @@
       "extracted_code": "P712",
       "code_match": true,
       "citations": [
-        "ритм-passport"
+        "ритм-architecture",
+        "ритм-passport",
+        "ритм-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.2297
     },
     {
       "id": "CAL-060",
@@ -1087,7 +1182,7 @@
         "ритм-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 2.9716
     },
     {
       "id": "CAL-061",
@@ -1102,10 +1197,12 @@
       "extracted_code": "P713",
       "code_match": true,
       "citations": [
-        "зонтик-passport"
+        "зонтик-architecture",
+        "зонтик-passport",
+        "зонтик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.3452
     },
     {
       "id": "CAL-062",
@@ -1120,10 +1217,12 @@
       "extracted_code": "P713",
       "code_match": true,
       "citations": [
-        "зонтик-passport"
+        "зонтик-architecture",
+        "зонтик-passport",
+        "зонтик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0076
+      "latency_sec": 5.0498
     },
     {
       "id": "CAL-063",
@@ -1138,10 +1237,12 @@
       "extracted_code": "P713",
       "code_match": true,
       "citations": [
-        "зонтик-passport"
+        "зонтик-architecture",
+        "зонтик-passport",
+        "зонтик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 5.0185
     },
     {
       "id": "CAL-064",
@@ -1156,10 +1257,11 @@
       "extracted_code": "P713",
       "code_match": true,
       "citations": [
+        "зонтик-architecture",
         "зонтик-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.2682
     },
     {
       "id": "CAL-065",
@@ -1174,10 +1276,12 @@
       "extracted_code": "P713",
       "code_match": true,
       "citations": [
-        "зонтик-passport"
+        "зонтик-architecture",
+        "зонтик-passport",
+        "зонтик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.0263
     },
     {
       "id": "CAL-066",
@@ -1192,10 +1296,12 @@
       "extracted_code": "P714",
       "code_match": true,
       "citations": [
-        "созвездие-passport"
+        "созвездие-architecture",
+        "созвездие-passport",
+        "созвездие-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.7477
     },
     {
       "id": "CAL-067",
@@ -1210,10 +1316,12 @@
       "extracted_code": "P714",
       "code_match": true,
       "citations": [
-        "созвездие-passport"
+        "созвездие-architecture",
+        "созвездие-passport",
+        "созвездие-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0044
+      "latency_sec": 4.5463
     },
     {
       "id": "CAL-068",
@@ -1228,10 +1336,12 @@
       "extracted_code": "P714",
       "code_match": true,
       "citations": [
-        "созвездие-passport"
+        "созвездие-architecture",
+        "созвездие-passport",
+        "созвездие-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.001
+      "latency_sec": 4.1092
     },
     {
       "id": "CAL-069",
@@ -1246,10 +1356,11 @@
       "extracted_code": "P714",
       "code_match": true,
       "citations": [
+        "созвездие-architecture",
         "созвездие-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0011
+      "latency_sec": 5.005
     },
     {
       "id": "CAL-070",
@@ -1264,10 +1375,12 @@
       "extracted_code": "P714",
       "code_match": true,
       "citations": [
-        "созвездие-passport"
+        "созвездие-architecture",
+        "созвездие-passport",
+        "созвездие-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.3798
     },
     {
       "id": "CAL-071",
@@ -1282,10 +1395,12 @@
       "extracted_code": "P715",
       "code_match": true,
       "citations": [
-        "мозаика-passport"
+        "мозаика-architecture",
+        "мозаика-passport",
+        "мозаика-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.5631
     },
     {
       "id": "CAL-072",
@@ -1300,10 +1415,12 @@
       "extracted_code": "P715",
       "code_match": true,
       "citations": [
-        "мозаика-passport"
+        "мозаика-architecture",
+        "мозаика-passport",
+        "мозаика-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0025
+      "latency_sec": 4.469
     },
     {
       "id": "CAL-073",
@@ -1318,10 +1435,12 @@
       "extracted_code": "P715",
       "code_match": true,
       "citations": [
-        "мозаика-passport"
+        "мозаика-architecture",
+        "мозаика-passport",
+        "мозаика-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.6092
     },
     {
       "id": "CAL-074",
@@ -1336,10 +1455,12 @@
       "extracted_code": "P715",
       "code_match": true,
       "citations": [
-        "мозаика-passport"
+        "мозаика-architecture",
+        "мозаика-passport",
+        "мозаика-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.9274
     },
     {
       "id": "CAL-075",
@@ -1354,10 +1475,12 @@
       "extracted_code": "P715",
       "code_match": true,
       "citations": [
-        "мозаика-passport"
+        "мозаика-architecture",
+        "мозаика-passport",
+        "мозаика-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.002
+      "latency_sec": 3.2736
     },
     {
       "id": "CAL-076",
@@ -1372,10 +1495,12 @@
       "extracted_code": "P716",
       "code_match": true,
       "citations": [
-        "маховик-passport"
+        "маховик-architecture",
+        "маховик-passport",
+        "маховик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.6853
     },
     {
       "id": "CAL-077",
@@ -1390,10 +1515,12 @@
       "extracted_code": "P716",
       "code_match": true,
       "citations": [
-        "маховик-passport"
+        "маховик-architecture",
+        "маховик-passport",
+        "маховик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 6.3502
     },
     {
       "id": "CAL-078",
@@ -1408,10 +1535,12 @@
       "extracted_code": "P716",
       "code_match": true,
       "citations": [
-        "маховик-passport"
+        "маховик-architecture",
+        "маховик-passport",
+        "маховик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.7894
     },
     {
       "id": "CAL-079",
@@ -1426,10 +1555,11 @@
       "extracted_code": "P716",
       "code_match": true,
       "citations": [
+        "маховик-architecture",
         "маховик-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0032
+      "latency_sec": 3.8904
     },
     {
       "id": "CAL-080",
@@ -1444,10 +1574,12 @@
       "extracted_code": "P716",
       "code_match": true,
       "citations": [
-        "маховик-passport"
+        "маховик-architecture",
+        "маховик-passport",
+        "маховик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0012
+      "latency_sec": 4.4025
     },
     {
       "id": "CAL-081",
@@ -1462,10 +1594,12 @@
       "extracted_code": "P717",
       "code_match": true,
       "citations": [
-        "пергамент-passport"
+        "пергамент-architecture",
+        "пергамент-passport",
+        "пергамент-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.4825
     },
     {
       "id": "CAL-082",
@@ -1480,10 +1614,12 @@
       "extracted_code": "P717",
       "code_match": true,
       "citations": [
-        "пергамент-passport"
+        "пергамент-architecture",
+        "пергамент-passport",
+        "пергамент-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.4033
     },
     {
       "id": "CAL-083",
@@ -1498,10 +1634,12 @@
       "extracted_code": "P717",
       "code_match": true,
       "citations": [
-        "пергамент-passport"
+        "пергамент-architecture",
+        "пергамент-passport",
+        "пергамент-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.6996
     },
     {
       "id": "CAL-084",
@@ -1516,10 +1654,12 @@
       "extracted_code": "P717",
       "code_match": true,
       "citations": [
-        "пергамент-passport"
+        "пергамент-architecture",
+        "пергамент-passport",
+        "пергамент-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.5952
     },
     {
       "id": "CAL-085",
@@ -1534,10 +1674,12 @@
       "extracted_code": "P717",
       "code_match": true,
       "citations": [
-        "пергамент-passport"
+        "пергамент-architecture",
+        "пергамент-passport",
+        "пергамент-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 6.1433
     },
     {
       "id": "CAL-086",
@@ -1549,13 +1691,13 @@
       "extracted_attachment": false,
       "attachment_match": true,
       "expected_code": "P718",
-      "extracted_code": "P718",
-      "code_match": true,
+      "extracted_code": "P717",
+      "code_match": false,
       "citations": [
-        "облачный сад-passport"
+        "пергамент-passport"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 1.4337
     },
     {
       "id": "CAL-087",
@@ -1570,10 +1712,12 @@
       "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "облачный сад-passport"
+        "облачный сад-architecture",
+        "облачный сад-passport",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.5516
     },
     {
       "id": "CAL-088",
@@ -1588,10 +1732,12 @@
       "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "облачный сад-passport"
+        "облачный сад-architecture",
+        "облачный сад-passport",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0058
+      "latency_sec": 3.9441
     },
     {
       "id": "CAL-089",
@@ -1606,10 +1752,12 @@
       "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "облачный сад-passport"
+        "облачный сад-architecture",
+        "облачный сад-passport",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 4.8186
     },
     {
       "id": "CAL-090",
@@ -1624,10 +1772,12 @@
       "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "облачный сад-passport"
+        "облачный сад-architecture",
+        "облачный сад-passport",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.9928
     },
     {
       "id": "CAL-091",
@@ -1639,13 +1789,15 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "oblachny-sad-decision-cases-partial-refund"
+        "oblachny-sad-decision-cases-partial-refund",
+        "облачный сад-architecture",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0032
+      "latency_sec": 2.7666
     },
     {
       "id": "CAL-092",
@@ -1657,13 +1809,15 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "oblachny-sad-source-contracts-event-delta"
+        "oblachny-sad-source-contracts-event-delta",
+        "облачный сад-architecture",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.0336
     },
     {
       "id": "CAL-093",
@@ -1675,13 +1829,15 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "oblachny-sad-decision-cases-timezone"
+        "oblachny-sad-decision-cases-timezone",
+        "облачный сад-architecture",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0017
+      "latency_sec": 2.6973
     },
     {
       "id": "CAL-094",
@@ -1693,13 +1849,15 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "oblachny-sad-source-contracts-reconciliation"
+        "oblachny-sad-source-contracts-reconciliation",
+        "облачный сад-architecture",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.2003
     },
     {
       "id": "CAL-095",
@@ -1711,13 +1869,15 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "oblachny-sad-decision-cases-full-refund"
+        "oblachny-sad-decision-cases-full-refund",
+        "облачный сад-architecture",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0027
+      "latency_sec": 2.6239
     },
     {
       "id": "CAL-096",
@@ -1729,13 +1889,15 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "oblachny-sad-dimension-specs-quality-state"
+        "oblachny-sad-dimension-specs-quality-state",
+        "облачный сад-architecture",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.2634
     },
     {
       "id": "CAL-097",
@@ -1747,13 +1909,15 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P718",
       "code_match": true,
       "citations": [
-        "oblachny-sad-source-contracts-permissions"
+        "oblachny-sad-source-contracts-permissions",
+        "облачный сад-architecture",
+        "облачный сад-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0021
+      "latency_sec": 2.7072
     },
     {
       "id": "CAL-098",
@@ -1765,13 +1929,15 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P715",
       "code_match": true,
       "citations": [
-        "mozaika-decision-cases-audience-spike"
+        "mozaika-decision-cases-audience-spike",
+        "мозаика-architecture",
+        "мозаика-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 3.0535
     },
     {
       "id": "CAL-099",
@@ -1783,13 +1949,15 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P716",
       "code_match": true,
       "citations": [
-        "mahoviq-dimension-specs-lifecycle"
+        "mahoviq-dimension-specs-lifecycle",
+        "маховик-architecture",
+        "маховик-sla-guide"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 2.7663
     },
     {
       "id": "CAL-100",
@@ -1801,13 +1969,13 @@
       "extracted_attachment": true,
       "attachment_match": true,
       "expected_code": null,
-      "extracted_code": null,
+      "extracted_code": "P718",
       "code_match": true,
       "citations": [
         "oblachny-sad-source-contracts-retention"
       ],
       "has_citations": true,
-      "latency_sec": 0.0
+      "latency_sec": 1.3858
     }
   ]
 }

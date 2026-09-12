@@ -121,6 +121,7 @@ def run_official_calibration(
 
         # Evaluate Router extraction
         router_out = resp.router_data
+        print(f"[{i}/{total}] {q_id}: code={router_out.product_code} (exp: {expected_code}), att={router_out.need_attachment} ({elapsed:.2f}s)")
         
         # 1. Attachment intent check
         att_match = (router_out.need_attachment == expected_att)
@@ -214,4 +215,10 @@ def run_official_calibration(
 
 
 if __name__ == "__main__":
-    run_official_calibration()
+    limit = None
+    if len(sys.argv) > 1:
+        try:
+            limit = int(sys.argv[1])
+        except ValueError:
+            pass
+    run_official_calibration(max_questions=limit)

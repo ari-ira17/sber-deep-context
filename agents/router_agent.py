@@ -176,21 +176,19 @@ class RouterAgent:
                 # Invalid code returned by LLM
                 product_code = None
 
-        # 2. If code missing, search product by name in query
+        # 2. Prioritize explicit product names mentioned in the query
+        for name, code in NAME_TO_CODE.items():
+            if name in lower_q:
+                product_code = code
+                break
+
+        # 3. Check explicit code mentions in query like P701..P718 if code still missing
         if not product_code:
-            # Check explicit code mentions in query like P701..P718
             code_match = re.search(r"\b(p7[0-1][0-9])\b", lower_q)
             if code_match:
                 candidate = code_match.group(1).upper()
                 if candidate in MERIDIAN_CATALOG:
                     product_code = candidate
-
-        # 3. Check product names in query
-        if not product_code:
-            for name, code in NAME_TO_CODE.items():
-                if name in lower_q:
-                    product_code = code
-                    break
 
         # 4. Fill product_name, section, owner from catalog if code is known
         if product_code and product_code in MERIDIAN_CATALOG:

@@ -177,3 +177,5 @@ cython_debug/
 __MACOSX/
 .env
 .env.*
+api.env
+*.env

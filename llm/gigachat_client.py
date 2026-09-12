@@ -24,6 +24,13 @@ try:
 except ImportError:
     GIGACHAT_SDK_AVAILABLE = False
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+    load_dotenv("api.env")
+except ImportError:
+    pass
+
 logger = logging.getLogger(__name__)
 
 
