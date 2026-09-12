@@ -19,6 +19,11 @@ from agents.router_agent import RouterAgent, RouterOutput, MERIDIAN_CATALOG
 from agents.answer_agent import AnswerAgent, AnswerOutput, DocumentContext
 from agents.pipeline import DeepAgentsPipeline, AgentState
 
+try:
+    from rag.search import search as participant3_search
+except ImportError:
+    participant3_search = None
+
 logger = logging.getLogger(__name__)
 
 
@@ -86,19 +91,22 @@ class StandaloneSearchEngine:
     def search(self, router_output: RouterOutput, top_k: int = 5) -> List[DocumentContext]:
         """Simulate or execute hybrid search based on router filters."""
         # Check if actual LanceDB search module from Participant 3 is available
-        try:
-            from rag.search import search as participant3_search
-            logger.info("Using Participant 3 RAG search module (rag.search).")
-            return participant3_search(
-                query=router_output.query_rewrite,
-                product_code=router_output.product_code,
-                section=router_output.section,
-                owner=router_output.owner,
-                slug=router_output.slug,
-                top_k=top_k,
-            )
-        except ImportError:
-            pass
+        if participant3_search is not None:
+            try:
+                res = participant3_search(
+                    query=router_output.query_rewrite,
+                    product_code=router_output.product_code,
+                    section=router_output.section,
+                    owner=router_output.owner,
+                    slug=router_output.slug,
+                    top_k=top_k,
+                    return_contexts=True,
+                )
+                if res:
+                    return res
+            except Exception as e:
+                logger.warning(f"RAG search error: {e}. Falling back to StandaloneSearchEngine.")
+                pass
 
         # Decoupled Standalone Search Engine: Generates accurate synthetic/mock documents
         # based on the Meridian Catalog and requested query.
