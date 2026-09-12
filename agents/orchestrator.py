@@ -104,14 +104,16 @@ class StandaloneSearchEngine:
                     top_k=top_k,
                     return_contexts=True,
                 )
-                if res:
+                if res is not None:
                     return res
             except Exception as e:
                 logger.warning(f"RAG search error: {e}. Falling back to StandaloneSearchEngine.")
                 pass
 
-        # Decoupled Standalone Search Engine: Generates accurate synthetic/mock documents
-        # based on the Meridian Catalog and requested query.
+        # Decoupled Standalone Search Engine: Only generate mock documents if product was recognized
+        if not router_output.product_code and not router_output.product_name:
+            return []
+
         code = router_output.product_code or "P701"
         name, section, owner = MERIDIAN_CATALOG.get(code, ("Искра", "Ежедневные расчёты", "Команда Пульс"))
         slug_prefix = name.lower()
