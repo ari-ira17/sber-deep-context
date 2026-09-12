@@ -10,7 +10,9 @@ Task 4.5:
 
 import os
 import time
+import json
 import logging
+from pathlib import Path
 from typing import Optional, List, Dict, Any, Callable
 from pydantic import BaseModel, Field
 
@@ -243,6 +245,62 @@ class MeridianOrchestrator:
         # Simple single-hop factoids / metadata queries (e.g. паспорт, карточка, SLA, владелец)
         return False
 
+    def _enrich_with_attachments(self, documents: List[DocumentContext], router_out: RouterOutput) -> List[DocumentContext]:
+        """Enrich documents with technical scripts (Python, ASM, CS, etc.) from parsed attachments."""
+        if not hasattr(self, "_attachments_index"):
+            self._attachments_index = {}
+            att_file = Path(__file__).parent.parent / "data" / "attachments" / "attachments.json"
+            if att_file.exists():
+                try:
+                    with open(att_file, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    for item in data.get("attachments", []):
+                        path_str = item.get("attachment_path")
+                        if path_str:
+                            stem = Path(path_str).stem
+                            self._attachments_index[stem] = item
+                except Exception as e:
+                    logger.warning(f"Failed to load attachments index: {e}")
+
+        # 1. Fill attachment_text for documents already retrieved
+        for doc in documents:
+            if not doc.attachment_text or not doc.attachment_text.strip():
+                att = self._attachments_index.get(doc.slug)
+                if att and att.get("text"):
+                    doc.attachment_text = att.get("text")
+                    doc.attachment_format = att.get("attachment_format")
+                    doc.attachment_path = att.get("attachment_path")
+
+        # 2. If router identified a specific slug with an attachment, ensure it is in context
+        target_slug = router_out.slug
+        if not target_slug:
+            # Check if any stem in index matches router query_rewrite
+            for stem, att in self._attachments_index.items():
+                if stem in router_out.query_rewrite:
+                    target_slug = stem
+                    break
+
+        if target_slug and not any(d.slug == target_slug for d in documents):
+            att = self._attachments_index.get(target_slug)
+            if att and att.get("text"):
+                code = router_out.product_code or att.get("product_code")
+                name = router_out.product_name or att.get("product_name")
+                injected_doc = DocumentContext(
+                    doc_id=f"doc-{target_slug}",
+                    slug=target_slug,
+                    title=f"Вложение {target_slug}",
+                    product_name=name,
+                    product_code=code,
+                    content=f"# Материал {target_slug}\nТехнический материал продукта {name} ({code}).",
+                    attachment_path=att.get("attachment_path"),
+                    attachment_format=att.get("attachment_format"),
+                    attachment_text=att.get("text"),
+                    score=1.0,
+                )
+                documents.insert(0, injected_doc)
+
+        return documents
+
     def ask(self, question: str) -> OrchestratorResponse:
         """Process user question through full end-to-end pipeline synchronously."""
         start_time = time.time()
@@ -256,9 +314,10 @@ class MeridianOrchestrator:
             f"rewrite='{router_out.query_rewrite}'"
         )
 
-        # 2. RAG Search
+        # 2. RAG Search + Technical Attachment Enrichment
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
-        logs.append(f"Retrieved {len(retrieved_docs)} documents.")
+        retrieved_docs = self._enrich_with_attachments(retrieved_docs, router_out)
+        logs.append(f"Retrieved and enriched {len(retrieved_docs)} documents.")
 
         # 3. Answer Agent (Adaptive Model Routing: Lite for simple factoids, Max for complex RAG/attachments)
         is_complex = self.is_complex_query(question, router_out, retrieved_docs)
@@ -304,9 +363,10 @@ class MeridianOrchestrator:
             f"need_attachment={router_out.need_attachment}"
         )
 
-        # 2. RAG Search (non-blocking in thread pool)
+        # 2. RAG Search (non-blocking in thread pool) + Attachment Enrichment
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
-        logs.append(f"Retrieved {len(retrieved_docs)} documents.")
+        retrieved_docs = self._enrich_with_attachments(retrieved_docs, router_out)
+        logs.append(f"Retrieved and enriched {len(retrieved_docs)} documents.")
 
         # 3. Answer Agent (Adaptive Model Routing)
         is_complex = self.is_complex_query(question, router_out, retrieved_docs)
