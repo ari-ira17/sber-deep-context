@@ -192,24 +192,82 @@ body {
   font-weight: 600;
 }
 
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.history-item-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 12px;
+  position: relative;
+  transition: 0.2s;
+}
+
+.history-item-wrapper:hover {
+  background: var(--glass-btn-hover);
+}
+
+.history-item-wrapper.active {
+  background: var(--glass-btn-hover);
+}
+
 .history-item {
+  flex: 1;
   padding: 0.6rem 0.8rem;
   border-radius: 12px;
   color: var(--text-main);
   text-decoration: none;
   font-size: 0.85rem;
-  transition: 0.2s;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
 }
-.history-item:hover {
-  background: var(--glass-btn-hover);
-}
+
 .history-item.active {
-  background: var(--glass-btn-hover);
-  color: var(--text-main);
   font-weight: 500;
+}
+
+.delete-chat-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  color: var(--text-muted);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  align-items: center;
+  justify-content: center;
+}
+
+.history-item-wrapper:hover .delete-chat-btn {
+  display: flex;
+}
+
+.delete-chat-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.empty-history {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding: 0.8rem 0.5rem;
+  font-style: italic;
 }
 
 .sidebar-footer {

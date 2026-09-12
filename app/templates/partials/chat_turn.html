@@ -4,10 +4,8 @@
     <div class="message-content">{{ query }}</div>
 </div>
 
-<!-- 2. Сразу создаем заглушку для ответа бота. 
-     hx-trigger="load" означает, что как только этот блок появится в DOM, 
-     он сделает GET запрос к /bot_reply и заменит сам себя (hx-swap="outerHTML") на реальный ответ. -->
-<div class="message bot-message" hx-get="/bot_reply?query={{ query | urlencode }}" hx-trigger="load" hx-swap="outerHTML">
+<!-- 2. Заглушка для ответа бота с лоадером -->
+<div class="message bot-message" hx-get="/bot_reply?query={{ query | urlencode }}{% if chat_id %}&chat_id={{ chat_id }}{% endif %}" hx-trigger="load" hx-swap="outerHTML">
     <div class="avatar"><img src="/static/img/sbercat.jpg" alt="Сберкот"></div>
     <div class="message-content">
         <div class="loader-dots">
@@ -15,3 +13,18 @@
         </div>
     </div>
 </div>
+
+{% if chat_id %}
+<script>
+    (function() {
+        const idInput = document.getElementById('chat-id-input');
+        if (idInput) {
+            idInput.value = "{{ chat_id }}";
+        }
+        if (window.location.pathname === '/' || !window.location.pathname.startsWith('/chats/')) {
+            window.history.pushState({}, '', '/chats/{{ chat_id }}');
+        }
+    })();
+</script>
+{% endif %}
+

@@ -21,7 +21,7 @@
     <!-- Контейнер для сообщений по центру -->
     <div class="chat-container" id="chat-container">
         
-        <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-screen" id="welcome-screen" {% if messages %}style="display: none;"{% endif %}>
             <img src="/static/img/sbercat.jpg" alt="SberCat" id="sbercat-avatar" title="Смотреть видео">
             <h1>Готов к работе</h1>
             <p>Я ваш AI-помощник. Отвечаю на вопросы по продуктам, опираясь на регламенты, метаданные и вложения.</p>
@@ -52,7 +52,30 @@
         </div>
 
         <div id="chat-history">
-            <!-- Сюда HTMX будет динамически добавлять сообщения -->
+            {% if messages %}
+                {% for msg in messages %}
+                    {% if msg.role == 'user' %}
+                        <div class="message user-message">
+                            <div class="user-avatar">Вы</div>
+                            <div class="message-content">{{ msg.content }}</div>
+                        </div>
+                    {% else %}
+                        <div class="message bot-message">
+                            <div class="avatar"><img src="/static/img/sbercat.jpg" alt="Сберкот"></div>
+                            <div class="message-content">
+                                <div class="markdown-body">
+                                    {{ (msg.html_content or msg.content) | safe }}
+                                </div>
+                                {% if msg.sources %}
+                                    {% set sources = msg.sources %}
+                                    {% set query = msg.content %}
+                                    {% include "partials/sources.html" %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
         
     </div>
@@ -65,6 +88,7 @@
           hx-target="#chat-history" 
           hx-swap="beforeend"
           hx-on::after-request="this.reset(); window.clearAttachments();">
+        <input type="hidden" name="chat_id" id="chat-id-input" value="{{ active_chat_id or '' }}">
           
         <!-- Превью прикрепленных файлов -->
         <div class="attachments-preview" id="attachments-preview"></div>
@@ -325,6 +349,12 @@
             
             // Автоматическое закрытие по окончании видео
             sberVideo.addEventListener('ended', closeVideo);
+        }
+
+        // Автоскролл вниз при открытии чата с историей
+        const scrollArea = document.getElementById('chat-scroll-area');
+        if (scrollArea && {{ 'true' if messages else 'false' }}) {
+            scrollArea.scrollTop = scrollArea.scrollHeight;
         }
     });
 </script>

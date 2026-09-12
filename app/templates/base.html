@@ -26,19 +26,22 @@
         <aside class="sidebar">
             <div class="sidebar-logo">Квантум</div>
             
-            <button class="new-chat-btn" onclick="location.reload()">
+            <a href="/" class="new-chat-btn" style="text-decoration: none;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 Новый чат
-            </button>
+            </a>
             
             <div class="sidebar-nav">
                 <h3>История</h3>
-                <a href="#" class="history-item active">Лимиты продукта Мостик</a>
-                <a href="#" class="history-item">Регламент по кредитам</a>
-                <a href="#" class="history-item">OCR таблиц (Искра)</a>
+                <div id="sidebar-chats"
+                     hx-get="/api/chats{% if active_chat_id %}?active_id={{ active_chat_id }}{% endif %}"
+                     hx-trigger="refreshSidebar from:body"
+                     hx-swap="innerHTML">
+                    {% include "partials/sidebar_chats.html" %}
+                </div>
             </div>
             
             <div class="sidebar-footer">
