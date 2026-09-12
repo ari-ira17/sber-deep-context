@@ -175,4 +175,7 @@ cython_debug/
 .pypirc
 
 /meridian_hackathon_knowledge_base
+data/lancedb/
+.DS_Store
+.vscode/
 
