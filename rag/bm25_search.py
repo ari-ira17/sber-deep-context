@@ -11,11 +11,46 @@ from rag.storage import LanceDBStorage
 from rag.metadata_filter import MetadataFilter
 
 
-def tokenize(text: str) -> List[str]:
-    """Tokenize Russian/English text into lowercase words."""
+import pymorphy3
+
+_MORPH_ANALYZER = None
+
+
+def _get_morph():
+    global _MORPH_ANALYZER
+    if _MORPH_ANALYZER is None:
+        try:
+            _MORPH_ANALYZER = pymorphy3.MorphAnalyzer()
+        except Exception as e:
+            print(f"[pymorphy3 Warning] Failed to initialize MorphAnalyzer: {e}")
+            _MORPH_ANALYZER = False
+    return _MORPH_ANALYZER if _MORPH_ANALYZER is not False else None
+
+
+def tokenize(text: str, lemmatize: bool = True) -> List[str]:
+    """Tokenize Russian/English text into lowercase words with optional pymorphy3 lemmatization."""
     if not text:
         return []
-    return re.findall(r'[a-zA-Zа-яА-Я0-9_]+', text.lower())
+    raw_tokens = re.findall(r'[a-zA-Zа-яА-ЯёЁ0-9_]+', text.lower())
+    if not lemmatize:
+        return raw_tokens
+
+    morph = _get_morph()
+    if morph is None:
+        return raw_tokens
+
+    lemmas = []
+    for token in raw_tokens:
+        if token.isdigit() or "_" in token or len(token) <= 2:
+            lemmas.append(token)
+        else:
+            try:
+                lemma = morph.parse(token)[0].normal_form
+                lemmas.append(lemma)
+            except Exception:
+                lemmas.append(token)
+    return lemmas
+
 
 
 class SimpleBM25:

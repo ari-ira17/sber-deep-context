@@ -8,7 +8,7 @@ Interface for Participant 4 (Agent Engineer):
     Output: List[Dict] of top-k documents, each with page_content, metadata, score
 """
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 import os
 import yaml
 
@@ -19,6 +19,70 @@ from rag.bm25_search import BM25Search
 from rag.rrf import RRFFusion
 from rag.reranker import Reranker
 from rag.embedder import get_embedder
+
+try:
+    from agents.answer_agent import DocumentContext
+except ImportError:
+    from pydantic import BaseModel, Field
+
+    class DocumentContext(BaseModel):
+        doc_id: str
+        slug: str
+        title: str = ""
+        product_name: Optional[str] = None
+        product_code: Optional[str] = None
+        section: Optional[str] = None
+        content: str
+        attachment_path: Optional[str] = None
+        attachment_format: Optional[str] = None
+        attachment_text: Optional[str] = None
+        score: float = 0.0
+
+
+def to_document_context(doc: Dict[str, Any]) -> DocumentContext:
+    """
+    Adapter/Mapper function converting a dictionary search result into a DocumentContext object.
+    """
+    if isinstance(doc.get("metadata"), dict):
+        meta = doc["metadata"]
+    else:
+        meta = doc
+
+    doc_id = str(doc.get("doc_id") or meta.get("doc_id") or "")
+    slug = str(doc.get("slug") or meta.get("slug") or "")
+    title = str(doc.get("title") or meta.get("title") or (f"Документ {slug}" if slug else "Без названия"))
+    product_name = doc.get("product_name") or meta.get("product_name")
+    product_code = doc.get("product_code") or meta.get("product_code")
+    section = doc.get("section") or meta.get("section")
+    content = str(doc.get("page_content") or doc.get("content") or meta.get("page_content") or meta.get("content") or "")
+    attachment_path = doc.get("attachment_path") or meta.get("attachment_path")
+    attachment_format = doc.get("attachment_format") or meta.get("attachment_format")
+    attachment_text = doc.get("attachment_text") or meta.get("attachment_text")
+
+    score_val = doc.get("score") if doc.get("score") is not None else meta.get("score", 0.0)
+    try:
+        score = float(score_val)
+    except (ValueError, TypeError):
+        score = 0.0
+
+    return DocumentContext(
+        doc_id=doc_id,
+        slug=slug,
+        title=title,
+        product_name=product_name,
+        product_code=product_code,
+        section=section,
+        content=content,
+        attachment_path=attachment_path,
+        attachment_format=attachment_format,
+        attachment_text=attachment_text,
+        score=score,
+    )
+
+
+def to_document_contexts(docs: List[Dict[str, Any]]) -> List[DocumentContext]:
+    """Convert a list of document dicts to a list of DocumentContext objects."""
+    return [to_document_context(d) if isinstance(d, dict) else d for d in docs]
 
 
 class HybridSearchEngine:
@@ -62,7 +126,8 @@ class HybridSearchEngine:
 
     def search(
         self,
-        query_text: str,
+        query_text: Optional[str] = None,
+        query: Optional[str] = None,
         query_vector: Optional[List[float]] = None,
         top_k: Optional[int] = None,
         candidate_k: Optional[int] = None,
@@ -77,9 +142,10 @@ class HybridSearchEngine:
         where_clause: Optional[str] = None,
         enable_reranker: Optional[bool] = None,
         enable_fast_path: Optional[bool] = None,
-    ) -> List[Dict[str, Any]]:
+        return_contexts: bool = False,
+    ) -> Union[List[Dict[str, Any]], List[DocumentContext]]:
         """
-        Execute full RAG search pipeline.
+        Execute full RAG search pipeline. Accepts `query` as alias for `query_text`.
         
         Steps:
             1. Fast-Path direct metadata lookup (if exact slug/code requested).
@@ -88,6 +154,9 @@ class HybridSearchEngine:
             4. RRF Fusion of Dense + BM25 results.
             5. Cross-Encoder Reranking of fused top candidates.
         """
+        # Alias support: query can be passed instead of query_text
+        effective_query = query_text or query or ""
+
         # Apply config defaults if parameters are not provided
         search_cfg = self.config.get("search", {})
         top_k = top_k if top_k is not None else search_cfg.get("top_k", 5)
@@ -109,13 +178,14 @@ class HybridSearchEngine:
                 for doc in exact_docs:
                     doc["score"] = 1.0
                     doc["search_mode"] = "fast_path_exact_slug"
-                return exact_docs[:top_k]
+                results = exact_docs[:top_k]
+                return to_document_contexts(results) if return_contexts else results
 
-        # Auto-embed query_text if Participant 4 did not supply a vector
+        # Auto-embed effective_query if Participant 4 did not supply a vector
         if query_vector and len(query_vector) == VECTOR_DIM:
             vec = query_vector
         else:
-            vec = self.embedder.embed(query_text)
+            vec = self.embedder.embed(effective_query)
 
         # Step 2: Dense Search
         dense_results = self.dense_search.search(
@@ -134,7 +204,7 @@ class HybridSearchEngine:
 
         # Step 3: BM25 Search
         bm25_results = self.bm25_search.search(
-            query_text=query_text,
+            query_text=effective_query,
             top_k=candidate_k,
             where_clause=where_clause,
             product_code=product_code,
@@ -160,7 +230,7 @@ class HybridSearchEngine:
         # Step 5: Cross-Encoder Reranking
         if enable_reranker:
             final_results = self.reranker.rerank(
-                query=query_text,
+                query=effective_query,
                 documents=fused_results,
                 top_n=top_k,
             )
@@ -170,23 +240,29 @@ class HybridSearchEngine:
         else:
             final_results = fused_results[:top_k]
 
-        return final_results
+        return to_document_contexts(final_results) if return_contexts else final_results
 
 
 def search(
-    query_text: str,
+    query_text: Optional[str] = None,
+    query: Optional[str] = None,
     query_vector: Optional[List[float]] = None,
     top_k: int = 5,
     storage: Optional[LanceDBStorage] = None,
+    return_contexts: bool = False,
     **kwargs,
-) -> List[Dict[str, Any]]:
+) -> Union[List[Dict[str, Any]], List[DocumentContext]]:
     """
-    Convenience function for hybrid RAG search.
+    Convenience function for hybrid RAG search. Accepts `query` as alias for `query_text`.
+    Optionally returns `List[DocumentContext]` if `return_contexts=True`.
     """
+    effective_query = query_text or query or ""
     engine = HybridSearchEngine(storage=storage)
     return engine.search(
-        query_text=query_text,
+        query_text=effective_query,
         query_vector=query_vector,
         top_k=top_k,
+        return_contexts=return_contexts,
         **kwargs,
     )
+
