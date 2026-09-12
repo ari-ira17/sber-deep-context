@@ -1,0 +1,17 @@
+<!-- 1. Рендерим сообщение пользователя -->
+<div class="message user-message">
+    <div class="user-avatar">Вы</div>
+    <div class="message-content">{{ query }}</div>
+</div>
+
+<!-- 2. Сразу создаем заглушку для ответа бота. 
+     hx-trigger="load" означает, что как только этот блок появится в DOM, 
+     он сделает GET запрос к /bot_reply и заменит сам себя (hx-swap="outerHTML") на реальный ответ. -->
+<div class="message bot-message" hx-get="/bot_reply?query={{ query | urlencode }}" hx-trigger="load" hx-swap="outerHTML">
+    <div class="avatar"><img src="/static/img/sbercat.jpg" alt="Сберкот"></div>
+    <div class="message-content">
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+</div>

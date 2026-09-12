@@ -1,0 +1,14 @@
+<div class="message bot-message">
+    <div class="avatar"><img src="/static/img/sbercat.jpg" alt="Сберкот"></div>
+    <div class="message-content">
+        <!-- Текст ответа в Markdown -->
+        <div class="markdown-body">
+            {{ html_answer | safe }}
+        </div>
+        
+        <!-- Блок источников -->
+        {% if sources %}
+            {% include "partials/sources.html" %}
+        {% endif %}
+    </div>
+</div>
