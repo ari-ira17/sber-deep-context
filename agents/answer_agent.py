@@ -72,6 +72,8 @@ class AnswerAgent:
         self,
         query: str,
         documents: List[DocumentContext],
+        model: Optional[str] = None,
+        is_complex: bool = True,
     ) -> AnswerOutput:
         """Generate answer synchronously from retrieved documents."""
         if not documents:
@@ -91,10 +93,12 @@ class AnswerAgent:
             f"[slug] к каждому утверждению и блоком источников в конце."
         )
 
+        selected_model = model or (self.llm.config.model_max if is_complex else self.llm.config.model_lite)
+
         response = self.llm.complete(
             prompt=user_prompt,
             system_prompt=self.system_prompt,
-            model=self.llm.config.model_max,
+            model=selected_model,
             temperature=0.2,
             max_tokens=2000,
         )
@@ -105,6 +109,8 @@ class AnswerAgent:
         self,
         query: str,
         documents: List[DocumentContext],
+        model: Optional[str] = None,
+        is_complex: bool = True,
     ) -> AnswerOutput:
         """Generate answer asynchronously from retrieved documents."""
         if not documents:
@@ -124,10 +130,12 @@ class AnswerAgent:
             f"[slug] к каждому утверждению и блоком источников в конце."
         )
 
+        selected_model = model or (self.llm.config.model_max if is_complex else self.llm.config.model_lite)
+
         response = await self.llm.acomplete(
             prompt=user_prompt,
             system_prompt=self.system_prompt,
-            model=self.llm.config.model_max,
+            model=selected_model,
             temperature=0.2,
             max_tokens=2000,
         )

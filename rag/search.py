@@ -243,6 +243,19 @@ class HybridSearchEngine:
         return to_document_contexts(final_results) if return_contexts else final_results
 
 
+_default_engine: Optional[HybridSearchEngine] = None
+
+
+def get_default_engine(storage: Optional[LanceDBStorage] = None) -> HybridSearchEngine:
+    global _default_engine
+    if _default_engine is None or storage is not None:
+        engine = HybridSearchEngine(storage=storage)
+        if storage is None:
+            _default_engine = engine
+        return engine
+    return _default_engine
+
+
 def search(
     query_text: Optional[str] = None,
     query: Optional[str] = None,
@@ -257,7 +270,7 @@ def search(
     Optionally returns `List[DocumentContext]` if `return_contexts=True`.
     """
     effective_query = query_text or query or ""
-    engine = HybridSearchEngine(storage=storage)
+    engine = get_default_engine(storage=storage)
     return engine.search(
         query_text=effective_query,
         query_vector=query_vector,

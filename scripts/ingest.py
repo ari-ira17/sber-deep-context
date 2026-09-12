@@ -58,7 +58,7 @@ def ingest_data():
         meta = top_doc.get("metadata", top_doc)
         print(f"   Топ-1 результат: slug='{meta.get('slug')}', score={top_doc.get('score')}")
 
-    print("\n🎉 Инжест данных в LanceDB успешно завершён!")
+    print("\n[OK] Инжест данных в LanceDB успешно завершен!")
     return True
 
 

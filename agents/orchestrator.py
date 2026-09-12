@@ -215,6 +215,34 @@ class MeridianOrchestrator:
             search_fn=self.search_engine.search,
         )
 
+    @staticmethod
+    def is_complex_query(question: str, router_out: RouterOutput, documents: List[DocumentContext]) -> bool:
+        """Determine whether query requires GigaChat Max (complex) or can use GigaChat Lite (fast-path)."""
+        # 1. Attachment intent or any document has parsed attachment text
+        if router_out.need_attachment:
+            return True
+        if any(bool(d.attachment_text and d.attachment_text.strip()) for d in documents):
+            return True
+
+        # 2. Multi-product or cross-product comparative queries
+        lower_q = question.lower()
+        comparative_signals = [
+            "сравни", "различи", "сопоставь", "в чём разниц", "чем отлича",
+            "почему", "причин", "зависимост", "влияние", "архитектурн", "интеграци"
+        ]
+        if any(sig in lower_q for sig in comparative_signals):
+            return True
+
+        # 3. Tables / Calculations / Code queries
+        complex_signals = [
+            "таблиц", "расчёт", "вычисли", "формул", "код на", "скрипт", "json", "asm"
+        ]
+        if any(sig in lower_q for sig in complex_signals):
+            return True
+
+        # Simple single-hop factoids / metadata queries (e.g. паспорт, карточка, SLA, владелец)
+        return False
+
     def ask(self, question: str) -> OrchestratorResponse:
         """Process user question through full end-to-end pipeline synchronously."""
         start_time = time.time()
@@ -232,10 +260,16 @@ class MeridianOrchestrator:
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
         logs.append(f"Retrieved {len(retrieved_docs)} documents.")
 
-        # 3. Answer Agent
+        # 3. Answer Agent (Adaptive Model Routing: Lite for simple factoids, Max for complex RAG/attachments)
+        is_complex = self.is_complex_query(question, router_out, retrieved_docs)
+        answer_model = self.llm_client.config.model_max if is_complex else self.llm_client.config.model_lite
+        logs.append(f"Model routing: {'GigaChat-Max (Complex)' if is_complex else 'GigaChat-Lite (Fast-Path)'}")
+
         answer_out = self.answer_agent.generate_answer(
             query=question,
             documents=retrieved_docs,
+            model=answer_model,
+            is_complex=is_complex,
         )
         logs.append(f"Generated answer with {len(answer_out.citations)} citations.")
 
@@ -274,10 +308,16 @@ class MeridianOrchestrator:
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
         logs.append(f"Retrieved {len(retrieved_docs)} documents.")
 
-        # 3. Answer Agent
+        # 3. Answer Agent (Adaptive Model Routing)
+        is_complex = self.is_complex_query(question, router_out, retrieved_docs)
+        answer_model = self.llm_client.config.model_max if is_complex else self.llm_client.config.model_lite
+        logs.append(f"Model routing: {'GigaChat-Max (Complex)' if is_complex else 'GigaChat-Lite (Fast-Path)'}")
+
         answer_out = await self.answer_agent.agenerate_answer(
             query=question,
             documents=retrieved_docs,
+            model=answer_model,
+            is_complex=is_complex,
         )
         logs.append(f"Generated answer with {len(answer_out.citations)} citations.")
 
