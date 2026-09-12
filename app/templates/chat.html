@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Оверлей видео -->
+<div class="video-overlay" id="video-overlay">
+    <button class="video-close-btn" id="video-close" title="Закрыть видео">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </button>
+    <video id="sber-video">
+        <source src="/static/video.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео.
+    </video>
+</div>
+
+<!-- Скроллируемая область теперь занимает всю ширину, скроллбар будет с самого края -->
+<div class="chat-scroll-area" id="chat-scroll-area">
+    
+    <!-- Контейнер для сообщений по центру -->
+    <div class="chat-container" id="chat-container">
+        
+        <div class="welcome-screen" id="welcome-screen">
+            <img src="/static/img/sbercat.jpg" alt="SberCat" id="sbercat-avatar" title="Смотреть видео">
+            <h1>Готов к работе</h1>
+            <p>Я ваш AI-помощник. Отвечаю на вопросы по продуктам, опираясь на регламенты, метаданные и вложения.</p>
+            
+            <div class="quick-prompts">
+                <button class="quick-prompt-btn" onclick="sendQuickPrompt('Подготовьте карточку продукта Искра')">
+                    <div class="qp-icon">✦</div>
+                    <div class="qp-content">
+                        <span>Справочная информация</span>
+                        Карточка продукта «Искра»
+                    </div>
+                </button>
+                <button class="quick-prompt-btn" onclick="sendQuickPrompt('Какие лимиты по продукту Мостик (P704)?')">
+                    <div class="qp-icon">✧</div>
+                    <div class="qp-content">
+                        <span>Финансирование</span>
+                        Лимиты «Мостик»
+                    </div>
+                </button>
+                <button class="quick-prompt-btn" onclick="sendQuickPrompt('Выведи данные из таблицы PNG вложения')">
+                    <div class="qp-icon">★</div>
+                    <div class="qp-content">
+                        <span>Обработка вложений</span>
+                        Данные из OCR вложения
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div id="chat-history">
+            <!-- Сюда HTMX будет динамически добавлять сообщения -->
+        </div>
+        
+    </div>
+</div>
+
+<div class="input-area">
+    <!-- HTMX форма -->
+    <form class="input-form" id="chat-form"
+          hx-post="/ask" 
+          hx-target="#chat-history" 
+          hx-swap="beforeend"
+          hx-on::after-request="this.reset(); window.clearAttachments();">
+          
+        <!-- Превью прикрепленных файлов -->
+        <div class="attachments-preview" id="attachments-preview"></div>
+          
+        <!-- Кастомная подсказка ошибки -->
+        <div class="custom-tooltip" id="empty-error">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            Пожалуйста, введите ваш вопрос
+        </div>
+
+        <!-- Кнопка прикрепления файла -->
+        <label class="icon-btn" title="Прикрепить файл">
+            <input type="file" id="file-upload" style="display: none;" multiple>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+            </svg>
+        </label>
+
+        <!-- Поле ввода -->
+        <input type="text" id="query-input" name="query" class="input-field" placeholder="Задайте вопрос по базе знаний..." required autocomplete="off">
+        
+        <!-- Интерфейс записи голосового (скрыт по умолчанию) -->
+        <div class="recording-ui" id="recording-ui" style="display: none;">
+            <div class="recording-indicator">
+                <div class="voice-visualizer" id="voice-visualizer">
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <span id="recording-timer">00:00</span>
+                <span class="recording-text">Запись...</span>
+            </div>
+            <button type="button" class="cancel-record-btn" id="cancel-record-btn" title="Отменить запись">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Кнопка микрофона -->
+        <button type="button" class="icon-btn" id="voice-btn" title="Голосовое сообщение">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+        </button>
+
+        <!-- Кнопка отправки -->
+        <button type="submit" class="send-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z"></path>
+            </svg>
+        </button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputField = document.getElementById('query-input');
+        const errorTooltip = document.getElementById('empty-error');
+        const chatForm = document.getElementById('chat-form');
+        
+        // --- 1. Валидация ошибки ---
+        if (inputField) {
+            inputField.addEventListener('invalid', function(e) {
+                e.preventDefault(); 
+                errorTooltip.classList.add('show');
+                chatForm.classList.add('shake');
+                setTimeout(() => chatForm.classList.remove('shake'), 400);
+                setTimeout(() => errorTooltip.classList.remove('show'), 3000);
+            });
+
+            inputField.addEventListener('input', function() {
+                errorTooltip.classList.remove('show');
+            });
+        }
+
+        // --- 2. Логика файлов ---
+        const fileInput = document.getElementById('file-upload');
+        const attachmentsPreview = document.getElementById('attachments-preview');
+        let selectedFiles = [];
+
+        fileInput.addEventListener('change', function(e) {
+            Array.from(e.target.files).forEach(file => {
+                selectedFiles.push(file);
+            });
+            renderAttachments();
+            fileInput.value = ''; 
+        });
+
+        function renderAttachments() {
+            attachmentsPreview.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const pill = document.createElement('div');
+                pill.className = 'attachment-pill';
+                const shortName = file.name.length > 20 ? file.name.substring(0, 20) + '...' : file.name;
+                pill.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                    <span>${shortName}</span>
+                    <svg class="remove-file" onclick="removeFile(${index})" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                `;
+                attachmentsPreview.appendChild(pill);
+            });
+        }
+
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            renderAttachments();
+        };
+
+        window.clearAttachments = function() {
+            selectedFiles = [];
+            renderAttachments();
+        };
+
+        // --- 3. Логика Микрофона (Визуализатор, Счетчик, Отмена) ---
+        const voiceBtn = document.getElementById('voice-btn');
+        const recordingUi = document.getElementById('recording-ui');
+        const recordingTimer = document.getElementById('recording-timer');
+        const cancelRecordBtn = document.getElementById('cancel-record-btn');
+        const sendBtn = chatForm.querySelector('.send-btn');
+        
+        let isRecording = false;
+        let recordInterval;
+        let recordSeconds = 0;
+        
+        // Аудио переменные
+        let audioContext, analyser, localStream, animationId;
+
+        async function startAudioVisualizer() {
+            const dots = document.querySelectorAll('#voice-visualizer span');
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 64; 
+                analyser.smoothingTimeConstant = 0.6;
+                
+                const microphone = audioContext.createMediaStreamSource(localStream);
+                microphone.connect(analyser);
+                
+                const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                
+                function draw() {
+                    animationId = requestAnimationFrame(draw);
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    const indices = [2, 4, 6, 8, 10];
+                    for(let i = 0; i < 5; i++) {
+                        const value = dataArray[indices[i]] || 0;
+                        const height = 4 + (value / 255) * 16; 
+                        dots[i].style.height = height + 'px';
+                    }
+                }
+                draw();
+            } catch (err) {
+                console.warn("Нет доступа к микрофону, включаем фейковую CSS анимацию", err);
+                document.getElementById('voice-visualizer').classList.add('fallback');
+            }
+        }
+
+        function stopAudioVisualizer() {
+            if (animationId) cancelAnimationFrame(animationId);
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext && audioContext.state !== 'closed') {
+                audioContext.close();
+            }
+            document.getElementById('voice-visualizer').classList.remove('fallback');
+            document.querySelectorAll('#voice-visualizer span').forEach(dot => dot.style.height = '4px');
+        }
+
+        function stopRecording(isCancelled = false) {
+            isRecording = false; // Важно сбросить флаг перед возможной отправкой
+            clearInterval(recordInterval);
+            voiceBtn.classList.remove('recording');
+            
+            stopAudioVisualizer();
+            
+            recordingUi.style.display = 'none';
+            inputField.style.display = 'block';
+            inputField.disabled = false; // Поле снова активно и готово к отправке
+            
+            if (!isCancelled) {
+                // Имитация транскрибации
+                inputField.value = "Распознанное голосовое сообщение...";
+                
+                // Автоматически нажимаем кнопку отправки через миллисекунду
+                setTimeout(() => {
+                    if (sendBtn) sendBtn.click();
+                }, 10);
+            }
+        }
+
+        // Перехватываем клик по самолетику, если идет запись
+        if (sendBtn) {
+            sendBtn.addEventListener('click', function(e) {
+                if (isRecording) {
+                    e.preventDefault(); // Блокируем стандартную отправку пустой формы
+                    stopRecording(false); // Завершаем запись и отправляем
+                }
+            });
+        }
+
+        voiceBtn.addEventListener('click', function() {
+            if (!isRecording) {
+                isRecording = true;
+                recordSeconds = 0;
+                recordingTimer.textContent = "00:00";
+                
+                voiceBtn.classList.add('recording');
+                
+                inputField.style.display = 'none';
+                recordingUi.style.display = 'flex';
+                
+                startAudioVisualizer();
+                
+                recordInterval = setInterval(() => {
+                    recordSeconds++;
+                    const m = Math.floor(recordSeconds / 60).toString().padStart(2, '0');
+                    const s = (recordSeconds % 60).toString().padStart(2, '0');
+                    recordingTimer.textContent = `${m}:${s}`;
+                }, 1000);
+            } else {
+                stopRecording(false);
+            }
+        });
+
+        cancelRecordBtn.addEventListener('click', function() {
+            stopRecording(true);
+        });
+        // --- 4. Логика Видео (Сберкот) ---
+        const catAvatar = document.getElementById('sbercat-avatar');
+        const videoOverlay = document.getElementById('video-overlay');
+        const sberVideo = document.getElementById('sber-video');
+        const videoClose = document.getElementById('video-close');
+
+        if (catAvatar && videoOverlay) {
+            function closeVideo() {
+                videoOverlay.classList.remove('active');
+                sberVideo.pause();
+                sberVideo.currentTime = 0; // Сбрасываем видео в начало
+            }
+
+            catAvatar.addEventListener('click', function() {
+                videoOverlay.classList.add('active');
+                sberVideo.play();
+            });
+
+            videoClose.addEventListener('click', closeVideo);
+            
+            // Автоматическое закрытие по окончании видео
+            sberVideo.addEventListener('ended', closeVideo);
+        }
+    });
+</script>
+{% endblock %}
