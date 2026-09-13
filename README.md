@@ -85,9 +85,9 @@ python scripts/ingest.py
 
 ### 5. Запуск веб-сервера
 ```bash
-uvicorn app.main:app --reload --port 8017
+uvicorn app.main:app --reload --port 8016
 ```
-Сервер будет доступен по адресу: http://localhost:8017
+Сервер будет доступен по адресу: http://localhost:8016
 
 ---
 
