@@ -1,16 +1,6 @@
 <div class="sources-container">
-    <!-- Баннер заземления и уверенности модели -->
+    <!-- Кнопки действий -->
     <div class="grounding-assurance-bar">
-        <div class="gab-left">
-            <span class="gab-shield">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    <path d="M9 12l2 2 4-4"></path>
-                </svg>
-                100% Заземлённый ответ
-            </span>
-            <span class="gab-info">Подтверждено в базе знаний Меридиан ({{ sources | length }} ист.)</span>
-        </div>
         <div class="gab-right">
             {% if sources and sources[0].slug %}
             <button type="button" class="inspect-dossier-btn" onclick="openEvidenceInspector('{{ sources[0].slug }}')">
@@ -21,7 +11,7 @@
                 Досье доказательств
             </button>
             {% endif %}
-            <button type="button" class="graph-btn" data-query="{{ query }}" onclick="openGraphDrawer(this.getAttribute('data-query'))" title="Открыть граф связей в шторке">
+            <button type="button" class="graph-btn" data-query="{{ query }}" onclick="openGraphInDrawer('{{ sources[0].slug if sources and sources[0].slug else '' }}')" title="Открыть граф связей в шторке">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="18" cy="5" r="3"></circle>
                     <circle cx="6" cy="12" r="3"></circle>
@@ -39,7 +29,6 @@
         <div class="source-badge" onclick="openEvidenceInspector('{{ source.slug }}')" title="Открыть первоисточник [{{ source.slug }}] в инспекторе">
             <div class="source-badge-header">
                 <span class="badge-code">{{ source.code }}</span>
-                <span class="badge-score">Score: {{ source.score }}</span>
             </div>
             <div class="badge-name">{{ source.name }}</div>
             <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.35rem;">Раздел: {{ source.section }}</div>

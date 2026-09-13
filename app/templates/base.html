@@ -45,6 +45,19 @@
             </div>
             
             <div class="sidebar-footer">
+                <div class="auth-profile" id="auth-profile-display" style="display: none; padding: 0.5rem 0.8rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between; background: var(--glass-btn-bg); border-radius: 12px; font-weight: 500; font-size: 0.9rem;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div id="auth-profile-avatar-node" style="width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">ИФ</div>
+                        <span id="auth-profile-name">Иванов И.</span>
+                    </div>
+                    <button id="logout-btn" title="Выйти" style="background: transparent; border: none; color: #ef4444; cursor: pointer; padding: 4px; display: flex; align-items: center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
                 <a href="#" class="settings-btn" id="theme-toggle">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="5"></circle>
@@ -59,10 +72,10 @@
                     </svg>
                     <span id="theme-text">Темная тема</span>
                 </a>
-                <a href="#" class="settings-btn">
+                <a href="#" class="settings-btn" id="open-settings-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                     </svg>
                     Настройки
                 </a>
@@ -477,6 +490,314 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeEvidenceInspector();
+            }
+        });
+
+        // Открытие графа связей в шторке на вкладке "Граф связей"
+        // Открытие графа связей в шторке на вкладке "Граф связей"
+        window.openGraphInDrawer = async function(slug) {
+            if (!slug) return;
+            // Сначала загружаем шторку с сервера
+            await openEvidenceInspector(slug);
+            // Теперь, когда HTML вставлен, переключаем на вкладку графа
+            const switchBtns = document.querySelectorAll('.view-switch-btn');
+            switchBtns.forEach(b => b.classList.remove('active'));
+            const graphBtn = Array.from(switchBtns).find(b => 
+                b.getAttribute('onclick') && b.getAttribute('onclick').includes('graph-view')
+            );
+            if (graphBtn) {
+                graphBtn.classList.add('active');
+                if (typeof switchDocView === 'function') switchDocView('graph-view', graphBtn);
+            }
+        };
+
+        // Переключение меню трёх точек
+        window.toggleMsgMenu = function(btn) {
+            const dropdown = btn.nextElementSibling;
+            const isOpen = dropdown.classList.contains('open');
+            // Закрыть все открытые меню
+            document.querySelectorAll('.msg-dropdown.open').forEach(d => d.classList.remove('open'));
+            if (!isOpen) dropdown.classList.add('open');
+        };
+
+        // Закрытие меню при клике вне
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.msg-actions-wrap')) {
+                document.querySelectorAll('.msg-dropdown.open').forEach(d => d.classList.remove('open'));
+            }
+        });
+
+        // Скачивание контента сообщения
+        // Скачивание контента сообщения через MCP сервер
+        window.downloadBotMsg = async function(btn, format) {
+            const msgContent = btn.closest('.message-content');
+            const markdownBody = msgContent ? msgContent.querySelector('.markdown-body') : null;
+            const text = markdownBody ? markdownBody.innerText : '';
+            
+            // Закрыть меню сразу
+            btn.closest('.msg-dropdown').classList.remove('open');
+
+            try {
+                const response = await fetch('/api/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: text, format: format })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Ответ_Квантум.${format}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert('Ошибка при скачивании файла через MCP');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Сбой сети при попытке скачать файл.');
+            }
+        };
+    </script>
+    <!-- Auth Overlay -->
+    <div id="auth-overlay" class="auth-overlay">
+        <div class="auth-modal">
+            <div class="sidebar-logo" style="margin: 0 auto 1.5rem; text-align: center; display: block; padding: 0;">КВАНТУМ</div>
+            <h2 style="margin-top:0; margin-bottom: 1.5rem; text-align: center; color: var(--text-main);">Вход в систему</h2>
+            <form id="auth-form">
+                <div class="auth-field">
+                    <label>Табельный номер (Имя пользователя)</label>
+                    <input type="text" id="auth-tab" required placeholder="000123456" pattern="\d+" title="Только цифры">
+                </div>
+                <div class="auth-field">
+                    <label>Логин</label>
+                    <input type="text" id="auth-login" required placeholder="ivanov-ii">
+                </div>
+                <div class="auth-field">
+                    <label>Пароль</label>
+                    <input type="password" id="auth-password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="auth-submit-btn">Войти</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Overlay -->
+    <div id="settings-overlay" class="auth-overlay" style="display: none;">
+        <div class="auth-modal">
+            <h2 style="margin-top:0; margin-bottom: 1.5rem; text-align: center; color: var(--text-main);">Настройки профиля</h2>
+            <form id="settings-form">
+                <div class="auth-field">
+                    <label>Имя</label>
+                    <input type="text" id="settings-firstname" placeholder="Иван">
+                </div>
+                <div class="auth-field">
+                    <label>Фамилия</label>
+                    <input type="text" id="settings-lastname" placeholder="Иванов">
+                </div>
+                <div class="auth-field">
+                    <label>Аватарка</label>
+                    <div class="avatar-selector" style="display: flex; gap: 10px; margin-top: 0.5rem; justify-content: center;">
+                        <label class="avatar-option">
+                            <input type="radio" name="avatar" value="" checked style="display: none;">
+                            <div class="avatar-preview" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; background: var(--pastel-green); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 500; cursor: pointer; color: var(--accent);">ИИ</div>
+                        </label>
+                        <label class="avatar-option">
+                            <input type="radio" name="avatar" value="/static/img/avatar1.png" style="display: none;">
+                            <img src="/static/img/avatar1.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjZWRmMmY3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzRhNTU2OCI+MTwvdGV4dD48L3N2Zz4='" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; object-fit: cover;">
+                        </label>
+                        <label class="avatar-option">
+                            <input type="radio" name="avatar" value="/static/img/avatar2.png" style="display: none;">
+                            <img src="/static/img/avatar2.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjZWRmMmY3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzRhNTU2OCI+MjwvdGV4dD48L3N2Zz4='" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; object-fit: cover;">
+                        </label>
+                        <label class="avatar-option">
+                            <input type="radio" name="avatar" value="/static/img/avatar3.jpg" style="display: none;">
+                            <img src="/static/img/avatar3.jpg" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjZWRmMmY3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzRhNTU2OCI+MzwvdGV4dD48L3N2Zz4='" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; object-fit: cover;">
+                        </label>
+                        <label class="avatar-option">
+                            <input type="radio" name="avatar" value="/static/img/avatar4.png" style="display: none;">
+                            <img src="/static/img/avatar4.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjZWRmMmY3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzRhNTU2OCI+NDwvdGV4dD48L3N2Zz4='" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; object-fit: cover;">
+                        </label>
+                        <label class="avatar-option">
+                            <input type="radio" name="avatar" value="/static/img/avatar5.jpg" style="display: none;">
+                            <img src="/static/img/avatar5.jpg" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjZWRmMmY3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzRhNTU2OCI+NTwvdGV4dD48L3N2Zz4='" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; object-fit: cover;">
+                        </label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+                    <button type="button" class="auth-submit-btn" style="margin-top: 0; background: var(--glass-btn-bg); color: var(--text-main);" onclick="document.getElementById('settings-overlay').style.display='none'">Отмена</button>
+                    <button type="submit" class="auth-submit-btn" style="margin-top: 0;">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <style>
+        .avatar-option input[type='radio']:checked + img,
+        .avatar-option input[type='radio']:checked + .avatar-preview {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px var(--accent) !important;
+            transform: scale(1.1);
+        }
+        .avatar-option img, .avatar-option .avatar-preview {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+    <script>
+        // --- Auth, Settings & Avatar Logic ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const authOverlay = document.getElementById('auth-overlay');
+            const authForm = document.getElementById('auth-form');
+            const authProfileDisplay = document.getElementById('auth-profile-display');
+            const authProfileName = document.getElementById('auth-profile-name');
+            const authProfileAvatar = document.getElementById('auth-profile-avatar-node');
+
+            const settingsOverlay = document.getElementById('settings-overlay');
+            const settingsForm = document.getElementById('settings-form');
+            const openSettingsBtn = document.getElementById('open-settings-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            function getInitials(name) {
+                if (!name) return 'Вы';
+                const parts = name.split(' ').filter(p => p.trim() !== '');
+                if (parts.length >= 2) {
+                    return (parts[0][0] + parts[1][0]).toUpperCase();
+                } else if (parts.length === 1) {
+                    return (parts[0][0] + (parts[0].length > 1 ? parts[0][1] : '')).toUpperCase();
+                }
+                return 'Вы';
+            }
+
+            function updateUserUI() {
+                const fName = localStorage.getItem('auth_firstName') || '';
+                const lName = localStorage.getItem('auth_lastName') || '';
+                const loginStr = localStorage.getItem('auth_login') || '';
+                const avatarUrl = localStorage.getItem('auth_avatar') || '';
+
+                let displayName = '';
+                if (fName || lName) {
+                    displayName = `${fName} ${lName}`.trim();
+                } else {
+                    displayName = loginStr || 'Пользователь';
+                }
+
+                if (authProfileName) authProfileName.textContent = displayName;
+                
+                const initials = getInitials(displayName);
+
+                // Update sidebar avatar
+                if (authProfileAvatar) {
+                    if (avatarUrl) {
+                        authProfileAvatar.style.background = 'transparent';
+                        authProfileAvatar.innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                    } else {
+                        authProfileAvatar.style.background = 'var(--accent)';
+                        authProfileAvatar.innerHTML = initials;
+                    }
+                }
+
+                // Update all user message avatars
+                document.querySelectorAll('.user-avatar').forEach(el => {
+                    if (avatarUrl) {
+                        el.style.background = 'transparent';
+                        el.innerHTML = `<img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                    } else {
+                        el.style.background = 'var(--pastel-green)';
+                        el.innerHTML = initials;
+                    }
+                });
+            }
+
+            const savedUser = localStorage.getItem('auth_login');
+            if (savedUser) {
+                authOverlay.style.display = 'none';
+                if (authProfileDisplay) authProfileDisplay.style.display = 'flex';
+                updateUserUI();
+            } else {
+                authOverlay.style.display = 'flex';
+            }
+
+            if (authForm) {
+                authForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const loginStr = document.getElementById('auth-login').value;
+                    localStorage.setItem('auth_login', loginStr);
+                    localStorage.removeItem('auth_firstName');
+                    localStorage.removeItem('auth_lastName');
+                    localStorage.removeItem('auth_avatar');
+                    
+                    updateUserUI();
+                    authOverlay.style.opacity = '0';
+                    setTimeout(() => {
+                        authOverlay.style.display = 'none';
+                        if (authProfileDisplay) authProfileDisplay.style.display = 'flex';
+                    }, 300);
+                });
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.clear();
+                    location.reload();
+                });
+            }
+
+            if (openSettingsBtn) {
+                openSettingsBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('settings-firstname').value = localStorage.getItem('auth_firstName') || '';
+                    document.getElementById('settings-lastname').value = localStorage.getItem('auth_lastName') || '';
+                    const avatarUrl = localStorage.getItem('auth_avatar') || '';
+                    const radios = document.querySelectorAll('input[name="avatar"]');
+                    radios.forEach(r => r.checked = false);
+                    const match = Array.from(radios).find(r => r.value === avatarUrl);
+                    if (match) match.checked = true;
+                    settingsOverlay.style.display = 'flex';
+                });
+            }
+
+            if (settingsForm) {
+                settingsForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    localStorage.setItem('auth_firstName', document.getElementById('settings-firstname').value.trim());
+                    localStorage.setItem('auth_lastName', document.getElementById('settings-lastname').value.trim());
+                    const avatarUrl = document.querySelector('input[name="avatar"]:checked').value;
+                    if (avatarUrl) {
+                        localStorage.setItem('auth_avatar', avatarUrl);
+                    } else {
+                        localStorage.removeItem('auth_avatar');
+                    }
+                    updateUserUI();
+                    settingsOverlay.style.display = 'none';
+                });
+            }
+
+            // Наблюдатель за новыми сообщениями, чтобы обновлять аватарки
+            // Наблюдатель за новыми сообщениями, чтобы обновлять аватарки
+            const observer = new MutationObserver(function(mutations) {
+                let shouldUpdate = false;
+                mutations.forEach(m => { 
+                    // Проверяем, что добавились именно сообщения, а не внутренности аватарки
+                    Array.from(m.addedNodes).forEach(node => {
+                        if (node.nodeType === 1 && (node.classList.contains('message') || node.querySelector('.user-avatar'))) {
+                            shouldUpdate = true;
+                        }
+                    });
+                });
+                
+                if (shouldUpdate) {
+                    observer.disconnect(); // отключаем на время обновления
+                    updateUserUI();
+                    if (chatArea) observer.observe(chatArea, { childList: true, subtree: true });
+                }
+            });
+            const chatArea = document.querySelector('.chat-scroll-area');
+            if (chatArea) {
+                observer.observe(chatArea, { childList: true, subtree: true });
             }
         });
     </script>
