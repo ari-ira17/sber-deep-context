@@ -111,7 +111,7 @@ def parse_table_data(text: str) -> Optional[Dict[str, Any]]:
 
 
 def convert_csv_tables_to_markdown(text: str) -> str:
-    \"\"\"Finds semicolon-delimited CSV tables in text and converts them to Markdown tables.\"\"\"
+    """Finds semicolon-delimited CSV tables in text and converts them to Markdown tables."""
     import csv
     import io
 
@@ -122,7 +122,7 @@ def convert_csv_tables_to_markdown(text: str) -> str:
     def flush_table_buffer():
         if not table_buffer:
             return
-        reader = csv.reader(io.StringIO("\\n".join(table_buffer)), delimiter=";")
+        reader = csv.reader(io.StringIO("\n".join(table_buffer)), delimiter=";")
         try:
             rows = list(reader)
         except Exception:
@@ -130,9 +130,16 @@ def convert_csv_tables_to_markdown(text: str) -> str:
             table_buffer.clear()
             return
 
-        if len(rows) > 1 and len(rows[0]) > 1:
-            for i, row in enumerate(rows):
-                md_line = "| " + " | ".join(cell.replace("\\n", " ").strip() for cell in row) + " |"
+        # Strip trailing empty cell if line ended with semicolon
+        cleaned_rows = []
+        for r in rows:
+            if r and r[-1] == "":
+                r = r[:-1]
+            cleaned_rows.append(r)
+
+        if len(cleaned_rows) > 1 and len(cleaned_rows[0]) > 1:
+            for i, row in enumerate(cleaned_rows):
+                md_line = "| " + " | ".join(cell.replace("\n", " ").strip() for cell in row) + " |"
                 out_lines.append(md_line)
                 if i == 0:
                     sep_line = "| " + " | ".join(["---"] * len(row)) + " |"
@@ -142,14 +149,18 @@ def convert_csv_tables_to_markdown(text: str) -> str:
         table_buffer.clear()
 
     for line in lines:
-        if ";" in line and line.count(";") >= 2:
+        stripped = line.strip()
+        is_pipe_table = stripped.startswith("|") or line.count("|") >= 2
+        is_csv_candidate = (";" in line) and (line.count(";") >= 1) and not is_pipe_table
+
+        if is_csv_candidate:
             table_buffer.append(line)
         else:
             flush_table_buffer()
             out_lines.append(line)
 
     flush_table_buffer()
-    return "\\n".join(out_lines)
+    return "\n".join(out_lines)
 
 
 def format_code_with_lines(code_text: str, lang: str = "text") -> str:
