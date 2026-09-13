@@ -180,10 +180,28 @@ class GigaChatClient:
                     )
                 except Exception as ex:
                     last_error = ex
+                    err_str = str(ex)
                     logger.warning(
                         "GigaChat API error on attempt %d/%d for model %s: %s",
-                        attempt, self.config.max_retries, selected_model, str(ex)
+                        attempt, self.config.max_retries, selected_model, err_str
                     )
+                    # Auto-heal: if model name is rejected (e.g. corporate B2B account without base GigaChat), discover available models
+                    if "no such model" in err_str.lower() or "404" in err_str:
+                        try:
+                            client = self._get_client()
+                            models_resp = client.get_models()
+                            avail = [m.id for m in getattr(models_resp, "data", [])]
+                            if avail:
+                                logger.info("Available GigaChat models for this credentials: %s", avail)
+                                preferred = ["GigaChat-Pro", "GigaChat-Max", "GigaChat", "GigaChat-Plus"]
+                                for cand in preferred:
+                                    if cand in avail and cand != selected_model:
+                                        logger.info("Auto-switching model from %s to %s", selected_model, cand)
+                                        selected_model = cand
+                                        break
+                        except Exception as m_err:
+                            logger.debug("Failed to auto-discover models: %s", m_err)
+
                     if attempt < self.config.max_retries:
                         time.sleep(delay)
                         delay *= self.config.backoff_factor

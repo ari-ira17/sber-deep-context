@@ -257,8 +257,162 @@ class EvidenceService:
                 return v
         return None
 
+    def _get_sandbox_evidence(self, slug: str, highlight_term: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """Build evidence inspector payload for user uploaded sandbox document."""
+        from app.db import chat_history
+        source_id = slug.replace("sandbox-", "")
+        src = chat_history.get_chat_source(source_id)
+        if not src:
+            return None
+
+        filename = src["filename"]
+        ftype = src["file_type"].lower()
+        content = src["text_content"] or ""
+        meta = src.get("parsed_meta", {})
+
+        rendered_html = markdown.markdown(
+            content,
+            extensions=["extra", "tables", "fenced_code", "nl2br"]
+        )
+
+        table_data = None
+        code_html = None
+        if ftype in ["csv", "tsv"] or meta.get("type") == "table":
+            if meta.get("headers") and meta.get("rows"):
+                table_data = {
+                    "type": "table",
+                    "headers": meta["headers"],
+                    "rows": meta["rows"],
+                    "total_rows": meta.get("total_rows", len(meta["rows"])),
+                }
+            else:
+                table_data = parse_table_data(content)
+        elif ftype in ["py", "js", "ts", "json", "yaml", "yml", "sql", "html", "css", "xml", "asm", "sh", "bat"] or meta.get("type") == "code":
+            code_html = format_code_with_lines(content, lang=ftype)
+
+        attachment_info = {
+            "path": src["file_path"],
+            "filename": filename,
+            "format": ftype.upper(),
+            "raw_text": content,
+            "table_data": table_data,
+            "code_html": code_html,
+            "image_url": None,
+            "file_exists": True,
+        }
+
+        sibling_docs = []
+        for s in chat_history.list_chat_sources():
+            if s["id"] != src["id"]:
+                sibling_docs.append({
+                    "slug": f"sandbox-{s['id']}",
+                    "section": "Пользовательские файлы",
+                    "topic": s["file_type"].upper(),
+                    "title": f"📎 {s['filename']}",
+                })
+
+        return {
+            "slug": slug,
+            "title": f"📎 {filename}",
+            "product_code": "ФАЙЛ",
+            "product_name": "Пользовательский файл",
+            "product_color": "#8B5CF6",
+            "section": "Пользовательские документы",
+            "owner": "Пользователь",
+            "lifecycle": "active",
+            "quality_tags": ["пользовательский_файл", ftype.upper()],
+            "updated_at": src["created_at"][:10],
+            "valid_from": src["created_at"][:10],
+            "doc_html": rendered_html,
+            "doc_raw_markdown": content,
+            "attachment": attachment_info,
+            "has_attachment": bool(table_data or code_html or ftype in ["pdf", "docx", "csv", "tsv"]),
+            "related_documents": sibling_docs,
+            "highlight_term": highlight_term or "",
+        }
+
+    def _get_code_evidence(self, code_rec: Any, highlight_term: Optional[str] = None) -> Dict[str, Any]:
+        """Generate evidence dossier for a code asset (Python, C#, ASM, SQL, etc.)."""
+        content = code_rec.content or ""
+        ext = code_rec.extension.lower()
+        code_html = format_code_with_lines(content, lang=ext)
+
+        md_desc = (
+            f"# {code_rec.filename}\n\n"
+            f"**Язык программирования**: `{ext.upper()}`  \n"
+            f"**Продукт**: {code_rec.product_name} ({code_rec.product_code or 'Общая база'})  \n"
+            f"**Категория**: `{code_rec.category}`  \n"
+            f"**Путь к файлу**: `{code_rec.rel_path}`  \n\n"
+            f"### Назначение\n{code_rec.summary}\n\n"
+        )
+        if code_rec.symbols:
+            md_desc += "### Объявленные функции и структуры данных\n"
+            for s in code_rec.symbols:
+                md_desc += f"- `{s}`\n"
+
+        rendered_doc = markdown.markdown(md_desc, extensions=["extra", "tables", "fenced_code"])
+
+        sibling_docs = []
+        if code_rec.product_code:
+            try:
+                from app.code_registry import code_registry
+                for sib in code_registry.filter_by_product(code_rec.product_code):
+                    if sib.filename != code_rec.filename:
+                        sibling_docs.append({
+                            "slug": sib.filename,
+                            "section": f"{sib.extension.upper()} скрипт",
+                            "topic": sib.product_name,
+                            "title": f"💻 {sib.filename}",
+                        })
+            except Exception:
+                pass
+
+        attachment_info = {
+            "path": code_rec.rel_path,
+            "filename": code_rec.filename,
+            "format": ext.upper(),
+            "raw_text": content,
+            "table_data": None,
+            "code_html": code_html,
+            "image_url": None,
+            "file_exists": True,
+        }
+
+        badge_color = PRODUCT_COLOR_PALETTE.get(code_rec.product_code or "", "#10B981")
+
+        return {
+            "slug": code_rec.filename,
+            "title": f"💻 {code_rec.filename}",
+            "product_code": code_rec.product_code or "CODE",
+            "product_name": code_rec.product_name or "Исходный код",
+            "product_color": badge_color,
+            "section": f"Исходный код ({ext.upper()})",
+            "owner": "Инженерная разработка",
+            "lifecycle": "active",
+            "quality_tags": ["исходный_код", ext.upper(), code_rec.category],
+            "updated_at": "2026-09-01",
+            "valid_from": "2026-04-01",
+            "doc_html": rendered_doc,
+            "doc_raw_markdown": md_desc,
+            "attachment": attachment_info,
+            "has_attachment": True,
+            "related_documents": sibling_docs[:8],
+            "highlight_term": highlight_term or "",
+        }
+
     def get_evidence(self, slug: str, highlight_term: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Retrieve full audit-grade evidence details for a given slug."""
+        if slug.startswith("sandbox-"):
+            return self._get_sandbox_evidence(slug, highlight_term=highlight_term)
+
+        try:
+            from app.code_registry import code_registry
+            code_file = code_registry.get_file(slug)
+            if code_file:
+                return self._get_code_evidence(code_file, highlight_term=highlight_term)
+        except Exception as e:
+            logger.debug(f"Code registry lookup failed for {slug}: {e}")
+
         item = self.get_document_raw(slug)
         if not item:
             return None
@@ -482,6 +636,50 @@ class EvidenceService:
         # 1. Replace [slug] with interactive evidence badges
         def replace_slug_cite(match: re.Match) -> str:
             raw_slug = match.group(1).strip()
+            if raw_slug.startswith("sandbox-"):
+                sid = raw_slug.replace("sandbox-", "")
+                from app.db import chat_history
+                src = chat_history.get_chat_source(sid)
+                label = src["filename"] if src else raw_slug
+                safe_label = html.escape(label)
+                safe_slug = html.escape(raw_slug)
+                return (
+                    f'<button type="button" class="evidence-pill" '
+                    f'onclick="openEvidenceInspector(\'{safe_slug}\')" '
+                    f'data-slug="{safe_slug}" '
+                    f'title="Открыть документ [{safe_label}] в Evidence Inspector">'
+                    f'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">'
+                    f'<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>'
+                    f'</svg>'
+                    f'<span class="pill-slug">📎 {safe_label}</span>'
+                    f'<span class="pill-dot" style="background-color: #8B5CF6;"></span>'
+                    f'</button>'
+                )
+
+            # Check code registry for Python, C#, ASM, SQL scripts
+            try:
+                from app.code_registry import code_registry
+                code_file = code_registry.get_file(raw_slug)
+                if code_file:
+                    safe_slug = html.escape(code_file.filename)
+                    safe_label = html.escape(code_file.filename)
+                    badge_color = PRODUCT_COLOR_PALETTE.get(code_file.product_code or "", "#10B981")
+                    return (
+                        f'<button type="button" class="evidence-pill code-pill" '
+                        f'onclick="openEvidenceInspector(\'{safe_slug}\')" '
+                        f'data-slug="{safe_slug}" '
+                        f'title="Открыть исходный код [{safe_label}] в Evidence Inspector">'
+                        f'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">'
+                        f'<polyline points="16 18 22 12 16 6"></polyline>'
+                        f'<polyline points="8 6 2 12 8 18"></polyline>'
+                        f'</svg>'
+                        f'<span class="pill-slug">💻 {safe_label}</span>'
+                        f'<span class="pill-dot" style="background-color: {badge_color};"></span>'
+                        f'</button>'
+                    )
+            except Exception:
+                pass
+
             # Verify if this is a known slug in our corpus or active citations
             is_valid = raw_slug in self.all_slugs or raw_slug in active_set
             if not is_valid:

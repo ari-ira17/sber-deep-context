@@ -36,12 +36,37 @@
             </a>
             
             <div class="sidebar-nav">
-                <h3>История</h3>
-                <div id="sidebar-chats"
-                     hx-get="/api/chats{% if active_chat_id %}?active_id={{ active_chat_id }}{% endif %}"
-                     hx-trigger="refreshSidebar from:body"
-                     hx-swap="innerHTML">
-                    {% include "partials/sidebar_chats.html" %}
+                <!-- Секция Источников (Песочница документов чата) -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-header">
+                        <h3>Источники</h3>
+                        <label class="sidebar-add-source-btn" title="Добавить документ в песочницу">
+                            <input type="file" id="sidebar-file-upload" onchange="window.handleSidebarFileUpload(this.files)" style="display: none;" multiple>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </label>
+                    </div>
+                    <div id="sidebar-sources-container"
+                         hx-get="/api/sources/html"
+                         hx-trigger="refreshSources from:body"
+                         hx-swap="innerHTML">
+                        {% include "partials/sidebar_sources.html" %}
+                    </div>
+                </div>
+
+                <!-- Секция Истории диалогов -->
+                <div class="sidebar-section" style="margin-top: 1.25rem;">
+                    <div class="sidebar-section-header">
+                        <h3>История</h3>
+                    </div>
+                    <div id="sidebar-chats"
+                         hx-get="/api/chats{% if active_chat_id %}?active_id={{ active_chat_id }}{% endif %}"
+                         hx-trigger="refreshSidebar from:body"
+                         hx-swap="innerHTML">
+                        {% include "partials/sidebar_chats.html" %}
+                    </div>
                 </div>
             </div>
             
@@ -134,6 +159,54 @@
                 }
             }
         });
+
+        // ==========================================
+        // SANDBOX SOURCES JAVASCRIPT LOGIC
+        // ==========================================
+        window.handleSidebarFileUpload = async function(filesList) {
+            const files = Array.from(filesList);
+            if (!files.length) return;
+
+            const formData = new FormData();
+            files.forEach(f => formData.append('files', f));
+
+            try {
+                const res = await fetch('/api/sources/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (window.htmx) {
+                        htmx.trigger('body', 'refreshSources');
+                    }
+                }
+            } catch (err) {
+                console.error('Ошибка загрузки файлов:', err);
+            }
+        };
+
+        window.deleteSandboxSource = async function(sourceId, event) {
+            if (event) event.stopPropagation();
+            const item = document.getElementById(`source-item-${sourceId}`);
+            if (item) item.style.opacity = '0.3';
+
+            try {
+                const res = await fetch(`/api/sources/${sourceId}`, {
+                    method: 'DELETE',
+                });
+                const data = await res.json();
+                if (window.htmx) {
+                    htmx.trigger('body', 'refreshSources');
+                }
+                if (window.currentEvidenceSlug === `sandbox-${sourceId}` && typeof closeEvidenceInspector === 'function') {
+                    closeEvidenceInspector();
+                }
+            } catch (err) {
+                console.error('Ошибка при удалении источника:', err);
+                if (item) item.style.opacity = '1';
+            }
+        };
 
         // ==========================================
         // EVIDENCE INSPECTOR JAVASCRIPT LOGIC

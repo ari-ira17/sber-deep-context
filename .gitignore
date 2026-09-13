@@ -178,6 +178,7 @@ cython_debug/
 # PyPI configuration file
 /meridian_hackathon_knowledge_base
 data/lancedb/
+data/sandbox_uploads/
 .DS_Store
 .vscode/
 
