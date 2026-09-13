@@ -11,7 +11,7 @@ sentence-transformers>=2.2
 transformers>=4.36
 torch>=2.1
 gigachat>=0.2.0
-fastmcp>=0.1
+
 pyvis>=0.3
 networkx>=3.0
 pydantic>=2.0
