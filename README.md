@@ -89,17 +89,6 @@ uvicorn app.main:app --reload --port 8009
 ```
 Сервер будет доступен по адресу: http://localhost:8009
 
-### 6. Запуск тестов и бенчмарков
-Выполнение модульных тестов:
-```bash
-pytest tests/test_agents.py
-```
-Выполнение калибровочного бенчмарка (100 вопросов):
-```bash
-python scripts/run_calibration.py
-```
-Результаты тестирования сохраняются в директорию `results/calibration_results.json`.
-
 ---
 
 ## Результаты калибровки на официальном датасете
