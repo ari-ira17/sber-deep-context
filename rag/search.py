@@ -65,6 +65,13 @@ def to_document_context(doc: Dict[str, Any]) -> DocumentContext:
     except (ValueError, TypeError):
         score = 0.0
 
+    # Methodology version: may be int or string
+    mv = doc.get("methodology_version") or meta.get("methodology_version")
+    try:
+        mv = int(mv) if mv is not None else None
+    except (ValueError, TypeError):
+        mv = None
+
     return DocumentContext(
         doc_id=doc_id,
         slug=slug,
@@ -72,6 +79,11 @@ def to_document_context(doc: Dict[str, Any]) -> DocumentContext:
         product_name=product_name,
         product_code=product_code,
         section=section,
+        owner=doc.get("owner") or meta.get("owner"),
+        methodology_version=mv,
+        updated_at=str(doc.get("updated_at") or meta.get("updated_at") or "") or None,
+        valid_from=str(doc.get("valid_from") or meta.get("valid_from") or "") or None,
+        lifecycle=str(doc.get("lifecycle") or meta.get("lifecycle") or "") or None,
         content=content,
         attachment_path=attachment_path,
         attachment_format=attachment_format,

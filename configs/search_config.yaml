@@ -13,8 +13,9 @@ search:
   k_rrf: 60
   
   # Порог отсечения для BGE Reranker (вероятности от 0 до 1).
-  # Отсекаем откровенный мусор, чтобы не путать LLM.
-  min_reranker_score: 0.02
+  # Оставляем 0.0 — fallback heuristic reranker выдаёт очень низкие score (0.003–0.01),
+  # а предварительная фильтрация по product_code уже гарантирует релевантность.
+  min_reranker_score: 0.0
   
   # Глобальные флаги
   enable_reranker: true

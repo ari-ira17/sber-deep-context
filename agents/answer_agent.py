@@ -27,6 +27,11 @@ class DocumentContext(BaseModel):
     product_name: Optional[str] = Field(None, description="Product name")
     product_code: Optional[str] = Field(None, description="Product code e.g. P701")
     section: Optional[str] = Field(None, description="Section or direction")
+    owner: Optional[str] = Field(None, description="Page owner team")
+    methodology_version: Optional[int] = Field(None, description="Methodology version")
+    updated_at: Optional[str] = Field(None, description="Last update date")
+    valid_from: Optional[str] = Field(None, description="Valid from date")
+    lifecycle: Optional[str] = Field(None, description="Lifecycle status (active/archive)")
     content: str = Field(..., description="Main content (markdown/text/table)")
     attachment_path: Optional[str] = Field(None, description="Path to attachment file")
     attachment_format: Optional[str] = Field(None, description="Format of attachment")
@@ -155,9 +160,11 @@ class AnswerAgent:
                     f"  </attachment>"
                 )
 
+            # Build metadata block with all available fields
+            meta_attrs = f'owner="{doc.owner or ""}" methodology_version="{doc.methodology_version or ""}" updated_at="{doc.updated_at or ""}" valid_from="{doc.valid_from or ""}" lifecycle="{doc.lifecycle or ""}"'
             doc_node = (
                 f'<document id="{doc.doc_id}" slug="{doc.slug}" product="{doc.product_name or ""}" '
-                f'code="{doc.product_code or ""}" section="{doc.section or ""}">\n'
+                f'code="{doc.product_code or ""}" section="{doc.section or ""}" {meta_attrs}>\n'
                 f"  <title>{doc.title}</title>\n"
                 f"  <content>\n{doc.content.strip()}\n  </content>"
                 f"{attachment_part}\n"
