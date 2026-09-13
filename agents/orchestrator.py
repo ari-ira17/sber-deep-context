@@ -402,6 +402,23 @@ class MeridianOrchestrator:
                     score=1.0,
                 )
                 documents.insert(0, catalog_doc)
+                
+                for rec in matched_records[:10]:
+                    if not any(d.slug == rec.filename or d.slug == rec.slug for d in documents):
+                        code_doc = DocumentContext(
+                            doc_id=f"code-{rec.slug}",
+                            slug=rec.filename,
+                            title=f"{rec.filename}",
+                            product_name=rec.product_name,
+                            product_code=rec.product_code,
+                            section=f"Исходный код ({rec.extension.upper()})",
+                            content=f"# Файл {rec.filename}\nНазначение: {rec.summary}",
+                            attachment_path=rec.rel_path,
+                            attachment_format=rec.extension,
+                            attachment_text=rec.content,
+                            score=0.98,
+                        )
+                        documents.append(code_doc)
 
         # Case B: Semantic / symbol lookup (searching for exact code files or functions)
         code_hits = code_registry.search(
@@ -558,28 +575,24 @@ class MeridianOrchestrator:
             return {"type": "log", "content": msg}
 
         yield yield_log(f"Получен запрос: {question}")
-        await asyncio.sleep(0.8)
-
+        
         yield yield_log("Анализирую запрос...")
-        await asyncio.sleep(0.8)
         
         # 1. Router Agent
         router_out = await self.router_agent.aroute(question)
         yield yield_log("Ищу информацию в базе знаний...")
-        await asyncio.sleep(0.8)
-
-        # 2. RAG Search (non-blocking in thread pool) + Attachment Enrichment
+        
+        # 2. RAG Search (non-blocking in thread pool) + Attachment Enrichment + Code Registry
         retrieved_docs = await asyncio.to_thread(self.search_engine.search, router_out, 5)
         retrieved_docs = await asyncio.to_thread(self._enrich_with_attachments, retrieved_docs, router_out)
+        retrieved_docs = await asyncio.to_thread(self._enrich_with_code_assets, question, router_out, retrieved_docs)
         yield yield_log("Изучаю найденные материалы...")
-        await asyncio.sleep(0.8)
-
+        
         # 3. Answer Agent (Adaptive Model Routing)
         is_complex = self.is_complex_query(question, router_out, retrieved_docs)
         answer_model = self.llm_client.config.model_max if is_complex else self.llm_client.config.model_lite
         yield yield_log("Формирую ответ...")
-        await asyncio.sleep(0.8)
-
+        
         answer_out = await self.answer_agent.agenerate_answer(
             query=question,
             documents=retrieved_docs,
@@ -587,7 +600,6 @@ class MeridianOrchestrator:
             is_complex=is_complex,
         )
         yield yield_log("Подготавливаю результаты к отправке...")
-        await asyncio.sleep(1.0)
 
         # 4. Construct Graph Data
         graph_nodes, graph_edges = self._build_graph_data(question, retrieved_docs)

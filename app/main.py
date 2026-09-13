@@ -344,7 +344,7 @@ async def bot_reply_sse(request: Request, query: str, chat_id: Optional[str] = N
 
                         sources.append({
                             "code": doc.product_code or "—",
-                            "name": doc.product_name or doc.title or "Документ",
+                            "name": doc.title or doc.product_name or "Документ",
                             "section": doc.section or "Общий раздел",
                             "score": score_pct,
                             "attachment": att,

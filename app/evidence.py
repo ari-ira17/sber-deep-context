@@ -405,6 +405,39 @@ class EvidenceService:
         if slug.startswith("sandbox-"):
             return self._get_sandbox_evidence(slug, highlight_term=highlight_term)
 
+        if slug.startswith("code-catalog-"):
+            ext = slug.split("-")[-1]
+            if ext == "all":
+                ext = None
+            try:
+                from app.code_registry import code_registry
+                matched = code_registry.filter_by_extension(ext) if ext else code_registry.list_all()
+                title_ext = ext.upper() if ext else "Кода"
+                catalog_md = code_registry.format_catalog_markdown(matched, title=f"Сводный каталог файлов {title_ext}")
+                rendered_html = markdown.markdown(catalog_md, extensions=["extra", "tables", "fenced_code"])
+                return {
+                    "slug": slug,
+                    "title": f"📚 Каталог файлов {title_ext}",
+                    "product_code": "CATALOG",
+                    "product_name": "Каталог Кода",
+                    "product_color": "#4B5563",
+                    "section": "Сводный реестр",
+                    "owner": "Система",
+                    "lifecycle": "active",
+                    "quality_tags": ["каталог", "автогенерация"],
+                    "updated_at": "2026-09-01",
+                    "valid_from": "2026-04-01",
+                    "doc_html": rendered_html,
+                    "doc_raw_markdown": catalog_md,
+                    "attachment": None,
+                    "has_attachment": False,
+                    "related_documents": [],
+                    "highlight_term": highlight_term or "",
+                }
+            except Exception as e:
+                logger.error(f"Failed to generate catalog evidence: {e}")
+                return None
+
         try:
             from app.code_registry import code_registry
             code_file = code_registry.get_file(slug)
