@@ -18,8 +18,9 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 import markdown
 
 from agents.orchestrator import MeridianOrchestrator, OrchestratorResponse
-from app.graph import get_graph_html, get_mock_graph_html
+from app.graph import get_graph_html, get_mock_graph_html, get_document_graph_html
 from app.db import chat_history
+from app.evidence import evidence_service
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,12 @@ chat_history.init_db()
 
 # Подключаем статику и шаблоны
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+# Подключаем вложения (изображения PNG, PDF, CSV) для инспектора первоисточников
+attachments_dir = os.path.join(os.path.dirname(__file__), "..", "meridian_hackathon_knowledge_base", "knowledge_attachments")
+if os.path.exists(attachments_dir):
+    app.mount("/attachments", StaticFiles(directory=attachments_dir), name="attachments")
+
 templates = Jinja2Templates(directory="app/templates")
 
 # Инициализируем центральный оркестратор
@@ -147,6 +154,9 @@ async def bot_reply(request: Request, query: str, chat_id: Optional[str] = None)
             extensions=["extra", "tables", "fenced_code", "nl2br"]
         )
 
+        # Обогащаем сноски [slug] интерактивными чипами инспектора доказательств
+        html_answer = evidence_service.enhance_citations(html_answer, active_citations=resp.citations)
+
         sources = []
         for doc in resp.sources:
             if 0.0 <= doc.score <= 1.0:
@@ -198,12 +208,23 @@ async def bot_reply(request: Request, query: str, chat_id: Optional[str] = None)
 
 
 @app.get("/graph", response_class=HTMLResponse)
-async def show_graph(query: str = "Запрос"):
+async def show_graph(
+    query: Optional[str] = None,
+    slug: Optional[str] = None,
+    embedded: bool = False
+):
     """
     Интерактивный дашборд графа знаний (Vis.js / Pyvis).
-    Визуализирует связи между запросом, найденными документами и вложениями.
+    Визуализирует:
+    1. Поисковый запрос (связи запроса, источников, вложений)
+    2. Или конкретный документ по slug (связи документа, продукта, смежных регламентов, вложений)
+    3. Поддерживает встраивание в slide-over шторку (embedded=True)
     """
-    clean_query = query.strip()
+    if slug:
+        html_content = get_document_graph_html(slug=slug, evidence_service=evidence_service, embedded=embedded)
+        return HTMLResponse(content=html_content)
+
+    clean_query = (query or "Запрос").strip()
     cached_resp = graph_cache.get(clean_query)
     if cached_resp and cached_resp.sources:
         score_disp = f"{int(round(cached_resp.confidence * 100))}%" if 0.0 <= cached_resp.confidence <= 1.0 else "96.4%"
@@ -211,16 +232,51 @@ async def show_graph(query: str = "Запрос"):
             query=clean_query,
             documents=cached_resp.sources,
             score_display=score_disp,
-            algorithm_display="RAG + Cross-Encoder"
+            algorithm_display="RAG + Cross-Encoder",
+            embedded=embedded
         )
     else:
         try:
             router_out = await orchestrator.router_agent.aroute(clean_query)
             docs = orchestrator.search_engine.search(router_out, top_k=5)
             docs = orchestrator._enrich_with_attachments(docs, router_out)
-            html_content = get_graph_html(query=clean_query, documents=docs)
+            html_content = get_graph_html(query=clean_query, documents=docs, embedded=embedded)
         except Exception:
-            html_content = get_mock_graph_html(clean_query)
+            html_content = get_mock_graph_html(clean_query, embedded=embedded)
 
     return HTMLResponse(content=html_content)
+
+
+@app.get("/evidence/drawer/{slug}", response_class=HTMLResponse)
+async def get_evidence_drawer(request: Request, slug: str, highlight: Optional[str] = None):
+    """
+    Возвращает HTML-содержимое шторки Evidence Inspector для выбранного слага страницы.
+    """
+    ev = evidence_service.get_evidence(slug, highlight_term=highlight)
+    if not ev:
+        return HTMLResponse(
+            content=f"""
+            <div class="evidence-error">
+                <h3>Первоисточник не найден</h3>
+                <p>Документ с идентификатором <code>{html.escape(slug)}</code> отсутствует в базе знаний «Меридиан».</p>
+                <button type="button" class="drawer-btn close-btn" onclick="closeEvidenceInspector()">Закрыть</button>
+            </div>
+            """,
+            status_code=404
+        )
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/evidence_drawer_content.html",
+        context={"ev": ev}
+    )
+
+
+@app.get("/api/evidence/{slug}")
+async def get_evidence_api(slug: str, highlight: Optional[str] = None):
+    """REST API эндпоинт для программного получения полного досье первоисточника и метаданных."""
+    ev = evidence_service.get_evidence(slug, highlight_term=highlight)
+    if not ev:
+        return {"error": "Document not found", "slug": slug}
+    return ev
+
 

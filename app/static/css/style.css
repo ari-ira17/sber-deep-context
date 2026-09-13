@@ -855,3 +855,1051 @@ video::-webkit-media-controls-current-time-display,
 video::-webkit-media-controls-time-remaining-display {
   display: none !important;
 }
+
+/* ==========================================================================
+   EVIDENCE INSPECTOR (АУДИТОРСКИЙ ИНСПЕКТОР ПЕРВОИСТОЧНИКА)
+   ========================================================================== */
+
+/* 1. Интерактивные чипы сносок [slug] в тексте сообщения */
+.evidence-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--glass-btn-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  vertical-align: baseline;
+  margin: 0 3px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.evidence-pill:hover {
+  background: var(--glass-btn-hover);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.evidence-pill svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.evidence-pill .pill-slug {
+  font-family: monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.evidence-pill .pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Ссылки на страницы базы знаний */
+.evidence-link {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--accent);
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+.evidence-link:hover {
+  opacity: 0.8;
+}
+
+/* 2. Баннер заземления в блоке источников */
+.grounding-assurance-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.03) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 16px;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.gab-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.gab-shield {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #10b981;
+}
+
+.gab-info {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.gab-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.inspect-dossier-btn {
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.inspect-dossier-btn:hover {
+  background: var(--glass-btn-hover);
+  border-color: #10b981;
+  color: #10b981;
+  transform: translateY(-1px);
+}
+
+.source-inspect-hint {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.source-badge:hover .source-inspect-hint {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* 3. Шторка Evidence Inspector (Slide-over Drawer) */
+.evidence-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 998;
+}
+
+.evidence-backdrop.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.evidence-drawer {
+  position: fixed;
+  top: 0; right: 0;
+  width: 640px;
+  max-width: 95vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(36px);
+  -webkit-backdrop-filter: blur(36px);
+  border-left: 1px solid var(--glass-border);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s ease;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body.dark-mode .evidence-drawer {
+  background: rgba(15, 23, 42, 0.92);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.6);
+}
+
+.evidence-drawer.active {
+  transform: translateX(0);
+}
+
+.evidence-drawer.wide {
+  width: 920px;
+}
+
+#evidence-drawer-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.evidence-content-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 4. Шапка инспектора */
+.evidence-header {
+  padding: 1.5rem 1.75rem 1rem 1.75rem;
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--sidebar-bg);
+  flex-shrink: 0;
+}
+
+.evidence-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.evidence-header-title-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.drawer-back-btn {
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--accent);
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.drawer-back-btn:hover {
+  background: var(--glass-btn-hover);
+  transform: translateX(-2px);
+}
+
+.evidence-header-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.evidence-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.drawer-btn {
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drawer-btn:hover {
+  background: var(--glass-btn-hover);
+  color: var(--text-main);
+  transform: scale(1.05);
+}
+
+.drawer-btn.close-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.copy-cite-text {
+  font-family: monospace;
+  font-size: 0.72rem;
+  margin-left: 4px;
+  display: none;
+}
+@media (min-width: 768px) {
+  .drawer-btn:has(.copy-cite-text) {
+    width: auto;
+    padding: 0 10px;
+  }
+  .copy-cite-text { display: inline; }
+}
+
+.evidence-title {
+  margin: 0.25rem 0 0.4rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.35;
+}
+
+.evidence-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0.5rem 0 0.85rem 0;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.status-badge.status-active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+.status-badge.status-archive {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+/* Переключатель режима документа и вложения */
+.doc-view-switcher {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.view-switch-btn {
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.view-switch-btn:hover {
+  color: var(--text-main);
+  background: var(--glass-btn-hover);
+}
+
+.view-switch-btn.active {
+  background: var(--card-bg);
+  color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.doc-view-pane {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.doc-view-pane.active {
+  display: block;
+}
+
+/* Граф знаний внутри шторки первоисточника */
+.evidence-graph-container {
+  flex: 1;
+  width: 100%;
+  height: calc(100vh - 75px);
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+
+.evidence-graph-iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 540px;
+  border: none;
+  display: block;
+  background: transparent;
+}
+
+.evidence-graph-view-pane {
+  height: calc(100vh - 190px);
+  min-height: 520px;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  background: var(--card-bg);
+  margin-bottom: 1.5rem;
+}
+
+.evidence-graph-drawer-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.att-filename-bar {
+  padding: 0.6rem 0.9rem;
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  font-size: 0.82rem;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+.evidence-document-reader {
+  line-height: 1.7;
+  font-size: 0.92rem;
+  color: var(--text-main);
+}
+
+.evidence-document-reader h1,
+.evidence-document-reader h2,
+.evidence-document-reader h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.6rem;
+  color: var(--text-main);
+}
+
+.evidence-document-reader table {
+  width: 100%;
+  margin: 1.2rem 0;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.evidence-document-reader th,
+.evidence-document-reader td {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--glass-border);
+}
+
+.evidence-document-reader th {
+  background: var(--glass-btn-bg);
+  font-weight: 600;
+}
+
+.evidence-document-reader tr:hover {
+  background: rgba(16, 185, 129, 0.05);
+}
+
+/* Ссылки внутри документа */
+.evidence-document-reader a {
+  color: #2563eb;
+  text-decoration: underline;
+  cursor: pointer;
+}
+body.dark-mode .evidence-document-reader a {
+  color: #60a5fa;
+}
+.evidence-document-reader a:hover {
+  opacity: 0.85;
+}
+
+.tab-badge {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent);
+  font-size: 0.68rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-family: monospace;
+}
+
+/* 6. Тело контента инспектора */
+.evidence-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 1.75rem;
+}
+
+.tab-pane {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* Панель поиска по тексту документа */
+.in-doc-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  padding: 0.5rem 0.85rem;
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.in-doc-search-bar svg { color: var(--text-muted); }
+
+.doc-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-main);
+  font-size: 0.85rem;
+}
+
+.search-count {
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.clear-search-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.clear-search-btn:hover { color: #ef4444; }
+
+/* Подсветка текста поиска */
+mark.doc-match {
+  background: #fde047;
+  color: #854d0e;
+  padding: 1px 3px;
+  border-radius: 4px;
+  font-weight: 600;
+  box-shadow: 0 0 8px rgba(250, 204, 21, 0.6);
+}
+body.dark-mode mark.doc-match {
+  background: #ca8a04;
+  color: #fef08a;
+}
+
+.evidence-markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.85rem;
+}
+
+.evidence-markdown-body table th,
+.evidence-markdown-body table td {
+  border: 1px solid var(--glass-border);
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+}
+
+.evidence-markdown-body table th {
+  background: var(--glass-btn-bg);
+  font-weight: 600;
+}
+
+.evidence-markdown-body table tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+body.dark-mode .evidence-markdown-body table tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* 7. Вкладка вложения: Таблица CSV */
+.attachment-meta-card {
+  display: flex;
+  align-items: center;
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.att-meta-row { display: flex; align-items: center; gap: 0.85rem; }
+
+.att-icon-pill {
+  background: #f59e0b;
+  color: white;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-family: monospace;
+}
+
+.att-filename { font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
+.att-path code { font-size: 0.72rem; color: var(--text-muted); }
+
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.table-search-input {
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  padding: 0.4rem 0.85rem;
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: 0.8rem;
+  outline: none;
+  flex: 1;
+  max-width: 320px;
+}
+
+.table-rows-count { font-size: 0.75rem; color: var(--text-muted); }
+
+.evidence-table-wrapper {
+  max-height: 480px;
+  overflow: auto;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+.evidence-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.evidence-data-table th,
+.evidence-data-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--glass-border);
+  text-align: left;
+}
+
+.evidence-data-table th {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  font-weight: 600;
+  z-index: 2;
+  box-shadow: 0 1px 0 var(--glass-border);
+}
+
+.evidence-data-table tr:hover {
+  background: rgba(16, 185, 129, 0.08);
+}
+
+/* Код ASM / Python / CS */
+.code-inspector-box {
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0d1117;
+  color: #c9d1d9;
+}
+
+.code-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+  font-size: 0.75rem;
+  color: #8b949e;
+}
+
+.copy-raw-btn {
+  background: #21262d;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.copy-raw-btn:hover { background: #30363d; }
+
+.code-viewer-content {
+  padding: 0.75rem 0;
+  max-height: 500px;
+  overflow: auto;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.code-line {
+  display: flex;
+  padding: 1px 1rem;
+}
+.code-line:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.code-line .line-num {
+  width: 40px;
+  color: #484f58;
+  user-select: none;
+  text-align: right;
+  padding-right: 1rem;
+}
+
+.code-line .line-content {
+  flex: 1;
+  white-space: pre;
+}
+
+/* Изображение PNG схемы */
+.image-inspector-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.image-preview-card {
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--card-bg);
+}
+
+.img-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background: var(--glass-btn-bg);
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.img-open-link { color: var(--accent); text-decoration: none; font-weight: 500; }
+
+.img-container {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.evidence-schematic-img {
+  max-width: 100%;
+  max-height: 380px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.ocr-extracted-box {
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 1rem;
+  background: var(--card-bg);
+}
+
+.ocr-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+}
+
+.ocr-content {
+  margin: 0;
+  font-family: inherit;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--text-muted);
+  background: var(--glass-btn-bg);
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+/* 8. Вкладка аудиторского паспорта */
+.audit-passport-card {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.audit-passport-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: var(--text-main);
+}
+
+.audit-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0 0 1.25rem 0;
+  line-height: 1.5;
+}
+
+.audit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.audit-grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+}
+
+.ag-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ag-val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.audit-compliance-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-main);
+}
+
+/* 9. Связанные регламенты продукта (вертикальный список) */
+.evidence-related-block {
+  margin-top: 2.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.related-docs-title {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.related-docs-title svg {
+  color: var(--accent);
+  opacity: 0.85;
+}
+
+.related-docs-vertical-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.related-doc-vertical-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--glass-btn-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  width: 100%;
+}
+
+.related-doc-vertical-item:hover {
+  background: var(--glass-btn-hover);
+  border-color: var(--accent);
+  transform: translateX(3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.related-doc-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.related-item-slug {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.related-item-topic {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.related-doc-item-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.related-item-section {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+body.dark-mode .related-item-section {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.related-item-arrow {
+  color: var(--text-muted);
+  opacity: 0.6;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.related-doc-vertical-item:hover .related-item-arrow {
+  transform: translateX(2px);
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* 10. Скелетон и тосты */
+.evidence-skeleton {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sk-pill {
+  width: 140px; height: 26px; border-radius: 20px;
+  background: var(--glass-btn-bg); animation: pulse 1.5s infinite;
+}
+.sk-title {
+  width: 280px; height: 32px; border-radius: 8px;
+  background: var(--glass-btn-bg); animation: pulse 1.5s infinite;
+}
+.sk-bar {
+  width: 100%; height: 38px; border-radius: 10px;
+  background: var(--glass-btn-bg); animation: pulse 1.5s infinite;
+}
+.sk-tabs {
+  width: 200px; height: 34px; border-radius: 8px;
+  background: var(--glass-btn-bg); animation: pulse 1.5s infinite;
+}
+.sk-line {
+  width: 100%; height: 16px; border-radius: 6px;
+  background: var(--glass-btn-bg); animation: pulse 1.5s infinite;
+}
+.sk-box {
+  width: 100%; height: 140px; border-radius: 12px;
+  background: var(--glass-btn-bg); animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+.evidence-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--btn-primary);
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 10000;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.evidence-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.evidence-toast.toast-info {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+body.dark-mode .evidence-toast.toast-info {
+  background: #1e293b;
+  border-color: #475569;
+}
+
+.evidence-error {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+.evidence-error .err-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.evidence-error h3 { margin: 0 0 0.5rem 0; color: var(--text-main); }
+.evidence-error p { color: var(--text-muted); margin-bottom: 1.5rem; }
+

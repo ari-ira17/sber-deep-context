@@ -75,6 +75,17 @@
         </main>
     </div>
 
+    <!-- Шторка инспектора доказательств (Evidence Inspector Drawer) -->
+    <div id="evidence-drawer-backdrop" class="evidence-backdrop" onclick="closeEvidenceInspector()"></div>
+    <aside id="evidence-drawer" class="evidence-drawer" aria-hidden="true">
+        <div id="evidence-drawer-body">
+            <!-- Динамически загружается через /evidence/drawer/{slug} -->
+        </div>
+    </aside>
+
+    <!-- Всплывающие уведомления (Toasts) -->
+    <div id="toast-container" class="toast-container"></div>
+
     <script>
         // Инициализация темы
         const themeText = document.getElementById('theme-text');
@@ -90,6 +101,12 @@
             const isDark = document.body.classList.contains('dark-mode');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
             themeText.innerText = isDark ? 'Светлая тема' : 'Темная тема';
+            // Оповещаем все встроенные iframe (включая граф) о смене темы
+            document.querySelectorAll('iframe').forEach(f => {
+                try {
+                    f.contentWindow.postMessage({ type: 'theme-change', isDark: isDark }, '*');
+                } catch(err) {}
+            });
         });
 
         // Быстрая вставка текста в инпут и программная отправка формы
@@ -114,6 +131,352 @@
                 if(scrollArea) {
                     scrollArea.scrollTop = scrollArea.scrollHeight;
                 }
+            }
+        });
+
+        // ==========================================
+        // EVIDENCE INSPECTOR JAVASCRIPT LOGIC
+        // ==========================================
+        let isDrawerWide = false;
+        let evidenceHistory = [];
+        let currentEvidenceSlug = null;
+
+        async function openEvidenceInspector(slug, highlightTerm = '', isBack = false) {
+            if (!slug) return;
+            const drawer = document.getElementById('evidence-drawer');
+            const backdrop = document.getElementById('evidence-drawer-backdrop');
+            const body = document.getElementById('evidence-drawer-body');
+            if (!drawer || !backdrop || !body) return;
+
+            // Отслеживаем историю переходов внутри инспектора
+            if (!isBack && currentEvidenceSlug && currentEvidenceSlug !== slug) {
+                evidenceHistory.push(currentEvidenceSlug);
+            }
+            currentEvidenceSlug = slug;
+
+            // Отображаем плавный скелетон-лоадер
+            body.innerHTML = `
+                <div class="evidence-skeleton">
+                    <div class="sk-pill"></div>
+                    <div class="sk-title"></div>
+                    <div class="sk-bar"></div>
+                    <div class="sk-tabs"></div>
+                    <div class="sk-line"></div>
+                    <div class="sk-line" style="width: 85%;"></div>
+                    <div class="sk-line" style="width: 70%;"></div>
+                    <div class="sk-box"></div>
+                </div>
+            `;
+
+            drawer.classList.add('active');
+            backdrop.classList.add('active');
+            document.body.classList.add('drawer-open');
+
+            try {
+                const url = `/evidence/drawer/${encodeURIComponent(slug)}` + 
+                            (highlightTerm ? `?highlight=${encodeURIComponent(highlightTerm)}` : '');
+                const res = await fetch(url);
+                if (!res.ok) {
+                    body.innerHTML = `
+                        <div class="evidence-error">
+                            <div class="err-icon">⚠️</div>
+                            <h3>Первоисточник не найден</h3>
+                            <p>Документ <code>${slug}</code> не обнаружен в базе знаний «Меридиан».</p>
+                            <button class="drawer-btn close-btn" onclick="closeEvidenceInspector()">Закрыть</button>
+                        </div>
+                    `;
+                    return;
+                }
+                const html = await res.text();
+                body.innerHTML = html;
+
+                // Кнопка возврата при переходе по внутренним ссылкам
+                const backBtn = document.getElementById('evidence-nav-back-btn');
+                if (backBtn) {
+                    if (evidenceHistory.length > 0) {
+                        const prev = evidenceHistory[evidenceHistory.length - 1];
+                        backBtn.style.display = 'inline-flex';
+                        backBtn.title = (prev && typeof prev === 'object' && prev.type === 'graph')
+                            ? 'Назад к графу связей'
+                            : `Назад к ${prev}`;
+                    } else {
+                        backBtn.style.display = 'none';
+                    }
+                }
+
+                if (highlightTerm) {
+                    searchWithinDocument(highlightTerm);
+                }
+            } catch (err) {
+                body.innerHTML = `
+                    <div class="evidence-error">
+                        <div class="err-icon">⚠️</div>
+                        <h3>Ошибка загрузки</h3>
+                        <p>${err.message}</p>
+                        <button class="drawer-btn close-btn" onclick="closeEvidenceInspector()">Закрыть</button>
+                    </div>
+                `;
+            }
+        }
+
+        function openGraphDrawer(query, isBack = false) {
+            if (!query) query = "Запрос";
+            const drawer = document.getElementById('evidence-drawer');
+            const backdrop = document.getElementById('evidence-drawer-backdrop');
+            const body = document.getElementById('evidence-drawer-body');
+            if (!drawer || !backdrop || !body) return;
+
+            // Отслеживаем историю
+            if (!isBack && currentEvidenceSlug) {
+                evidenceHistory.push(currentEvidenceSlug);
+            }
+            currentEvidenceSlug = { type: 'graph', query: query };
+
+            // Включаем широкий режим для комфортного взаимодействия с графом
+            isDrawerWide = true;
+            drawer.classList.add('wide');
+            drawer.classList.add('active');
+            backdrop.classList.add('active');
+            document.body.classList.add('drawer-open');
+
+            const cleanQuery = (query || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            const shortTitle = query.length > 32 ? query.substring(0, 30) + '...' : query;
+            const hasPrev = evidenceHistory.length > 0;
+
+            body.innerHTML = `
+                <div class="evidence-content-inner evidence-graph-drawer-inner">
+                    <div class="evidence-header">
+                        <div class="evidence-header-top">
+                            <div class="evidence-header-title-wrap">
+                                <button type="button" id="evidence-nav-back-btn" class="drawer-back-btn" style="${hasPrev ? 'display: inline-flex;' : 'display: none;'}" onclick="evidenceGoBack()" title="Назад">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                                        <polyline points="12 19 5 12 12 5"></polyline>
+                                    </svg>
+                                </button>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                                    <circle cx="18" cy="5" r="3"></circle>
+                                    <circle cx="6" cy="12" r="3"></circle>
+                                    <circle cx="18" cy="19" r="3"></circle>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                </svg>
+                                <h2 class="evidence-header-title" title="${cleanQuery}">Граф связей: ${shortTitle}</h2>
+                            </div>
+                            
+                            <div class="evidence-controls">
+                                <button type="button" class="drawer-btn" onclick="toggleDrawerWidth()" title="Переключить ширину">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <polyline points="9 21 3 21 3 15"></polyline>
+                                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                                    </svg>
+                                </button>
+                                <button type="button" class="drawer-btn close-btn" onclick="closeEvidenceInspector()" title="Закрыть (Esc)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="evidence-graph-container">
+                        <iframe src="/graph?query=${encodeURIComponent(query)}&embedded=true" class="evidence-graph-iframe"></iframe>
+                    </div>
+                </div>
+            `;
+        }
+
+        function evidenceGoBack() {
+            if (evidenceHistory.length > 0) {
+                const prev = evidenceHistory.pop();
+                if (prev && typeof prev === 'object' && prev.type === 'graph') {
+                    openGraphDrawer(prev.query, true);
+                } else if (typeof prev === 'string') {
+                    openEvidenceInspector(prev, '', true);
+                }
+            }
+        }
+
+        function closeEvidenceInspector() {
+            const drawer = document.getElementById('evidence-drawer');
+            const backdrop = document.getElementById('evidence-drawer-backdrop');
+            if (drawer) drawer.classList.remove('active');
+            if (backdrop) backdrop.classList.remove('active');
+            document.body.classList.remove('drawer-open');
+            evidenceHistory = [];
+            currentEvidenceSlug = null;
+        }
+
+        function handleMissingEvidenceLink(slug, text) {
+            showToast(`«${slug}» — внутренняя перекрёстная ссылка. В выгрузке хакатона отдельный файл отсутствует.`, 'info');
+        }
+
+        function toggleDrawerWidth() {
+            const drawer = document.getElementById('evidence-drawer');
+            if (!drawer) return;
+            isDrawerWide = !isDrawerWide;
+            drawer.classList.toggle('wide', isDrawerWide);
+        }
+
+        function copyCitation(slug) {
+            const text = `[${slug}]`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(`Сноска ${text} скопирована в буфер`);
+                }).catch(() => {
+                    showToast(`Скопировано: ${text}`);
+                });
+            } else {
+                showToast(`Сноска: ${text}`);
+            }
+        }
+
+        function copyRawCode() {
+            const hidden = document.getElementById('hidden-raw-code');
+            if (!hidden) return;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(hidden.value).then(() => {
+                    showToast('Код вложения скопирован');
+                });
+            } else {
+                showToast('Код скопирован');
+            }
+        }
+
+        function switchDocView(viewId, btn) {
+            const parent = btn.closest('.evidence-content-inner');
+            if (!parent) return;
+            parent.querySelectorAll('.view-switch-btn').forEach(b => b.classList.remove('active'));
+            parent.querySelectorAll('.doc-view-pane').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            const target = parent.querySelector('#' + viewId);
+            if (target) target.classList.add('active');
+
+            // Автоматически расширяем шторку при включении графа для максимального пространства
+            if (viewId === 'graph-view') {
+                const drawer = document.getElementById('evidence-drawer');
+                if (drawer && !isDrawerWide) {
+                    toggleDrawerWidth();
+                }
+            }
+        }
+
+        function switchEvidenceTab(tabId, btn) {
+            const parent = btn.closest('.evidence-content-inner');
+            if (!parent) return;
+            parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            parent.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            const target = parent.querySelector('#' + tabId);
+            if (target) target.classList.add('active');
+        }
+
+        function searchWithinDocument(term) {
+            const doc = document.getElementById('evidence-rendered-doc');
+            const countEl = document.getElementById('doc-search-count');
+            if (!doc) return;
+
+            // Сбрасываем предыдущие маркеры
+            const originalHtml = doc.getAttribute('data-original-html');
+            if (!originalHtml) {
+                doc.setAttribute('data-original-html', doc.innerHTML);
+            } else {
+                doc.innerHTML = originalHtml;
+            }
+
+            const cleanTerm = (term || '').trim();
+            if (!cleanTerm || cleanTerm.length < 2) {
+                if (countEl) countEl.innerText = '';
+                return;
+            }
+
+            try {
+                const regex = new RegExp(`(${cleanTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                let matches = 0;
+
+                function highlightNodes(node) {
+                    if (node.nodeType === 3) {
+                        const text = node.nodeValue;
+                        if (regex.test(text)) {
+                            const span = document.createElement('span');
+                            span.innerHTML = text.replace(regex, '<mark class="doc-match">$1</mark>');
+                            const foundCount = (text.match(regex) || []).length;
+                            matches += foundCount;
+                            node.parentNode.replaceChild(span, node);
+                        }
+                    } else if (node.nodeType === 1 && node.childNodes && !['SCRIPT', 'STYLE', 'MARK', 'CODE'].includes(node.tagName)) {
+                        Array.from(node.childNodes).forEach(highlightNodes);
+                    }
+                }
+
+                highlightNodes(doc);
+
+                if (countEl) {
+                    countEl.innerText = matches > 0 ? `${matches} совп.` : '0 совп.';
+                }
+
+                const firstMatch = doc.querySelector('.doc-match');
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } catch (e) {
+                console.warn('Highlight search error:', e);
+            }
+        }
+
+        function clearDocSearch() {
+            const input = document.getElementById('doc-search-input');
+            if (input) {
+                input.value = '';
+                searchWithinDocument('');
+            }
+        }
+
+        function filterTableRows(query) {
+            const table = document.getElementById('evidence-csv-table');
+            if (!table) return;
+            const clean = (query || '').toLowerCase().trim();
+            const rows = table.querySelectorAll('tbody tr');
+            let visibleCount = 0;
+            rows.forEach(r => {
+                const text = r.innerText.toLowerCase();
+                const match = !clean || text.includes(clean);
+                r.style.display = match ? '' : 'none';
+                if (match) visibleCount++;
+            });
+            const counter = document.querySelector('.table-rows-count');
+            if (counter) {
+                counter.innerText = clean ? `Найдено: ${visibleCount}` : `Строк: ${rows.length}`;
+            }
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `evidence-toast toast-${type}`;
+            const iconSvg = type === 'info'
+                ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
+                : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            toast.innerHTML = `
+                ${iconSvg}
+                <span>${msg}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3200);
+        }
+
+        // Закрытие по нажатию клавиши Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEvidenceInspector();
             }
         });
     </script>
