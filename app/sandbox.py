@@ -180,13 +180,14 @@ class SandboxService:
 
     def save_and_register_file(
         self,
-        chat_id: str,
         filename: str,
         file_bytes: bytes,
+        chat_id: Optional[str] = "global",
     ) -> Dict[str, Any]:
-        """Save file to disk and record in chat_sources database."""
+        """Save file to disk and record in sandbox database."""
         safe_name = sanitize_filename(filename)
-        chat_dir = ensure_sandbox_dir(chat_id)
+        cid = chat_id or "global"
+        chat_dir = ensure_sandbox_dir(cid)
 
         import uuid
         source_id = str(uuid.uuid4())[:8]
@@ -199,12 +200,12 @@ class SandboxService:
         text_content, file_type, parsed_meta = self.parse_file(file_bytes, safe_name)
 
         record = chat_history.add_chat_source(
-            chat_id=chat_id,
             filename=safe_name,
             file_path=str(file_path),
             file_type=file_type,
             size_bytes=len(file_bytes),
             text_content=text_content,
+            chat_id=cid,
             parsed_meta=parsed_meta,
             source_id=source_id,
         )
@@ -212,17 +213,15 @@ class SandboxService:
 
     def search_sandbox_sources(
         self,
-        chat_id: Optional[str],
         query: str,
+        chat_id: Optional[str] = None,
         top_k: int = 3,
     ) -> List[DocumentContext]:
         """
-        Search active files in the chat sandbox and return DocumentContext objects.
+        Search active files across sandbox and return DocumentContext objects.
+        Sources are accessible globally across all chats.
         """
-        if not chat_id:
-            return []
-
-        sources = chat_history.list_chat_sources(chat_id, only_active=True)
+        sources = chat_history.list_chat_sources(only_active=True)
         if not sources:
             return []
 

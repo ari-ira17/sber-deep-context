@@ -48,7 +48,7 @@
                         </label>
                     </div>
                     <div id="sidebar-sources-container"
-                         hx-get="/api/chats/{{ active_chat_id or 'new' }}/sources/html"
+                         hx-get="/api/sources/html"
                          hx-trigger="refreshSources from:body"
                          hx-swap="innerHTML">
                         {% include "partials/sidebar_sources.html" %}
@@ -166,36 +166,17 @@
             const files = Array.from(filesList);
             if (!files.length) return;
 
-            let chatIdInput = document.getElementById('chat-id-input');
-            let activeChatId = chatIdInput ? chatIdInput.value : '';
-            if (!activeChatId) {
-                const m = window.location.pathname.match(/\/chats\/([a-zA-Z0-9_-]+)/);
-                if (m) activeChatId = m[1];
-            }
-            if (!activeChatId) activeChatId = 'new';
-
             const formData = new FormData();
             files.forEach(f => formData.append('files', f));
 
             try {
-                const res = await fetch(`/api/chats/${activeChatId}/upload`, {
+                const res = await fetch('/api/sources/upload', {
                     method: 'POST',
                     body: formData,
                 });
                 const data = await res.json();
-                if (data.success && data.chat_id) {
-                    if (chatIdInput && !chatIdInput.value) {
-                        chatIdInput.value = data.chat_id;
-                    }
-                    if (window.location.pathname === '/' || window.location.pathname === '') {
-                        window.history.replaceState({}, '', `/chats/${data.chat_id}`);
-                    }
-                    const srcContainer = document.getElementById('sidebar-sources-container');
-                    if (srcContainer) {
-                        srcContainer.setAttribute('hx-get', `/api/chats/${data.chat_id}/sources/html`);
-                    }
+                if (data.success) {
                     if (window.htmx) {
-                        htmx.trigger('body', 'refreshSidebar');
                         htmx.trigger('body', 'refreshSources');
                     }
                 }
@@ -206,19 +187,11 @@
 
         window.deleteSandboxSource = async function(sourceId, event) {
             if (event) event.stopPropagation();
-            let chatIdInput = document.getElementById('chat-id-input');
-            let activeChatId = chatIdInput ? chatIdInput.value : '';
-            if (!activeChatId) {
-                const m = window.location.pathname.match(/\/chats\/([a-zA-Z0-9_-]+)/);
-                if (m) activeChatId = m[1];
-            }
-            if (!activeChatId || activeChatId === 'new') return;
-
             const item = document.getElementById(`source-item-${sourceId}`);
             if (item) item.style.opacity = '0.3';
 
             try {
-                const res = await fetch(`/api/chats/${activeChatId}/sources/${sourceId}`, {
+                const res = await fetch(`/api/sources/${sourceId}`, {
                     method: 'DELETE',
                 });
                 const data = await res.json();

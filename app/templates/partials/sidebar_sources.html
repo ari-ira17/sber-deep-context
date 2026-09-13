@@ -1,17 +1,21 @@
 <div class="sidebar-sources-list" id="sidebar-sources-list">
     {% for s in sandbox_sources %}
-    <div class="source-item-wrapper" id="source-item-{{ s.id }}">
+    <div class="source-item-wrapper {% if not s.is_active %}source-inactive{% endif %}" id="source-item-{{ s.id }}">
+        <label class="source-toggle-label" title="{% if s.is_active %}Используется в контексте (нажмите, чтобы отключить){% else %}Отключен (нажмите, чтобы включить){% endif %}" onclick="event.stopPropagation();">
+            <input type="checkbox" class="source-toggle-input" 
+                   {% if s.is_active %}checked{% endif %}
+                   hx-post="/api/sources/{{ s.id }}/toggle"
+                   hx-target="#sidebar-sources-container"
+                   hx-swap="innerHTML">
+            <span class="source-toggle-custom"></span>
+        </label>
         <div class="source-item" onclick="openEvidenceInspector('sandbox-{{ s.id }}')" title="Открыть [{{ s.filename }}] в инспекторе">
-            <svg class="source-item-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-            </svg>
             <span class="source-item-name">{{ s.filename }}</span>
             <span class="source-item-type">{{ s.file_type | upper }}</span>
         </div>
         <button type="button" class="delete-source-btn" 
                 onclick="window.deleteSandboxSource('{{ s.id }}', event)" 
-                title="Удалить файл из песочницы">
+                title="Удалить файл">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>

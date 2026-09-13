@@ -238,11 +238,11 @@ class EvidenceService:
         }
 
         sibling_docs = []
-        for s in chat_history.list_chat_sources(src["chat_id"]):
+        for s in chat_history.list_chat_sources():
             if s["id"] != src["id"]:
                 sibling_docs.append({
                     "slug": f"sandbox-{s['id']}",
-                    "section": "Песочница",
+                    "section": "Пользовательские файлы",
                     "topic": s["file_type"].upper(),
                     "title": f"📎 {s['filename']}",
                 })
@@ -253,10 +253,10 @@ class EvidenceService:
             "product_code": "ФАЙЛ",
             "product_name": "Пользовательский файл",
             "product_color": "#8B5CF6",
-            "section": "Песочница чата",
+            "section": "Пользовательские документы",
             "owner": "Пользователь",
             "lifecycle": "active",
-            "quality_tags": ["сессионный_файл", ftype.upper()],
+            "quality_tags": ["пользовательский_файл", ftype.upper()],
             "updated_at": src["created_at"][:10],
             "valid_from": src["created_at"][:10],
             "doc_html": rendered_html,
@@ -505,7 +505,7 @@ class EvidenceService:
                     f'<button type="button" class="evidence-pill" '
                     f'onclick="openEvidenceInspector(\'{safe_slug}\')" '
                     f'data-slug="{safe_slug}" '
-                    f'title="Открыть сессионный файл [{safe_label}] в Evidence Inspector">'
+                    f'title="Открыть документ [{safe_label}] в Evidence Inspector">'
                     f'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">'
                     f'<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>'
                     f'</svg>'

@@ -327,6 +327,59 @@ body {
   background: var(--glass-btn-hover);
 }
 
+.source-item-wrapper.source-inactive {
+  opacity: 0.5;
+}
+
+.source-item-wrapper.source-inactive:hover {
+  opacity: 0.85;
+}
+
+.source-item-wrapper.source-inactive .source-item-name {
+  color: var(--text-muted);
+}
+
+.source-toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 4px 0 4px 6px;
+  user-select: none;
+}
+
+.source-toggle-input {
+  display: none;
+}
+
+.source-toggle-custom {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  border: 1.5px solid var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.source-toggle-input:checked + .source-toggle-custom {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.source-toggle-input:checked + .source-toggle-custom::after {
+  content: '';
+  width: 3.5px;
+  height: 7px;
+  border: solid white;
+  border-width: 0 1.8px 1.8px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
 .source-item {
   flex: 1;
   display: flex;
@@ -2043,4 +2096,88 @@ body.dark-mode .evidence-toast.toast-info {
 .evidence-error .err-icon { font-size: 2.5rem; margin-bottom: 1rem; }
 .evidence-error h3 { margin: 0 0 0.5rem 0; color: var(--text-main); }
 .evidence-error p { color: var(--text-muted); margin-bottom: 1.5rem; }
+
+/* ================================
+   FAVORITE CHAT BUTTON
+   ================================ */
+
+.favorite-chat-btn {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+    color: #8b95a7;
+
+    cursor: pointer;
+
+    opacity: 0;
+    transform: scale(0.92);
+
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+/* Показываем кнопки при наведении на чат */
+.history-item-wrapper:hover .favorite-chat-btn,
+.history-item-wrapper.active .favorite-chat-btn,
+.favorite-chat-btn.favorite-active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Наведение */
+.favorite-chat-btn:hover {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+    transform: scale(1.08);
+}
+
+/* Активное избранное */
+.favorite-chat-btn.favorite-active {
+    color: #f5b942;
+    background: rgba(245, 185, 66, 0.10);
+}
+
+/* Наведение на уже избранное */
+.favorite-chat-btn.favorite-active:hover {
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.16);
+    transform: scale(1.08);
+}
+
+/* Иконка */
+.favorite-icon {
+    display: block;
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+/* Небольшая анимация при наведении */
+.favorite-chat-btn:hover .favorite-icon {
+    transform: rotate(-8deg) scale(1.08);
+}
+
+/* Нажатие */
+.favorite-chat-btn:active {
+    transform: scale(0.88);
+}
+
+/* Активная звезда */
+.favorite-chat-btn.favorite-active .favorite-icon {
+    filter: drop-shadow(0 0 4px rgba(245, 185, 66, 0.35));
+}
 

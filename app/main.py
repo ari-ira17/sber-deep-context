@@ -51,6 +51,7 @@ graph_cache: Dict[str, OrchestratorResponse] = {}
 async def index(request: Request):
     """Главная страница нового чата"""
     chats = chat_history.list_chats()
+    sandbox_sources = chat_history.list_chat_sources()
     return templates.TemplateResponse(
         request=request,
         name="chat.html",
@@ -58,7 +59,7 @@ async def index(request: Request):
             "chats": chats,
             "messages": [],
             "active_chat_id": None,
-            "sandbox_sources": [],
+            "sandbox_sources": sandbox_sources,
         },
     )
 
@@ -71,7 +72,7 @@ async def get_chat(request: Request, chat_id: str):
         return RedirectResponse(url="/", status_code=303)
     chats = chat_history.list_chats()
     messages = chat_history.get_chat_messages(chat_id)
-    sandbox_sources = chat_history.list_chat_sources(chat_id, only_active=True)
+    sandbox_sources = chat_history.list_chat_sources()
     return templates.TemplateResponse(
         request=request,
         name="chat.html",
@@ -117,68 +118,93 @@ async def delete_chat_endpoint(request: Request, chat_id: str):
     return response
 
 
+@app.post("/api/sources/upload")
 @app.post("/api/chats/{chat_id}/upload")
 async def upload_sandbox_files(
-    chat_id: str,
     files: List[UploadFile] = File(...),
+    chat_id: Optional[str] = None,
 ):
-    """Загружает пользовательские файлы в изолированную песочницу чата."""
-    clean_id = (chat_id or "").strip()
-    if not clean_id or clean_id == "new" or not chat_history.get_chat(clean_id):
-        first_name = files[0].filename if files else "файл"
-        clean_id = chat_history.create_chat(title=f"Файл: {first_name[:30]}")
-
+    """Загружает пользовательские файлы в песочницу (глобально доступные источники без создания чата)."""
     uploaded_records = []
     for file in files:
         content = await file.read()
         if not content:
             continue
         rec = sandbox_service.save_and_register_file(
-            chat_id=clean_id,
             filename=file.filename or "uploaded_file",
             file_bytes=content,
+            chat_id="global",
         )
         uploaded_records.append(rec)
 
-    all_sources = chat_history.list_chat_sources(clean_id, only_active=True)
+    all_sources = chat_history.list_chat_sources()
     return JSONResponse({
         "success": True,
-        "chat_id": clean_id,
         "uploaded": uploaded_records,
         "sources": all_sources,
     })
 
 
+@app.get("/api/sources")
 @app.get("/api/chats/{chat_id}/sources")
-async def get_sandbox_sources(chat_id: str):
-    """Возвращает список активных файлов песочницы чата."""
-    sources = chat_history.list_chat_sources(chat_id, only_active=True)
+async def get_sandbox_sources(chat_id: Optional[str] = None):
+    """Возвращает список всех файлов песочницы."""
+    sources = chat_history.list_chat_sources()
     return JSONResponse({"sources": sources})
 
 
+@app.get("/api/sources/html", response_class=HTMLResponse)
 @app.get("/api/chats/{chat_id}/sources/html", response_class=HTMLResponse)
-async def get_sandbox_sources_html(request: Request, chat_id: str):
+async def get_sandbox_sources_html(request: Request, chat_id: Optional[str] = None):
     """Возвращает HTML-список файлов песочницы для сайдбара."""
-    clean_id = (chat_id or "").strip()
-    if not clean_id or clean_id in ("new", "None", "null"):
-        sandbox_sources = []
-    else:
-        sandbox_sources = chat_history.list_chat_sources(clean_id, only_active=True)
+    sandbox_sources = chat_history.list_chat_sources()
     return templates.TemplateResponse(
         request=request,
         name="partials/sidebar_sources.html",
-        context={"request": request, "sandbox_sources": sandbox_sources, "active_chat_id": clean_id},
+        context={"request": request, "sandbox_sources": sandbox_sources},
     )
 
 
+@app.post("/api/sources/{source_id}/toggle", response_class=HTMLResponse)
+@app.post("/api/chats/{chat_id}/sources/{source_id}/toggle", response_class=HTMLResponse)
+async def toggle_source_endpoint(request: Request, source_id: str, chat_id: Optional[str] = None):
+    """Переключает статус активности источника в контексте и возвращает обновленный список для сайдбара."""
+    chat_history.toggle_chat_source(source_id)
+    sandbox_sources = chat_history.list_chat_sources()
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/sidebar_sources.html",
+        context={"request": request, "sandbox_sources": sandbox_sources},
+    )
+
+
+@app.delete("/api/sources/{source_id}")
 @app.delete("/api/chats/{chat_id}/sources/{source_id}")
-async def delete_sandbox_source(chat_id: str, source_id: str):
-    """Удаляет файл из песочницы чата."""
+async def delete_sandbox_source(source_id: str, chat_id: Optional[str] = None):
+    """Удаляет файл из песочницы."""
     success = chat_history.delete_chat_source(source_id)
-    remaining = chat_history.list_chat_sources(chat_id, only_active=True)
+    remaining = chat_history.list_chat_sources()
     return JSONResponse({"success": success, "sources": remaining})
 
 
+@app.post("/chats/{chat_id}/favorite", response_class=HTMLResponse)
+async def toggle_favorite_endpoint(request: Request, chat_id: str):
+    """Переключает избранное состояние чата и обновляет боковую панель."""
+    chat_history.toggle_favorite(chat_id)
+
+    chats = chat_history.list_chats()
+
+    current_url = request.headers.get("HX-Current-URL", "")
+    active_chat_id = chat_id if chat_id in current_url else None
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/sidebar_chats.html",
+        context={
+            "chats": chats,
+            "active_chat_id": active_chat_id,
+        },
+    )
 @app.post("/ask", response_class=HTMLResponse)
 async def ask(request: Request, query: str = Form(...), chat_id: Optional[str] = Form(None)):
     """Принимает запрос пользователя, сохраняет его в БД и возвращает блок с лоадером."""
@@ -211,8 +237,8 @@ async def bot_reply(request: Request, query: str, chat_id: Optional[str] = None)
     clean_query = query.strip()
     raw_answer = ""
     try:
-        # Поиск по файлам песочницы текущего чата
-        sandbox_docs = sandbox_service.search_sandbox_sources(chat_id=chat_id, query=clean_query, top_k=3)
+        # Поиск по активным файлам песочницы (глобально включенные источники)
+        sandbox_docs = sandbox_service.search_sandbox_sources(query=clean_query, top_k=3)
 
         resp: OrchestratorResponse = await orchestrator.aask(clean_query, extra_documents=sandbox_docs)
         graph_cache[clean_query] = resp

@@ -29,11 +29,12 @@ def init_db() -> None:
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS chats (
-                id TEXT PRIMARY KEY,
-                title TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
-            );
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            is_favorite INTEGER NOT NULL DEFAULT 0
+        );
             """
         )
         conn.execute(
@@ -54,7 +55,7 @@ def init_db() -> None:
             """
             CREATE TABLE IF NOT EXISTS chat_sources (
                 id TEXT PRIMARY KEY,
-                chat_id TEXT NOT NULL,
+                chat_id TEXT DEFAULT 'global',
                 filename TEXT NOT NULL,
                 file_path TEXT NOT NULL,
                 file_type TEXT NOT NULL,
@@ -62,15 +63,45 @@ def init_db() -> None:
                 is_active INTEGER DEFAULT 1,
                 text_content TEXT,
                 parsed_meta_json TEXT,
-                created_at TEXT NOT NULL,
-                FOREIGN KEY(chat_id) REFERENCES chats(id) ON DELETE CASCADE
+                created_at TEXT NOT NULL
             );
             """
         )
+        try:
+            # Recreate chat_sources if it was created with foreign key
+            fk_info = conn.execute("PRAGMA foreign_key_list(chat_sources);").fetchall()
+            if fk_info:
+                conn.execute("DROP TABLE IF EXISTS chat_sources;")
+                conn.execute(
+                    """
+                    CREATE TABLE chat_sources (
+                        id TEXT PRIMARY KEY,
+                        chat_id TEXT DEFAULT 'global',
+                        filename TEXT NOT NULL,
+                        file_path TEXT NOT NULL,
+                        file_type TEXT NOT NULL,
+                        size_bytes INTEGER NOT NULL,
+                        is_active INTEGER DEFAULT 1,
+                        text_content TEXT,
+                        parsed_meta_json TEXT,
+                        created_at TEXT NOT NULL
+                    );
+                    """
+                )
+        except Exception:
+            pass
+        try:
+            conn.execute(
+                "ALTER TABLE chats ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0"
+            )
+        except sqlite3.OperationalError:
+            # Колонка уже существует
+            pass
         conn.execute("CREATE INDEX IF NOT EXISTS idx_messages_chat_id ON messages(chat_id);")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_chat_sources_chat_id ON chat_sources(chat_id);")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_chats_updated_at ON chats(updated_at DESC);")
         conn.commit()
+        
 
 
 def list_chats() -> List[Dict[str, Any]]:
@@ -78,7 +109,11 @@ def list_chats() -> List[Dict[str, Any]]:
     init_db()
     with _get_connection() as conn:
         rows = conn.execute(
-            "SELECT id, title, created_at, updated_at FROM chats ORDER BY updated_at DESC"
+            """
+            SELECT id, title, created_at, updated_at, is_favorite
+            FROM chats
+            ORDER BY is_favorite DESC, updated_at DESC
+            """
         ).fetchall()
         return [dict(row) for row in rows]
 
@@ -88,7 +123,11 @@ def get_chat(chat_id: str) -> Optional[Dict[str, Any]]:
     init_db()
     with _get_connection() as conn:
         row = conn.execute(
-            "SELECT id, title, created_at, updated_at FROM chats WHERE id = ?",
+            """
+            SELECT id, title, created_at, updated_at, is_favorite
+            FROM chats
+            WHERE id = ?
+            """,
             (chat_id,),
         ).fetchone()
         return dict(row) if row else None
@@ -120,24 +159,41 @@ def update_chat_title(chat_id: str, title: str) -> None:
         )
         conn.commit()
 
+def toggle_favorite(chat_id: str) -> bool:
+    """Переключить статус избранного для чата."""
+    init_db()
+
+    with _get_connection() as conn:
+        row = conn.execute(
+            "SELECT is_favorite FROM chats WHERE id = ?",
+            (chat_id,),
+        ).fetchone()
+
+        if not row:
+            return False
+
+        new_value = 0 if row["is_favorite"] else 1
+
+        conn.execute(
+            """
+            UPDATE chats
+            SET is_favorite = ?
+            WHERE id = ?
+            """,
+            (new_value, chat_id),
+        )
+        conn.commit()
+
+        return bool(new_value)
+
 
 def delete_chat(chat_id: str) -> None:
-    """Delete a chat session, its messages, attachments, and sandbox files."""
+    """Delete a chat session and its messages."""
     init_db()
     with _get_connection() as conn:
         conn.execute("DELETE FROM messages WHERE chat_id = ?", (chat_id,))
-        conn.execute("DELETE FROM chat_sources WHERE chat_id = ?", (chat_id,))
         conn.execute("DELETE FROM chats WHERE id = ?", (chat_id,))
         conn.commit()
-
-    # Clean up files from disk if any
-    sandbox_dir = Path("data") / "sandbox_uploads" / chat_id
-    if sandbox_dir.exists():
-        import shutil
-        try:
-            shutil.rmtree(sandbox_dir)
-        except Exception:
-            pass
 
 
 def add_message(
@@ -234,18 +290,19 @@ def get_chat_messages(chat_id: str) -> List[Dict[str, Any]]:
 
 
 def add_chat_source(
-    chat_id: str,
     filename: str,
     file_path: str,
     file_type: str,
     size_bytes: int,
     text_content: str,
+    chat_id: Optional[str] = "global",
     parsed_meta: Optional[Dict[str, Any]] = None,
     source_id: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Register an uploaded user file in chat sandbox."""
+    """Register an uploaded user file in global sandbox."""
     init_db()
     sid = source_id or str(uuid.uuid4())
+    cid = chat_id or "global"
     now = datetime.now().isoformat()
     meta_json = json.dumps(parsed_meta, ensure_ascii=False) if parsed_meta else None
 
@@ -256,13 +313,13 @@ def add_chat_source(
             (id, chat_id, filename, file_path, file_type, size_bytes, is_active, text_content, parsed_meta_json, created_at)
             VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?)
             """,
-            (sid, chat_id, filename, file_path, file_type, size_bytes, text_content, meta_json, now),
+            (sid, cid, filename, file_path, file_type, size_bytes, text_content, meta_json, now),
         )
         conn.commit()
 
     return {
         "id": sid,
-        "chat_id": chat_id,
+        "chat_id": cid,
         "filename": filename,
         "file_path": file_path,
         "file_type": file_type,
@@ -274,8 +331,8 @@ def add_chat_source(
     }
 
 
-def list_chat_sources(chat_id: str, only_active: bool = False) -> List[Dict[str, Any]]:
-    """Return all sandbox files uploaded to a specific chat."""
+def list_chat_sources(chat_id: Optional[str] = None, only_active: bool = False) -> List[Dict[str, Any]]:
+    """Return sandbox files. Sources are globally accessible across all chats."""
     init_db()
     with _get_connection() as conn:
         if only_active:
@@ -283,20 +340,17 @@ def list_chat_sources(chat_id: str, only_active: bool = False) -> List[Dict[str,
                 """
                 SELECT id, chat_id, filename, file_path, file_type, size_bytes, is_active, text_content, parsed_meta_json, created_at
                 FROM chat_sources
-                WHERE chat_id = ? AND is_active = 1
+                WHERE is_active = 1
                 ORDER BY created_at ASC
-                """,
-                (chat_id,),
+                """
             ).fetchall()
         else:
             rows = conn.execute(
                 """
                 SELECT id, chat_id, filename, file_path, file_type, size_bytes, is_active, text_content, parsed_meta_json, created_at
                 FROM chat_sources
-                WHERE chat_id = ?
                 ORDER BY created_at ASC
-                """,
-                (chat_id,),
+                """
             ).fetchall()
 
         sources = []
