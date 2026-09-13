@@ -72,19 +72,30 @@ def parse_table_data(text: str) -> Optional[Dict[str, Any]]:
             "total_rows": len(rows),
         }
 
-    # Check for CSV delimiter (comma or semicolon)
-    first_line = lines[0]
+    # Check for CSV delimiter (comma or semicolon) anywhere in the text
+    table_lines = []
     delimiter = None
-    if ";" in first_line:
-        delimiter = ";"
-    elif "," in first_line:
-        delimiter = ","
+    
+    for line in lines:
+        if delimiter:
+            if delimiter in line:
+                table_lines.append(line)
+            else:
+                # Table ended
+                break
+        else:
+            if ";" in line and line.count(";") > 1:
+                delimiter = ";"
+                table_lines.append(line)
+            elif "," in line and line.count(",") > 1:
+                delimiter = ","
+                table_lines.append(line)
 
-    if delimiter:
+    if delimiter and len(table_lines) > 1:
         try:
             import csv
             import io
-            reader = csv.reader(io.StringIO(clean_text), delimiter=delimiter)
+            reader = csv.reader(io.StringIO("\n".join(table_lines)), delimiter=delimiter)
             rows = list(reader)
             if rows and len(rows) > 1:
                 return {
@@ -97,6 +108,48 @@ def parse_table_data(text: str) -> Optional[Dict[str, Any]]:
             logger.debug(f"Failed CSV parse: {e}")
 
     return None
+
+
+def convert_csv_tables_to_markdown(text: str) -> str:
+    \"\"\"Finds semicolon-delimited CSV tables in text and converts them to Markdown tables.\"\"\"
+    import csv
+    import io
+
+    lines = text.splitlines()
+    out_lines = []
+    table_buffer = []
+
+    def flush_table_buffer():
+        if not table_buffer:
+            return
+        reader = csv.reader(io.StringIO("\\n".join(table_buffer)), delimiter=";")
+        try:
+            rows = list(reader)
+        except Exception:
+            out_lines.extend(table_buffer)
+            table_buffer.clear()
+            return
+
+        if len(rows) > 1 and len(rows[0]) > 1:
+            for i, row in enumerate(rows):
+                md_line = "| " + " | ".join(cell.replace("\\n", " ").strip() for cell in row) + " |"
+                out_lines.append(md_line)
+                if i == 0:
+                    sep_line = "| " + " | ".join(["---"] * len(row)) + " |"
+                    out_lines.append(sep_line)
+        else:
+            out_lines.extend(table_buffer)
+        table_buffer.clear()
+
+    for line in lines:
+        if ";" in line and line.count(";") >= 2:
+            table_buffer.append(line)
+        else:
+            flush_table_buffer()
+            out_lines.append(line)
+
+    flush_table_buffer()
+    return "\\n".join(out_lines)
 
 
 def format_code_with_lines(code_text: str, lang: str = "text") -> str:
@@ -274,6 +327,7 @@ class EvidenceService:
             title = f"{p_name}: {slug}" if p_name else slug
 
         # Render document markdown to rich HTML
+        doc_markdown = convert_csv_tables_to_markdown(doc_markdown)
         rendered_doc_html = markdown.markdown(
             doc_markdown,
             extensions=["extra", "tables", "fenced_code", "nl2br"]
