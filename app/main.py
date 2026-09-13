@@ -113,6 +113,25 @@ async def delete_chat_endpoint(request: Request, chat_id: str):
     return response
 
 
+@app.post("/chats/{chat_id}/favorite", response_class=HTMLResponse)
+async def toggle_favorite_endpoint(request: Request, chat_id: str):
+    """Переключает избранное состояние чата и обновляет боковую панель."""
+    chat_history.toggle_favorite(chat_id)
+
+    chats = chat_history.list_chats()
+
+    current_url = request.headers.get("HX-Current-URL", "")
+    active_chat_id = chat_id if chat_id in current_url else None
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/sidebar_chats.html",
+        context={
+            "chats": chats,
+            "active_chat_id": active_chat_id,
+        },
+    )
+
 @app.post("/ask", response_class=HTMLResponse)
 async def ask(request: Request, query: str = Form(...), chat_id: Optional[str] = Form(None)):
     """Принимает запрос пользователя, сохраняет его в БД и возвращает блок с лоадером."""

@@ -29,11 +29,12 @@ def init_db() -> None:
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS chats (
-                id TEXT PRIMARY KEY,
-                title TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
-            );
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            is_favorite INTEGER NOT NULL DEFAULT 0
+        );
             """
         )
         conn.execute(
@@ -50,9 +51,17 @@ def init_db() -> None:
             );
             """
         )
+        try:
+            conn.execute(
+                "ALTER TABLE chats ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0"
+            )
+        except sqlite3.OperationalError:
+            # Колонка уже существует
+            pass
         conn.execute("CREATE INDEX IF NOT EXISTS idx_messages_chat_id ON messages(chat_id);")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_chats_updated_at ON chats(updated_at DESC);")
         conn.commit()
+        
 
 
 def list_chats() -> List[Dict[str, Any]]:
@@ -60,7 +69,11 @@ def list_chats() -> List[Dict[str, Any]]:
     init_db()
     with _get_connection() as conn:
         rows = conn.execute(
-            "SELECT id, title, created_at, updated_at FROM chats ORDER BY updated_at DESC"
+            """
+            SELECT id, title, created_at, updated_at, is_favorite
+            FROM chats
+            ORDER BY is_favorite DESC, updated_at DESC
+            """
         ).fetchall()
         return [dict(row) for row in rows]
 
@@ -70,7 +83,11 @@ def get_chat(chat_id: str) -> Optional[Dict[str, Any]]:
     init_db()
     with _get_connection() as conn:
         row = conn.execute(
-            "SELECT id, title, created_at, updated_at FROM chats WHERE id = ?",
+            """
+            SELECT id, title, created_at, updated_at, is_favorite
+            FROM chats
+            WHERE id = ?
+            """,
             (chat_id,),
         ).fetchone()
         return dict(row) if row else None
@@ -101,6 +118,33 @@ def update_chat_title(chat_id: str, title: str) -> None:
             (title.strip(), now, chat_id),
         )
         conn.commit()
+
+def toggle_favorite(chat_id: str) -> bool:
+    """Переключить статус избранного для чата."""
+    init_db()
+
+    with _get_connection() as conn:
+        row = conn.execute(
+            "SELECT is_favorite FROM chats WHERE id = ?",
+            (chat_id,),
+        ).fetchone()
+
+        if not row:
+            return False
+
+        new_value = 0 if row["is_favorite"] else 1
+
+        conn.execute(
+            """
+            UPDATE chats
+            SET is_favorite = ?
+            WHERE id = ?
+            """,
+            (new_value, chat_id),
+        )
+        conn.commit()
+
+        return bool(new_value)
 
 
 def delete_chat(chat_id: str) -> None:
