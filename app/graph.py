@@ -4,26 +4,26 @@ import re
 from typing import Optional, List, Dict, Any
 from pathlib import Path
 
-# Product color palette matching Participant 4
+
 PRODUCT_COLOR_PALETTE: Dict[str, str] = {
-    "P701": "#FF6B6B",  # Искра (red-orange)
-    "P702": "#4D96FF",  # Росинка (blue)
-    "P703": "#FFD93D",  # Янтарь (amber)
-    "P704": "#6BCB77",  # Мостик (green)
-    "P705": "#9B51E0",  # Тихая Гавань (purple)
-    "P706": "#FF9F45",  # Лавка (orange)
-    "P707": "#F24A72",  # Комета (crimson)
-    "P708": "#00C897",  # Призма (teal)
-    "P709": "#2F80ED",  # Орбитариум (sapphire)
-    "P710": "#56CCF2",  # Парус (cyan)
-    "P711": "#EB5757",  # Бастион (ruby)
-    "P712": "#F2994A",  # Ритм (coral)
-    "P713": "#BB6BD9",  # Зонтик (lilac)
-    "P714": "#828282",  # Созвездие (slate)
-    "P715": "#27AE60",  # Мозаика (emerald)
-    "P716": "#E2B93B",  # Маховик (gold)
-    "P717": "#795548",  # Пергамент (bronze)
-    "P718": "#607D8B",  # Облачный Сад (blue-grey)
+    "P701": "#FF6B6B",  
+    "P702": "#4D96FF",  
+    "P703": "#FFD93D",  
+    "P704": "#6BCB77",  
+    "P705": "#9B51E0",  
+    "P706": "#FF9F45",  
+    "P707": "#F24A72",  
+    "P708": "#00C897",  
+    "P709": "#2F80ED",  
+    "P710": "#56CCF2",  
+    "P711": "#EB5757",  
+    "P712": "#F2994A",  
+    "P713": "#BB6BD9",  
+    "P714": "#828282",  
+    "P715": "#27AE60",  
+    "P716": "#E2B93B",  
+    "P717": "#795548",  
+    "P718": "#607D8B",  
 }
 
 
@@ -339,7 +339,7 @@ def get_graph_html(
         raw_edges = []
         node_data = {}
 
-        # 1. Central query node
+        
         raw_nodes.append({
             "id": 1,
             "label": f'"{query[:28]}..."' if len(query) > 28 else f'"{query}"',
@@ -352,7 +352,7 @@ def get_graph_html(
             "slug": "",
         }
 
-        # 2. Document nodes and edges
+        
         top_score_val = None
         for i, doc in enumerate(documents[:6]):
             doc_id = i + 2
@@ -397,7 +397,7 @@ def get_graph_html(
                 "dashes": False,
             })
 
-            # 3. Attachment node if present
+            
             att_path = getattr(doc, "attachment_path", None)
             att_format = getattr(doc, "attachment_format", None)
             if att_path or att_format:
@@ -437,7 +437,7 @@ def get_graph_html(
                 score_display = "96.4%"
 
     else:
-        # Fallback mock nodes
+        
         raw_nodes = [
             {"id": 1, "label": f'"{query[:28]}..."' if len(query) > 28 else f'"{query}"', "border": "#10b981", "size": 30},
             {"id": 2, "label": "P701 (Искра)", "border": "#3b82f6", "size": 22},
@@ -494,7 +494,7 @@ def get_document_graph_html(
     raw_edges = []
     node_data = {}
 
-    # 1. Main central document node
+    
     doc_short_title = title if len(title) <= 24 else title[:22] + "..."
     raw_nodes.append({
         "id": 1,
@@ -509,7 +509,7 @@ def get_document_graph_html(
         "slug": slug,
     }
 
-    # 2. Product Hub node
+    
     prod_label = f"🏷️ {p_name} ({p_code})" if p_name else p_code
     raw_nodes.append({
         "id": 2,
@@ -532,7 +532,7 @@ def get_document_graph_html(
 
     current_id = 3
 
-    # 3. Attachment node if present
+    
     att = ev.get("attachment")
     if att:
         att_filename = att.get("filename", "Вложение")
@@ -559,7 +559,7 @@ def get_document_graph_html(
         })
         current_id += 1
 
-    # 4. Sibling documents in the same product
+    
     related_docs = ev.get("related_documents") or []
     for sib in related_docs[:5]:
         sib_slug = sib.get("slug")
@@ -586,7 +586,7 @@ def get_document_graph_html(
         })
         current_id += 1
 
-    # 5. Cross-referenced links in the document markdown
+    
     linked_slugs = set(re.findall(r"openEvidenceInspector\(['\"]([a-zA-Z0-9_\-]+)['\"]", rendered_doc))
     for l_slug in list(linked_slugs)[:4]:
         if l_slug == slug or any(node_data.get(str(nid), {}).get("slug") == l_slug for nid in range(1, current_id)):

@@ -44,7 +44,7 @@ class RRFFusion:
         docs_map: Dict[str, Dict[str, Any]] = {}
         rank_info: Dict[str, Dict[str, Any]] = {}
 
-        # 1. Process Dense Results
+        
         for rank, doc in enumerate(dense_results, start=1):
             doc_id = self._get_doc_key(doc)
             if not doc_id:
@@ -59,7 +59,7 @@ class RRFFusion:
             rank_info[doc_id]["dense_rank"] = rank
             rank_info[doc_id]["dense_score"] = doc.get("score", 0.0)
 
-        # 2. Process BM25 Results
+        
         for rank, doc in enumerate(bm25_results, start=1):
             doc_id = self._get_doc_key(doc)
             if not doc_id:
@@ -76,10 +76,10 @@ class RRFFusion:
             rank_info[doc_id]["bm25_rank"] = rank
             rank_info[doc_id]["bm25_score"] = doc.get("score", 0.0)
 
-        # 3. Sort by RRF score descending
+        
         sorted_doc_ids = sorted(rrf_scores.keys(), key=lambda d: rrf_scores[d], reverse=True)
 
-        # 4. Construct final document list
+        
         fused_documents = []
         for doc_id in sorted_doc_ids[:top_k]:
             doc_copy = dict(docs_map[doc_id])

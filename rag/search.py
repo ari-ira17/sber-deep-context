@@ -65,7 +65,7 @@ def to_document_context(doc: Dict[str, Any]) -> DocumentContext:
     except (ValueError, TypeError):
         score = 0.0
 
-    # Methodology version: may be int or string
+    
     mv = doc.get("methodology_version") or meta.get("methodology_version")
     try:
         mv = int(mv) if mv is not None else None
@@ -109,7 +109,7 @@ class HybridSearchEngine:
     ):
         self.config = self._load_config(config_path)
         
-        # Load from config or use fallbacks
+        
         k_rrf = self.config.get("search", {}).get("k_rrf", 60)
         reranker_model = self.config.get("models", {}).get("reranker", "BAAI/bge-reranker-base")
         embedder_model = self.config.get("models", {}).get("embedder", "intfloat/multilingual-e5-base")
@@ -124,7 +124,7 @@ class HybridSearchEngine:
 
     def _load_config(self, config_path: Optional[str]) -> Dict[str, Any]:
         if not config_path:
-            # Default to configs/search_config.yaml in the project root
+            
             root_dir = os.path.dirname(os.path.dirname(__file__))
             config_path = os.path.join(root_dir, "configs", "search_config.yaml")
         
@@ -166,10 +166,10 @@ class HybridSearchEngine:
             4. RRF Fusion of Dense + BM25 results.
             5. Cross-Encoder Reranking of fused top candidates.
         """
-        # Alias support: query can be passed instead of query_text
+        
         effective_query = query_text or query or ""
 
-        # Apply config defaults if parameters are not provided
+        
         search_cfg = self.config.get("search", {})
         top_k = top_k if top_k is not None else search_cfg.get("top_k", 5)
         candidate_k = candidate_k if candidate_k is not None else search_cfg.get("candidate_k", 20)
@@ -177,7 +177,7 @@ class HybridSearchEngine:
         enable_fast_path = enable_fast_path if enable_fast_path is not None else search_cfg.get("enable_fast_path", True)
         min_reranker_score = search_cfg.get("min_reranker_score", 0.0)
 
-        # Step 1: Fast-Path Exact Metadata Match
+        
         if enable_fast_path and slug:
             exact_docs = self.metadata_filter.metadata_lookup(
                 slug=slug,
@@ -193,13 +193,13 @@ class HybridSearchEngine:
                 results = exact_docs[:top_k]
                 return to_document_contexts(results) if return_contexts else results
 
-        # Auto-embed effective_query if Participant 4 did not supply a vector
+        
         if query_vector and len(query_vector) == VECTOR_DIM:
             vec = query_vector
         else:
             vec = self.embedder.embed(effective_query)
 
-        # Step 2: Dense Search
+        
         dense_results = self.dense_search.search(
             query_vector=vec,
             top_k=candidate_k,
@@ -214,7 +214,7 @@ class HybridSearchEngine:
             quality_tag=quality_tag,
         )
 
-        # Step 3: BM25 Search
+        
         bm25_results = self.bm25_search.search(
             query_text=effective_query,
             top_k=candidate_k,
@@ -229,7 +229,7 @@ class HybridSearchEngine:
             quality_tag=quality_tag,
         )
 
-        # Step 4: RRF Fusion
+        
         fused_results = self.rrf_fusion.fuse(
             dense_results=dense_results,
             bm25_results=bm25_results,
@@ -239,14 +239,14 @@ class HybridSearchEngine:
         if not fused_results:
             return []
 
-        # Step 5: Cross-Encoder Reranking
+        
         if enable_reranker:
             final_results = self.reranker.rerank(
                 query=effective_query,
                 documents=fused_results,
                 top_n=top_k,
             )
-            # Filter out results below min score threshold
+            
             if min_reranker_score > 0.0:
                 final_results = [doc for doc in final_results if doc.get("score", 0) >= min_reranker_score]
         else:

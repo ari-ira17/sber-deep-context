@@ -25,8 +25,8 @@ def get_lance_schema() -> pa.Schema:
         pa.field("owner", pa.string()),
         pa.field("methodology_version", pa.int64()),
         pa.field("lifecycle", pa.string()),
-        pa.field("quality_tags_str", pa.string()),  # Comma-separated tags for SQL LIKE / FTS
-        pa.field("quality_tags_json", pa.string()), # Original JSON string
+        pa.field("quality_tags_str", pa.string()),  
+        pa.field("quality_tags_json", pa.string()), 
         pa.field("slug", pa.string()),
         pa.field("attachment_path", pa.string()),
         pa.field("attachment_format", pa.string()),
@@ -48,15 +48,15 @@ def format_document_record(doc: Dict[str, Any], vector: Optional[List[float]] = 
     else:
         metadata = doc
     
-    # Extract vector
+    
     vec = vector or doc.get("vector") or metadata.get("vector")
     if vec is None:
-        # Default zero vector if not provided
+        
         vec = [0.0] * VECTOR_DIM
     elif len(vec) != VECTOR_DIM:
         raise ValueError(f"Vector dimension mismatch: expected {VECTOR_DIM}, got {len(vec)}")
 
-    # Format quality tags
+    
     raw_tags = metadata.get("quality_tags") or doc.get("quality_tags") or metadata.get("quality_tags_json") or doc.get("quality_tags_json") or []
     if isinstance(raw_tags, str):
         try:
@@ -141,7 +141,7 @@ class LanceDBStorage:
             self._table = self.db.open_table(self.table_name)
             return self._table
 
-        # Auto-heal: If table does not exist in LanceDB, auto-ingest from dataset_with_vectors.json
+        
         vectors_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "dataset_with_vectors.json")
         if os.path.exists(vectors_path):
             try:
@@ -180,19 +180,19 @@ class LanceDBStorage:
         if tbl is None:
             return
         
-        # LanceDB scalar indexing for fast metadata filtering
+        
         for col in ["product_code", "slug", "owner", "section"]:
             try:
                 tbl.create_scalar_index(col, replace=True)
             except Exception as e:
-                # Log or ignore if scalar index creation is not supported for specific version
+                
                 pass
 
     def add_documents(self, documents: List[Dict[str, Any]], vectors: Optional[List[List[float]]] = None):
         """Add batch of documents with optional separate vectors list."""
         tbl = self.get_table()
         if tbl is None:
-            # Create table if it doesn't exist
+            
             records = []
             for i, doc in enumerate(documents):
                 vec = vectors[i] if vectors and i < len(vectors) else None

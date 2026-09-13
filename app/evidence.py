@@ -16,24 +16,24 @@ import markdown
 logger = logging.getLogger(__name__)
 
 PRODUCT_COLOR_PALETTE: Dict[str, str] = {
-    "P701": "#FF6B6B",  # Искра (red-orange)
-    "P702": "#4D96FF",  # Росинка (blue)
-    "P703": "#FFD93D",  # Янтарь (amber)
-    "P704": "#6BCB77",  # Мостик (green)
-    "P705": "#9B51E0",  # Тихая Гавань (purple)
-    "P706": "#FF9F45",  # Лавка (orange)
-    "P707": "#F24A72",  # Комета (crimson)
-    "P708": "#00C897",  # Призма (teal)
-    "P709": "#2F80ED",  # Орбитариум (sapphire)
-    "P710": "#56CCF2",  # Парус (cyan)
-    "P711": "#EB5757",  # Бастион (ruby)
-    "P712": "#F2994A",  # Ритм (coral)
-    "P713": "#BB6BD9",  # Зонтик (lilac)
-    "P714": "#828282",  # Созвездие (slate)
-    "P715": "#27AE60",  # Мозаика (emerald)
-    "P716": "#E2B93B",  # Маховик (gold)
-    "P717": "#795548",  # Пергамент (bronze)
-    "P718": "#607D8B",  # Облачный Сад (blue-grey)
+    "P701": "#FF6B6B",  
+    "P702": "#4D96FF",  
+    "P703": "#FFD93D",  
+    "P704": "#6BCB77",  
+    "P705": "#9B51E0",  
+    "P706": "#FF9F45",  
+    "P707": "#F24A72",  
+    "P708": "#00C897",  
+    "P709": "#2F80ED",  
+    "P710": "#56CCF2",  
+    "P711": "#EB5757",  
+    "P712": "#F2994A",  
+    "P713": "#BB6BD9",  
+    "P714": "#828282",  
+    "P715": "#27AE60",  
+    "P716": "#E2B93B",  
+    "P717": "#795548",  
+    "P718": "#607D8B",  
 }
 DEFAULT_PRODUCT_COLOR = "#10B981"
 
@@ -48,19 +48,19 @@ def parse_table_data(text: str) -> Optional[Dict[str, Any]]:
     if not lines:
         return None
 
-    # Check for Markdown table format (| col1 | col2 |)
+    
     if lines[0].startswith("|") and "|" in lines[0][1:]:
         header_parts = [c.strip() for c in lines[0].strip("|").split("|")]
         rows = []
         data_lines = lines[1:]
-        # Skip divider line if present (|---|---|)
+        
         if data_lines and "---" in data_lines[0]:
             data_lines = data_lines[1:]
         
         for dl in data_lines:
             if dl.startswith("|"):
                 cells = [c.strip() for c in dl.strip("|").split("|")]
-                # Pad cells if needed
+                
                 while len(cells) < len(header_parts):
                     cells.append("")
                 rows.append(cells[:len(header_parts)])
@@ -72,7 +72,7 @@ def parse_table_data(text: str) -> Optional[Dict[str, Any]]:
             "total_rows": len(rows),
         }
 
-    # Check for CSV delimiter (comma or semicolon) anywhere in the text
+    
     table_lines = []
     delimiter = None
     
@@ -81,7 +81,7 @@ def parse_table_data(text: str) -> Optional[Dict[str, Any]]:
             if delimiter in line:
                 table_lines.append(line)
             else:
-                # Table ended
+                
                 break
         else:
             if ";" in line and line.count(";") > 1:
@@ -130,7 +130,7 @@ def convert_csv_tables_to_markdown(text: str) -> str:
             table_buffer.clear()
             return
 
-        # Strip trailing empty cell if line ended with semicolon
+        
         cleaned_rows = []
         for r in rows:
             if r and r[-1] == "":
@@ -250,7 +250,7 @@ class EvidenceService:
         if slug in self.by_doc_id:
             return self.by_doc_id[slug]
         
-        # Case-insensitive or normalized fallback
+        
         slug_lower = slug.lower().strip()
         for k, v in self.by_slug.items():
             if k.lower() == slug_lower:
@@ -454,7 +454,7 @@ class EvidenceService:
         meta = item["metadata"]
         page_content = rec.get("page_content", "")
 
-        # Split document text and attachment text
+        
         doc_markdown = page_content
         attachment_text = ""
         if "--- Текст вложения ---" in page_content:
@@ -462,7 +462,7 @@ class EvidenceService:
             doc_markdown = parts[0].strip()
             attachment_text = parts[1].strip()
 
-        # Smart title extraction
+        
         title = ""
         for line in doc_markdown.splitlines():
             line_str = line.strip()
@@ -524,7 +524,7 @@ class EvidenceService:
         if not title:
             title = f"{p_name}: {slug}" if p_name else slug
 
-        # Render document markdown to rich HTML
+        
         doc_markdown = convert_csv_tables_to_markdown(doc_markdown)
         rendered_doc_html = markdown.markdown(
             doc_markdown,
@@ -532,7 +532,7 @@ class EvidenceService:
         )
         rendered_doc_html = self.transform_wiki_links(rendered_doc_html)
 
-        # Process attachment
+        
         attachment_info = None
         att_path = meta.get("attachment_path")
         att_format = (meta.get("attachment_format") or "").lower().lstrip(".")
@@ -540,7 +540,7 @@ class EvidenceService:
         if att_path or attachment_text:
             rel_file_path = att_path.replace("knowledge_attachments/", "") if att_path else ""
             
-            # Check if physical file exists for direct viewing
+            
             file_exists_on_disk = False
             image_url = None
             if rel_file_path:
@@ -551,12 +551,12 @@ class EvidenceService:
                         norm_rel = rel_file_path.replace('\\', '/')
                         image_url = f"/attachments/{norm_rel}"
 
-            # Check for tabular data (CSV / TSV)
+            
             table_data = None
             if att_format in ["csv", "tsv"] or "|" in attachment_text or ";" in attachment_text:
                 table_data = parse_table_data(attachment_text)
 
-            # Check for code (ASM, Python, C#, JSON)
+            
             code_html = None
             if att_format in ["asm", "py", "cs", "json", "c", "cpp"]:
                 code_html = format_code_with_lines(attachment_text, lang=att_format)
@@ -572,7 +572,7 @@ class EvidenceService:
                 "file_exists": file_exists_on_disk,
             }
 
-        # Related documents in the same product with topic metadata
+        
         p_code = item["product_code"]
         sibling_docs = []
         for d in self.by_product.get(p_code, []):
@@ -639,14 +639,14 @@ class EvidenceService:
                     f'title="Внутренний регламент (отдельный файл отсутствует в выгрузке)">{link_text}</a>'
                 )
 
-        # 1. Intercept any links pointing to kb.arcadia.example/pages/<slug>
+        
         pattern = re.compile(
             r'<a\s+[^>]*href="https?://kb\.arcadia\.example/pages/([a-zA-Z0-9_\-]+)"[^>]*>(.*?)</a>',
             re.IGNORECASE
         )
         transformed = pattern.sub(_replace_kb_link, html_content)
 
-        # 2. Also safeguard any remaining external links: ensure target="_blank" and rel
+        
         def _safe_external_link(match: re.Match) -> str:
             full_tag = match.group(0)
             if 'target=' not in full_tag and 'javascript:void' not in full_tag:
@@ -666,7 +666,7 @@ class EvidenceService:
 
         active_set = set(active_citations or [])
 
-        # 1. Replace [slug] with interactive evidence badges
+        
         def replace_slug_cite(match: re.Match) -> str:
             raw_slug = match.group(1).strip()
             if raw_slug.startswith("sandbox-"):
@@ -689,7 +689,7 @@ class EvidenceService:
                     f'</button>'
                 )
 
-            # Check code registry for Python, C#, ASM, SQL scripts
+            
             try:
                 from app.code_registry import code_registry
                 code_file = code_registry.get_file(raw_slug)
@@ -713,10 +713,10 @@ class EvidenceService:
             except Exception:
                 pass
 
-            # Verify if this is a known slug in our corpus or active citations
+            
             is_valid = raw_slug in self.all_slugs or raw_slug in active_set
             if not is_valid:
-                # Check fuzzy matching
+                
                 if not any(prefix in raw_slug for prefix in ["iskra", "rosinka", "yantar", "mostik", "tihaya", "lavka", "kometa", "prizma", "orbitarium", "parus", "bastion", "ritm", "zontik", "sozvezdie", "mozaika", "mahovik", "pergament", "oblachny", "p70", "p71", "passport", "guide", "spec", "events"]):
                     return match.group(0)
 
@@ -734,16 +734,16 @@ class EvidenceService:
                 f'title="Источник: {safe_slug}" style="text-decoration: none; color: #3b82f6; font-weight: 500;">[{index}]</a>'
             )
 
-        # Regex for [slug] patterns
+        
         enhanced = re.sub(r"\[([a-zA-Z0-9_\-\.]+)\]", replace_slug_cite, html_content)
 
-        # 2. Intercept wiki links and safeguard external URLs
+        
         enhanced = self.transform_wiki_links(enhanced)
 
-        # 3. Collapse adjacent citation links like [1][2][3][4][5] into concise ranges like [1–5] or [1, 2]
+        
         def collapse_adjacent_citations(m: re.Match) -> str:
             raw_group = m.group(0)
-            # Find all (index, slug) pairs
+            
             items = re.findall(r'href="#source-(\d+)"[^>]*onclick="openEvidenceInspector\(\'([^\']+)\'\)"[^>]*>\[\d+\]</a>', raw_group)
             if not items:
                 return raw_group
@@ -780,12 +780,12 @@ class EvidenceService:
                 f'title="Источники: {all_slugs_str}" style="text-decoration: none; color: #3b82f6; font-weight: 500;">{label}</a>'
             )
 
-        # Match 2 or more adjacent citation links (allowing whitespace/newlines/commas between them)
+        
         cite_link_pattern = r'(?:<a href="#source-\d+" class="citation-link"[^>]*>\[\d+\]</a>[\s,]*){2,}'
         enhanced = re.sub(cite_link_pattern, collapse_adjacent_citations, enhanced)
 
         return enhanced
 
 
-# Global singleton instance
+
 evidence_service = EvidenceService()

@@ -58,7 +58,7 @@ class DenseSearch:
         if tbl is None:
             return []
 
-        # Construct SQL filter if not explicitly passed as where_clause
+        
         sql_filter = where_clause or self.metadata_filter.build_sql_filter(
             product_code=product_code,
             product_name=product_name,
@@ -72,9 +72,9 @@ class DenseSearch:
 
         results = self._execute_vector_search(tbl, query_vector, top_k=top_k, where_clause=sql_filter, metric=metric)
 
-        # Broadening Fallback if strict metadata pre-filter yielded 0 results
+        
         if not results and sql_filter and enable_fallback:
-            # Broaden filter (level 1: drop slug & quality_tag & methodology_version)
+            
             fallback_filter = self.metadata_filter.build_sql_filter(
                 product_code=product_code,
                 product_name=product_name,
@@ -84,7 +84,7 @@ class DenseSearch:
             if fallback_filter and fallback_filter != sql_filter:
                 results = self._execute_vector_search(tbl, query_vector, top_k=top_k, where_clause=fallback_filter, metric=metric)
 
-            # Broaden filter (level 2: drop section/owner, keep product only)
+            
             if not results and (product_code or product_name):
                 product_filter = self.metadata_filter.build_sql_filter(
                     product_code=product_code,
@@ -93,7 +93,7 @@ class DenseSearch:
                 if product_filter and product_filter != fallback_filter:
                     results = self._execute_vector_search(tbl, query_vector, top_k=top_k, where_clause=product_filter, metric=metric)
 
-            # Broaden filter (level 3: unconstrained vector search)
+            
             if not results:
                 results = self._execute_vector_search(tbl, query_vector, top_k=top_k, where_clause="", metric=metric)
 
@@ -123,13 +123,13 @@ class DenseSearch:
         """Format raw LanceDB search record into structured result."""
         dist = record.get("_distance", 0.0)
         
-        # Convert distance to similarity score
+        
         if metric == "cosine":
-            # LanceDB cosine distance = 1 - cosine_similarity
+            
             score = max(0.0, min(1.0, 1.0 - dist))
         elif metric == "L2":
             score = max(0.0, 1.0 / (1.0 + dist))
-        else: # dot
+        else: 
             score = float(dist)
 
         formatted_doc = self.metadata_filter._format_record(record)

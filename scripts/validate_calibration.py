@@ -139,7 +139,7 @@ def check_case(case_id, case, attachments):
         }
 
     if len(matches) > 1:
-        # Обычно это не ошибка, но покажем оператору.
+        
         item = matches[0]
     else:
         item = matches[0]

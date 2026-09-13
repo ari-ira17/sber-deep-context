@@ -5,7 +5,7 @@ import logging
 from typing import Dict, List, Optional
 from dotenv import load_dotenv
 
-# Load credentials from api.env or .env
+
 if os.path.exists("api.env"):
     load_dotenv("api.env")
 elif os.path.exists(".env"):
@@ -27,23 +27,23 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Sber Meridian RAG AI Assistant")
 
-# Инициализируем базу данных истории чатов
+
 chat_history.init_db()
 
-# Подключаем статику и шаблоны
+
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-# Подключаем вложения (изображения PNG, PDF, CSV) для инспектора первоисточников
+
 attachments_dir = os.path.join(os.path.dirname(__file__), "..", "meridian_hackathon_knowledge_base", "knowledge_attachments")
 if os.path.exists(attachments_dir):
     app.mount("/attachments", StaticFiles(directory=attachments_dir), name="attachments")
 
 templates = Jinja2Templates(directory="app/templates")
 
-# Инициализируем центральный оркестратор
+
 orchestrator = MeridianOrchestrator()
 
-# Кэш недавних ответов для быстрого построения графа
+
 graph_cache: Dict[str, OrchestratorResponse] = {}
 
 
@@ -210,7 +210,7 @@ async def ask(request: Request, query: str = Form(...), chat_id: Optional[str] =
     """Принимает запрос пользователя, сохраняет его в БД и возвращает блок с лоадером."""
     clean_query = query.strip()
     if not chat_id or not chat_history.get_chat(chat_id):
-        # Называем чат по первому вопросу
+        
         title = clean_query[:35] + ("..." if len(clean_query) > 35 else "")
         chat_id = chat_history.create_chat(chat_id=chat_id, title=title)
 
@@ -237,20 +237,20 @@ async def bot_reply(request: Request, query: str, chat_id: Optional[str] = None)
     clean_query = query.strip()
     raw_answer = ""
     try:
-        # Поиск по активным файлам песочницы (глобально включенные источники)
+        
         sandbox_docs = sandbox_service.search_sandbox_sources(query=clean_query, top_k=3)
 
         resp: OrchestratorResponse = await orchestrator.aask(clean_query, extra_documents=sandbox_docs)
         graph_cache[clean_query] = resp
         raw_answer = resp.answer
 
-        # Рендерим Markdown в HTML с поддержкой таблиц и блоков кода
+        
         html_answer = markdown.markdown(
             resp.answer,
             extensions=["extra", "tables", "fenced_code", "nl2br"]
         )
 
-        # Обогащаем сноски [slug] интерактивными чипами инспектора доказательств
+        
         html_answer = evidence_service.enhance_citations(html_answer, active_citations=resp.citations)
 
         sources = []
@@ -280,7 +280,7 @@ async def bot_reply(request: Request, query: str, chat_id: Optional[str] = None)
         raw_answer = f"Ошибка: {str(e)}"
         sources = []
 
-    # Сохраняем ответ ассистента в SQLite историю
+    
     if chat_id:
         chat_history.add_message(
             chat_id=chat_id,
@@ -299,7 +299,7 @@ async def bot_reply(request: Request, query: str, chat_id: Optional[str] = None)
             "query": clean_query,
         }
     )
-    # Отправляем триггер HTMX для мгновенного обновления сайдбара
+    
     response.headers["HX-Trigger"] = "refreshSidebar"
     return response
 

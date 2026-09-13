@@ -95,7 +95,7 @@ class MetadataFilter:
             results = query_builder.limit(limit).to_list()
             return [self._format_record(r) for r in results]
         except Exception as e:
-            # Fallback handling if filter execution fails
+            
             print(f"[MetadataFilter Error] Failed to execute filter '{where_clause}': {e}")
             return []
 
@@ -131,8 +131,8 @@ class MetadataFilter:
         if results or not enable_broadening:
             return results
 
-        # --- Broadening Fallback Strategy ---
-        # Level 1: Drop slug & quality_tag & methodology_version
+        
+        
         if slug or quality_tag or methodology_version is not None:
             sql_fallback_1 = self.build_sql_filter(
                 product_code=product_code,
@@ -145,7 +145,7 @@ class MetadataFilter:
             if results:
                 return results
 
-        # Level 2: Keep only product_code or product_name
+        
         if product_code or product_name:
             sql_fallback_2 = self.build_sql_filter(
                 product_code=product_code,
@@ -155,7 +155,7 @@ class MetadataFilter:
             if results:
                 return results
 
-        # Level 3: Keep section or owner
+        
         if section or owner:
             sql_fallback_3 = self.build_sql_filter(
                 section=section,

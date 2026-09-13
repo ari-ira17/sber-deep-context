@@ -8,7 +8,7 @@ try:
     from mcp.server.fastmcp import FastMCP as Server
     mcp = Server("File Exporter Server")
 except ImportError:
-    # Dummy mock if mcp is not installed
+    
     class DummyServer:
         def tool(self):
             def decorator(func):
@@ -29,7 +29,7 @@ def clean_xml_chars(text: str) -> str:
     """Удаляет невидимые управляющие символы, ломающие структуру .docx"""
     if not text:
         return text
-    # Оставляем только валидные для XML символы (разрешаем \n, \r, \t)
+    
     return re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]', '', text)
 
 @mcp.tool()
@@ -40,7 +40,7 @@ def export_to_file(
     subfolder: str = ""
 ) -> str:
     try:
-        # Очищаем входные данные от символов, ломающих Word
+        
         content = clean_xml_chars(content)
         title = clean_xml_chars(title)
         
@@ -65,7 +65,7 @@ def export_to_file(
         elif ext == "docx":
             doc = Document()
             
-            # Глобальный стиль Normal настраивать безопасно (делается один раз)
+            
             style_normal = doc.styles['Normal']
             style_normal.font.name = 'Times New Roman'
             style_normal.font.size = Pt(14)
@@ -79,7 +79,7 @@ def export_to_file(
                 filtered_rows = [r for r in table_rows if not all(c.strip("-") == "" for c in r)]
                 if filtered_rows:
                     cols_count = len(filtered_rows[0])
-                    # Защита от пустых таблиц
+                    
                     if cols_count > 0:
                         table = doc.add_table(rows=len(filtered_rows), cols=cols_count)
                         table.style = 'Table Grid'
@@ -106,7 +106,7 @@ def export_to_file(
                 else:
                     flush_table()
                 
-                # Безопасное добавление заголовков через run
+                
                 if stripped.startswith("## "):
                     h = doc.add_heading(level=2)
                     run = h.add_run(stripped[3:])

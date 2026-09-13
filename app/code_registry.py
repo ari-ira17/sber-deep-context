@@ -85,7 +85,7 @@ class CodeRegistry:
 
     def _load_registry(self):
         """Load code records from filesystem and parsed attachments."""
-        # 1. First, check data/attachments/attachments.json which has pre-parsed attachments
+        
         att_file = self.base_dir / "data" / "attachments" / "attachments.json"
         parsed_texts: Dict[str, str] = {}
         if att_file.exists():
@@ -101,7 +101,7 @@ class CodeRegistry:
             except Exception as e:
                 logger.warning(f"Error loading attachments.json: {e}")
 
-        # 2. Check mapping file for doc_id and product annotations
+        
         mapping_file = self.base_dir / "data" / "attachments" / "attachment_mapping.json"
         doc_mappings: Dict[str, Dict[str, Any]] = {}
         if mapping_file.exists():
@@ -111,8 +111,8 @@ class CodeRegistry:
             except Exception as e:
                 logger.warning(f"Error loading attachment_mapping.json: {e}")
 
-        # 3. Discover on disk under meridian_hackathon_knowledge_base/knowledge_attachments
-        # or data/attachments
+        
+        
         search_roots = [
             self.base_dir / "meridian_hackathon_knowledge_base" / "knowledge_attachments",
             self.base_dir / "knowledge_attachments",
@@ -142,7 +142,7 @@ class CodeRegistry:
                             mapping_meta=doc_mappings.get(full_rel),
                         )
 
-        # 4. Fallback for any items in parsed_texts not discovered directly on disk
+        
         for full_rel, content in parsed_texts.items():
             if full_rel in found_disk_paths:
                 continue
@@ -429,5 +429,5 @@ class CodeRegistry:
         return "\n".join(lines)
 
 
-# Global singleton instance
+
 code_registry = CodeRegistry()

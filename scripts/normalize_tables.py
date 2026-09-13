@@ -6,26 +6,26 @@ def process_table_block(block: List[str], delimiter: str) -> List[str]:
     """
     Конвертирует блок строк с разделителями в Markdown-таблицу.
     """
-    # Таблица должна состоять как минимум из 2 строк (заголовок + 1 строка данных).
-    # Одиночные абзацы или вводные предложения с разделителем (например, 
-    # "Продукт Искра (P701); направление...") остаются обычным текстом[cite: 2].
+    
+    
+    
     if len(block) < 2:
         return block
         
-    # Использование csv.reader необходимо для безопасного парсинга.
-    # Он корректно игнорирует разделители, находящиеся внутри кавычек 
-    # (например, "Точный повтор; пропустить")[cite: 2].
+    
+    
+    
     f = StringIO('\n'.join(block))
     reader = csv.reader(f, delimiter=delimiter)
     
     md_block = []
     for i, row in enumerate(reader):
-        # Очищаем ячейки от лишних пробелов
+        
         cleaned_row = [col.strip() for col in row]
         md_line = "| " + " | ".join(cleaned_row) + " |"
         md_block.append(md_line)
         
-        # После первой строки (заголовка) добавляем разделитель Markdown
+        
         if i == 0:
             sep = "|" + "|".join(["---"] * len(cleaned_row)) + "|"
             md_block.append(sep)
@@ -40,7 +40,7 @@ def normalize_documents(documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]
     for doc in documents:
         fmt = doc.get('content_format')
         
-        # Обрабатываем только целевые форматы[cite: 1].
+        
         if fmt not in ('semicolon', 'tsv'):
             continue
             
@@ -52,8 +52,8 @@ def normalize_documents(documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]
         table_block = []
         
         for line in lines:
-            # Эвристика: строка считается частью таблицы, если содержит разделитель 
-            # и не является стандартным Markdown-элементом (заголовок, список, цитата).
+            
+            
             is_table_line = (
                 delimiter in line 
                 and not line.lstrip().startswith(('#', '- ', '* ', '> '))
@@ -62,14 +62,14 @@ def normalize_documents(documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]
             if is_table_line:
                 table_block.append(line)
             else:
-                # Если блок таблицы прервался обычным текстом или пустой строкой, 
-                # конвертируем накопленный блок.
+                
+                
                 if table_block:
                     normalized_lines.extend(process_table_block(table_block, delimiter))
                     table_block = []
                 normalized_lines.append(line)
         
-        # Обработка возможного блока таблицы в самом конце текста
+        
         if table_block:
             normalized_lines.extend(process_table_block(table_block, delimiter))
             
@@ -78,7 +78,7 @@ def normalize_documents(documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]
     return documents
 
 if __name__ == "__main__":
-    # Тестовый набор, воспроизводящий реальные граничные случаи из базы Меридиан
+    
     test_docs = [
         {
             "doc_id": "test-semicolon",

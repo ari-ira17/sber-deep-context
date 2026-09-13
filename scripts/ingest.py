@@ -8,7 +8,7 @@ import os
 import sys
 import json
 
-# Ensure project root is in python path
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from rag.storage import LanceDBStorage

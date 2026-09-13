@@ -20,7 +20,7 @@ import re
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-# Add project root to sys.path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from agents.orchestrator import MeridianOrchestrator, StandaloneSearchEngine
@@ -41,7 +41,7 @@ def load_sql_documents(sql_path: Path) -> Dict[str, Dict[str, Any]]:
         for line in f:
             if not line.startswith("('meridian_synthetic'"):
                 continue
-            # Extract JSON metadata which is at the end of each record: '{...}')
+            
             match = re.search(r"(\{.*?\})'\s*\)?\s*;?$", line)
             if not match:
                 continue
@@ -52,7 +52,7 @@ def load_sql_documents(sql_path: Path) -> Dict[str, Dict[str, Any]]:
                 if slug:
                     docs_by_slug[slug] = meta
             except Exception:
-                # Fallback simple json load
+                
                 try:
                     meta = json.loads(match.group(1))
                     slug = meta.get("slug")
@@ -114,49 +114,49 @@ def run_official_calibration(
             expected_code = expected_evidence.get("product_code")
 
         t0 = time.time()
-        # Orchestrator execution
+        
         resp = orchestrator.ask(q_text)
         elapsed = time.time() - t0
         total_latency += elapsed
 
-        # Evaluate Router extraction
+        
         router_out = resp.router_data
         print(f"[{i}/{total}] {q_id}: code={router_out.product_code} (exp: {expected_code}), att={router_out.need_attachment} ({elapsed:.2f}s)")
         
-        # 1. Attachment intent check
+        
         att_match = (router_out.need_attachment == expected_att)
         if att_match:
             correct_attachment_flags += 1
 
-        # 2. Slug check (if expected slug is present in query, did router find it?)
+        
         slug_match = False
         if expected_slug:
             if router_out.slug == expected_slug or (expected_slug in (router_out.slug or "")):
                 slug_match = True
                 correct_slugs += 1
             elif expected_slug in q_text:
-                # slug was mentioned in question but router missed it
+                
                 slug_match = False
             else:
-                # Question didn't explicitly mention slug, matched by product
+                
                 slug_match = True
                 correct_slugs += 1
         else:
             slug_match = True
             correct_slugs += 1
 
-        # 3. Product code check
+        
         code_match = True
         if expected_code:
             code_match = (router_out.product_code == expected_code)
             if code_match:
                 correct_product_codes += 1
         else:
-            # If no expected_code in evidence, verify if detected code is valid
+            
             code_match = True
             correct_product_codes += 1
 
-        # 4. Citations presence
+        
         has_cite = len(resp.citations) > 0
         if has_cite:
             citations_present += 1

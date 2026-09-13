@@ -3,15 +3,15 @@ import re
 import ast
 from typing import Iterator, Dict, Any
 
-# Надежные регулярные выражения для парсинга SQL-синтаксиса
-# 1. Строки: учитываем экранирование \' и двойные кавычки '' внутри текста
+
+
 SQL_STRING = r"'(?:[^'\\]|\\.|'')*'"
-# 2. Массивы ClickHouse: [ ... ]
+
 SQL_ARRAY = r"\[(?:[^'\]]|" + SQL_STRING + r")*\]"
-# 3. Числа, NULL и прочее (всё, что не содержит запятых)
+
 SQL_OTHER = r"[^,]+"
 
-# Собираем общий паттерн токенизатора
+
 VALUE_PATTERN = re.compile(f"({SQL_STRING})|({SQL_ARRAY})|({SQL_OTHER})")
 
 
@@ -25,14 +25,14 @@ def parse_sql_row(row_str: str) -> list:
         s_val, arr_val, other_val = match.groups()
         
         if s_val is not None:
-            # Текстовое поле: убираем внешние кавычки и декодируем экранирования
+            
             inner = s_val[1:-1]
             inner = inner.replace("''", "'").replace("\\'", "'")
             inner = inner.replace("\\n", "\n").replace("\\t", "\t").replace("\\\\", "\\")
             values.append(inner)
             
         elif arr_val is not None:
-            # Массивы ClickHouse (напр. acl_groups) парсим как Python list
+            
             try:
                 values.append(ast.literal_eval(arr_val.replace('NULL', 'None')))
             except Exception:
@@ -42,7 +42,7 @@ def parse_sql_row(row_str: str) -> list:
             val = other_val.strip()
             if not val:
                 continue
-            # Обработка NULL и чисел
+            
             if val.upper() == 'NULL':
                 values.append(None)
             elif val.isdigit() or (val.startswith('-') and val[1:].isdigit()):
@@ -89,7 +89,7 @@ def parse_sql_dump(file_path: str) -> Iterator[Dict[str, Any]]:
                         if len(columns) == len(row_values):
                             yield dict(zip(columns, row_values))
                         else:
-                            # Тихо игнорируем битые строки или выводим предупреждение
+                            
                             pass
                     except Exception as e:
                         print(f"Ошибка парсинга строки: {e}")
@@ -101,8 +101,8 @@ def parse_sql_dump(file_path: str) -> Iterator[Dict[str, Any]]:
 if __name__ == "__main__":
     import os
 
-    # Динамический путь: от папки scripts на 1 уровень вверх в корень,
-    # затем в двойную папку meridian_hackathon_knowledge_base
+    
+    
     script_dir = os.path.dirname(os.path.abspath(__file__))
     sql_file = os.path.normpath(
         os.path.join(script_dir, "..", "meridian_hackathon_knowledge_base", "meridian_hackathon_knowledge_base", "ai_copilot_documents.sql")
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         
         documents_generator = parse_sql_dump(sql_file)
         
-        # Печатаем первые 2 записи для теста
+        
         for i, record in enumerate(documents_generator):
             if i >= 2:
                 break

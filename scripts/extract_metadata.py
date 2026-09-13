@@ -20,7 +20,7 @@ def flatten_metadata(documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         metadata_raw = doc.get('metadata')
         metadata_obj = {}
 
-        # Безопасный парсинг: обрабатываем и строки, и уже готовые словари
+        
         if isinstance(metadata_raw, str):
             try:
                 metadata_obj = json.loads(metadata_raw)
@@ -29,18 +29,18 @@ def flatten_metadata(documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         elif isinstance(metadata_raw, dict):
             metadata_obj = metadata_raw
 
-        # Безопасное извлечение полей с использованием .get() (возвращает None, если ключа нет)
+        
         for field in target_fields:
             doc[field] = metadata_obj.get(field)
 
-        # Удаляем оригинальное поле metadata для исключения дублирования[cite: 1]
+        
         if 'metadata' in doc:
             del doc['metadata']
 
     return documents
 
 if __name__ == "__main__":
-    # Dummy-данные, покрывающие три кейса: валидная JSON-строка, готовый dict и битый JSON
+    
     test_docs = [
         {
             "doc_id": "test-json-string",

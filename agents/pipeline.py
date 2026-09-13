@@ -117,7 +117,7 @@ class DeepAgentsPipeline:
         self.answer_agent = answer_agent or AnswerAgent(llm_client=self.llm_client)
         self.search_fn = search_fn
 
-        # Configure subagents via create_deep_agent
+        
         self.router_subagent = create_deep_agent(
             name="RouterAgent",
             role="Query Classifier & Metadata Extractor",
@@ -140,7 +140,7 @@ class DeepAgentsPipeline:
         state = AgentState(query=query)
         state.logs.append(f"Starting pipeline for query: {query}")
 
-        # Step 1: Router Agent
+        
         state.router_output = self.router_agent.route(query)
         state.logs.append(
             f"Router extracted: product_code={state.router_output.product_code}, "
@@ -148,7 +148,7 @@ class DeepAgentsPipeline:
             f"need_attachment={state.router_output.need_attachment}"
         )
 
-        # Step 2: RAG Search & Reranking
+        
         if self.search_fn:
             try:
                 state.retrieved_docs = self.search_fn(state.router_output)
@@ -158,7 +158,7 @@ class DeepAgentsPipeline:
         else:
             state.logs.append("No search_fn configured. Using fallback retrieval.")
 
-        # Step 3: Answer Agent
+        
         state.answer_output = self.answer_agent.generate_answer(
             query=query,
             documents=state.retrieved_docs,
@@ -176,7 +176,7 @@ class DeepAgentsPipeline:
         state = AgentState(query=query)
         state.logs.append(f"Starting async pipeline for query: {query}")
 
-        # Step 1: Async Router Agent
+        
         state.router_output = await self.router_agent.aroute(query)
         state.logs.append(
             f"Router extracted: product_code={state.router_output.product_code}, "
@@ -184,7 +184,7 @@ class DeepAgentsPipeline:
             f"need_attachment={state.router_output.need_attachment}"
         )
 
-        # Step 2: RAG Search
+        
         if self.search_fn:
             try:
                 state.retrieved_docs = self.search_fn(state.router_output)
@@ -192,7 +192,7 @@ class DeepAgentsPipeline:
                 logger.error("Error executing search_fn: %s", e)
                 state.logs.append(f"Search error: {e}")
 
-        # Step 3: Async Answer Agent
+        
         state.answer_output = await self.answer_agent.agenerate_answer(
             query=query,
             documents=state.retrieved_docs,

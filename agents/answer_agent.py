@@ -90,7 +90,7 @@ class AnswerAgent:
                 confidence=0.0,
             )
 
-        # Check if the user is asking for a list/catalog of files vs a specific explanation
+        
         query_lower = query.lower()
         is_list_intent = any(w in query_lower for w in ["список", "каталог", "перечень", "какие файлы", "какие скрипты", "файлы", "скрипты"])
         has_code_docs = any(doc.doc_id.startswith("code-") or "Исходный код" in (doc.section or "") for doc in documents)
@@ -169,7 +169,7 @@ class AnswerAgent:
 
         context_str = self._format_context(documents)
 
-        # Check if the user is asking for a list/catalog of files vs a specific explanation
+        
         query_lower = query.lower()
         is_list_intent = any(w in query_lower for w in ["список", "каталог", "перечень", "какие файлы", "какие скрипты", "файлы", "скрипты"])
         has_code_docs = any(doc.doc_id.startswith("code-") or "Исходный код" in (doc.section or "") for doc in documents)
@@ -242,7 +242,7 @@ class AnswerAgent:
                     f"  </attachment>"
                 )
 
-            # Build metadata block with all available fields
+            
             meta_attrs = f'owner="{doc.owner or ""}" methodology_version="{doc.methodology_version or ""}" updated_at="{doc.updated_at or ""}" valid_from="{doc.valid_from or ""}" lifecycle="{doc.lifecycle or ""}"'
             doc_node = (
                 f'<document id="{doc.doc_id}" slug="{doc.slug}" product="{doc.product_name or ""}" '
@@ -266,29 +266,29 @@ class AnswerAgent:
         raw_text: str,
         documents: List[DocumentContext],
     ) -> AnswerOutput:
-        # Extract all [slug-name] mentions from answer preserving order
+        
         slug_map = {doc.slug: doc for doc in documents}
         found_slugs: List[str] = []
 
-        # Regex for [slug] patterns
+        
         matches = re.findall(r"\[([a-zA-Z0-9_\-\.]+)\]", raw_text)
         for m in matches:
             clean_m = m.strip()
             if clean_m in slug_map and clean_m not in found_slugs:
                 found_slugs.append(clean_m)
 
-        # Also search for slugs without brackets if mentioned
+        
         for slug in slug_map:
             if slug in raw_text and slug not in found_slugs:
                 found_slugs.append(slug)
 
-        # If LLM didn't include citations but answer is based on top doc, associate top doc
+        
         if not found_slugs and documents:
             found_slugs.append(documents[0].slug)
 
         cited_sources = [slug_map[s] for s in found_slugs if s in slug_map]
 
-        # Check if answer states info is missing
+        
         negative_phrases = [
             "информация отсутствует",
             "информации недостаточно",
@@ -299,7 +299,7 @@ class AnswerAgent:
         ]
         has_answer = not any(phrase in raw_text.lower() for phrase in negative_phrases)
 
-        # Confidence calculation
+        
         confidence = 1.0 if has_answer else 0.2
         if cited_sources:
             avg_score = sum(s.score for s in cited_sources) / len(cited_sources)

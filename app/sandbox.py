@@ -57,7 +57,7 @@ class SandboxService:
         elif ext in ["csv", "tsv"]:
             text_content, parsed_meta = self._parse_csv(file_bytes, delimiter="\t" if ext == "tsv" else None)
         else:
-            # Code or text file (.txt, .md, .py, .json, .yaml, .yml, .sql, .js, .html, etc.)
+            
             text_content, parsed_meta = self._parse_text(file_bytes, ext)
 
         return text_content.strip(), ext, parsed_meta
@@ -67,7 +67,7 @@ class SandboxService:
         pages_text = []
         page_count = 0
         try:
-            import fitz  # PyMuPDF
+            import fitz  
             doc = fitz.open(stream=file_bytes, filetype="pdf")
             page_count = len(doc)
             for page_num in range(page_count):
@@ -141,10 +141,10 @@ class SandboxService:
                 headers = [h.strip() for h in rows[0]]
                 data_rows = [[c.strip() for c in r] for r in rows[1:]]
 
-                # Format markdown table representation for LLM context
+                
                 md_lines = ["| " + " | ".join(headers) + " |"]
                 md_lines.append("| " + " | ".join(["---"] * len(headers)) + " |")
-                for r in data_rows[:200]:  # Limit markdown representation to 200 rows for context window
+                for r in data_rows[:200]:  
                     padded = r + [""] * (len(headers) - len(r))
                     md_lines.append("| " + " | ".join(padded[:len(headers)]) + " |")
 
@@ -233,13 +233,13 @@ class SandboxService:
         for src in sources:
             text = src.get("text_content", "")
             fname = src.get("filename", "")
-            score = 0.5  # Base score for attached session document
+            score = 0.5  
 
-            # If user mentions filename directly or partial name
+            
             if fname.lower() in query_lower or any(p in query_lower for p in fname.lower().split(".") if len(p) > 2):
                 score += 0.45
 
-            # Word overlap with document text
+            
             if query_words and text:
                 text_lower = text[:5000].lower()
                 matches = sum(1 for w in query_words if w in text_lower)
@@ -248,7 +248,7 @@ class SandboxService:
 
             matched_docs.append((score, src))
 
-        # Sort by relevance score
+        
         matched_docs.sort(key=lambda x: x[0], reverse=True)
 
         results: List[DocumentContext] = []

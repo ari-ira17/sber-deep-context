@@ -81,7 +81,7 @@ class GigaChatClient:
     def __init__(self, config: Optional[GigaChatConfig] = None):
         self.config = config or GigaChatConfig()
         
-        # Determine if we should force mock mode
+        
         if not self.config.credentials or self.config.credentials.lower() == "mock" or not GIGACHAT_SDK_AVAILABLE:
             self.config.mock_mode = True
             logger.info("GigaChatClient running in MOCK mode (no credentials or mock requested).")
@@ -119,14 +119,14 @@ class GigaChatClient:
         """Synchronous completion with 1-stream rate limiting and retry."""
         selected_model = model or self.config.model_lite
         
-        # Ensure there is an event loop in this thread (especially when called via run_in_executor)
-        # because the gigachat SDK (or its underlying httpx client) may rely on get_event_loop().
+        
+        
         try:
             asyncio.get_event_loop()
         except RuntimeError:
             asyncio.set_event_loop(asyncio.new_event_loop())
 
-        # 1-stream global lock across all threads
+        
         with self._sync_lock:
             start_time = time.time()
             if self.config.mock_mode:
@@ -142,7 +142,7 @@ class GigaChatClient:
                     is_mock=True,
                 )
 
-            # Execution with retry loop
+            
             delay = self.config.retry_delay
             last_error: Optional[Exception] = None
 
@@ -185,7 +185,7 @@ class GigaChatClient:
                         "GigaChat API error on attempt %d/%d for model %s: %s",
                         attempt, self.config.max_retries, selected_model, err_str
                     )
-                    # Auto-heal: if model name is rejected (e.g. corporate B2B account without base GigaChat), discover available models
+                    
                     if "no such model" in err_str.lower() or "404" in err_str:
                         try:
                             client = self._get_client()
@@ -206,7 +206,7 @@ class GigaChatClient:
                         time.sleep(delay)
                         delay *= self.config.backoff_factor
 
-            # Fallback to mock if API permanently failed
+            
             logger.error("All GigaChat API attempts failed (%s). Falling back to mock response.", last_error)
             content = self._mock_completion(prompt, system_prompt, selected_model)
             return GigaChatResponse(
@@ -227,7 +227,7 @@ class GigaChatClient:
         """Asynchronous completion with 1-stream rate limiting."""
         lock = self._get_async_lock()
         async with lock:
-            # Run the synchronous complete method in an executor to avoid blocking event loop
+            
             loop = asyncio.get_running_loop()
             return await loop.run_in_executor(
                 None,
@@ -249,9 +249,9 @@ class GigaChatClient:
         lower_prompt = prompt.lower()
         lower_sys = (system_prompt or "").lower()
 
-        # Is this a Router query?
+        
         if "маршрутизатор" in lower_sys or "product_code" in lower_sys or "query_rewrite" in lower_sys:
-            # Catalog of 18 products
+            
             catalog = [
                 ("p701", "искра", "Ежедневные расчёты", "Команда Пульс"),
                 ("p702", "росинка", "Накопления", "Команда Резерв"),
@@ -286,7 +286,7 @@ class GigaChatClient:
                     detected_owner = owner
                     break
 
-            # Check attachment intent strictly against user query (not prompt template)
+            
             query_text = lower_prompt
             if "вопрос пользователя:" in lower_prompt:
                 query_text = lower_prompt.split("вопрос пользователя:")[1].split("\n")[0]
@@ -298,7 +298,7 @@ class GigaChatClient:
             need_attachment = any(kw in query_text for kw in attachment_keywords)
 
             slug = None
-            # Extract slug from quotes or patterns
+            
             slug_match = re.search(r"[«\"']([a-z0-9]+(?:-[a-z0-9]+)+)[»\"']", query_text)
             if slug_match:
                 slug = slug_match.group(1)
@@ -307,7 +307,7 @@ class GigaChatClient:
 
             doc_type = "passport" if "паспорт" in query_text else "general"
 
-            # Clean query
+            
             clean_query = query_text
             for stopword in ["подскажи", "расскажи", "какой", "какая", "пожалуйста", "найди", "в"]:
                 clean_query = clean_query.replace(stopword, "").strip()
@@ -324,8 +324,8 @@ class GigaChatClient:
             }
             return json.dumps(result, ensure_ascii=False, indent=2)
 
-        # Otherwise Answer Agent query
-        # Extract any slugs in the prompt context
+        
+        
         slugs = re.findall(r"slug:\s*([a-zA-Z0-9_\-\.]+)", prompt, re.IGNORECASE)
         cited_slug = f"[{slugs[0]}]" if slugs else "[meridian-kb-doc]"
 

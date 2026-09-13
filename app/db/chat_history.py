@@ -68,7 +68,7 @@ def init_db() -> None:
             """
         )
         try:
-            # Recreate chat_sources if it was created with foreign key
+            
             fk_info = conn.execute("PRAGMA foreign_key_list(chat_sources);").fetchall()
             if fk_info:
                 conn.execute("DROP TABLE IF EXISTS chat_sources;")
@@ -95,7 +95,7 @@ def init_db() -> None:
                 "ALTER TABLE chats ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0"
             )
         except sqlite3.OperationalError:
-            # Колонка уже существует
+            
             pass
         conn.execute("CREATE INDEX IF NOT EXISTS idx_messages_chat_id ON messages(chat_id);")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_chat_sources_chat_id ON chat_sources(chat_id);")
@@ -210,17 +210,17 @@ def add_message(
     sources_json = json.dumps(sources, ensure_ascii=False) if sources is not None else None
 
     with _get_connection() as conn:
-        # Check if chat exists
+        
         chat_row = conn.execute("SELECT id, title FROM chats WHERE id = ?", (chat_id,)).fetchone()
         if not chat_row:
-            # Auto-create chat
+            
             auto_title = content.strip()[:40] + ("..." if len(content.strip()) > 40 else "")
             conn.execute(
                 "INSERT INTO chats (id, title, created_at, updated_at) VALUES (?, ?, ?, ?)",
                 (chat_id, auto_title or "Новый диалог", now, now),
             )
         else:
-            # If title is default and user sent first message, update title
+            
             if role == "user" and chat_row["title"] in ("Новый диалог", "Новый чат", ""):
                 auto_title = content.strip()[:40] + ("..." if len(content.strip()) > 40 else "")
                 conn.execute(
@@ -439,7 +439,7 @@ def delete_chat_source(source_id: str) -> bool:
         conn.execute("DELETE FROM chat_sources WHERE id = ?", (source_id,))
         conn.commit()
 
-    # Try removing file from disk
+    
     try:
         fpath = Path(source["file_path"])
         if fpath.exists():

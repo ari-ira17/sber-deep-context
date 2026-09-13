@@ -30,26 +30,26 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-# Color palette for Pyvis graph by product_code
+
 PRODUCT_COLOR_PALETTE: Dict[str, str] = {
-    "P701": "#FF6B6B",  # Искра (red-orange)
-    "P702": "#4D96FF",  # Росинка (blue)
-    "P703": "#FFD93D",  # Янтарь (amber)
-    "P704": "#6BCB77",  # Мостик (green)
-    "P705": "#9B51E0",  # Тихая Гавань (purple)
-    "P706": "#FF9F45",  # Лавка (orange)
-    "P707": "#F24A72",  # Комета (crimson)
-    "P708": "#00C897",  # Призма (teal)
-    "P709": "#2F80ED",  # Орбитариум (sapphire)
-    "P710": "#56CCF2",  # Парус (cyan)
-    "P711": "#EB5757",  # Бастион (ruby)
-    "P712": "#F2994A",  # Ритм (coral)
-    "P713": "#BB6BD9",  # Зонтик (lilac)
-    "P714": "#828282",  # Созвездие (slate)
-    "P715": "#27AE60",  # Мозаика (emerald)
-    "P716": "#E2B93B",  # Маховик (gold)
-    "P717": "#795548",  # Пергамент (bronze)
-    "P718": "#607D8B",  # Облачный Сад (blue-grey)
+    "P701": "#FF6B6B",  
+    "P702": "#4D96FF",  
+    "P703": "#FFD93D",  
+    "P704": "#6BCB77",  
+    "P705": "#9B51E0",  
+    "P706": "#FF9F45",  
+    "P707": "#F24A72",  
+    "P708": "#00C897",  
+    "P709": "#2F80ED",  
+    "P710": "#56CCF2",  
+    "P711": "#EB5757",  
+    "P712": "#F2994A",  
+    "P713": "#BB6BD9",  
+    "P714": "#828282",  
+    "P715": "#27AE60",  
+    "P716": "#E2B93B",  
+    "P717": "#795548",  
+    "P718": "#607D8B",  
 }
 DEFAULT_PRODUCT_COLOR = "#9E9E9E"
 
@@ -123,10 +123,10 @@ class StandaloneSearchEngine:
             )
 
         docs = []
-        # Check if actual LanceDB search module from Participant 3 is available
+        
         if participant3_search is not None:
             try:
-                # Увеличиваем top_k для более широкого поиска, если это общий запрос
+                
                 search_limit = 20 if is_catalog_query else top_k
                 res = participant3_search(
                     query=router_output.query_rewrite,
@@ -144,22 +144,22 @@ class StandaloneSearchEngine:
                 pass
                 
         if catalog_doc:
-            # Внедряем полный справочник на первое место, чтобы LLM всегда видела ВСЕ продукты
-            # вне зависимости от top-k векторного поиска
+            
+            
             docs.insert(0, catalog_doc)
             return docs
 
         if docs:
             return docs
 
-        # Decoupled Standalone Search Engine Fallback
+        
         code = router_output.product_code or "P701"
         name, section, owner = MERIDIAN_CATALOG.get(code, ("Искра", "Ежедневные расчёты", "Команда Пульс"))
         slug_prefix = name.lower()
 
         docs: List[DocumentContext] = []
         
-        # 1. Product Passport / Main Document
+        
         passport_slug = router_output.slug or f"{slug_prefix}-passport"
         docs.append(
             DocumentContext(
@@ -195,7 +195,7 @@ class StandaloneSearchEngine:
             )
         )
 
-        # 2. Architecture & Integration Doc
+        
         docs.append(
             DocumentContext(
                 doc_id=f"doc-{code}-002",
@@ -215,7 +215,7 @@ class StandaloneSearchEngine:
             )
         )
 
-        # 3. SLA & Support Doc
+        
         docs.append(
             DocumentContext(
                 doc_id=f"doc-{code}-003",
@@ -261,13 +261,13 @@ class MeridianOrchestrator:
     @staticmethod
     def is_complex_query(question: str, router_out: RouterOutput, documents: List[DocumentContext]) -> bool:
         """Determine whether query requires GigaChat Max (complex) or can use GigaChat Lite (fast-path)."""
-        # 1. Attachment intent or any document has parsed attachment text
+        
         if router_out.need_attachment:
             return True
         if any(bool(d.attachment_text and d.attachment_text.strip()) for d in documents):
             return True
 
-        # 2. Multi-product or cross-product comparative queries
+        
         lower_q = question.lower()
         comparative_signals = [
             "сравни", "различи", "сопоставь", "в чём разниц", "чем отлича",
@@ -276,14 +276,14 @@ class MeridianOrchestrator:
         if any(sig in lower_q for sig in comparative_signals):
             return True
 
-        # 3. Tables / Calculations / Code queries
+        
         complex_signals = [
             "таблиц", "расчёт", "вычисли", "формул", "код на", "скрипт", "json", "asm"
         ]
         if any(sig in lower_q for sig in complex_signals):
             return True
 
-        # Simple single-hop factoids / metadata queries (e.g. паспорт, карточка, SLA, владелец)
+        
         return False
 
     def _enrich_with_attachments(self, documents: List[DocumentContext], router_out: RouterOutput) -> List[DocumentContext]:
@@ -303,7 +303,7 @@ class MeridianOrchestrator:
                 except Exception as e:
                     logger.warning(f"Failed to load attachments index: {e}")
 
-        # 1. Fill attachment_text for documents already retrieved
+        
         for doc in documents:
             if not doc.attachment_text or not doc.attachment_text.strip():
                 att = self._attachments_index.get(doc.slug)
@@ -312,10 +312,10 @@ class MeridianOrchestrator:
                     doc.attachment_format = att.get("attachment_format")
                     doc.attachment_path = att.get("attachment_path")
 
-        # 2. If router identified a specific slug with an attachment, ensure it is in context
+        
         target_slug = router_out.slug
         if not target_slug:
-            # Check if any stem in index matches router query_rewrite
+            
             for stem, att in self._attachments_index.items():
                 if stem in router_out.query_rewrite:
                     target_slug = stem
@@ -359,7 +359,7 @@ class MeridianOrchestrator:
         rewrite = (router_out.query_rewrite or "").lower()
         combined_q = f"{lower_q} {rewrite}"
 
-        # 1. Detect target extension / language
+        
         target_ext = None
         if any(term in combined_q for term in ["питон", "python", ".py"]):
             target_ext = "py"
@@ -382,7 +382,7 @@ class MeridianOrchestrator:
             ]
         )
 
-        # Case A: Listing/catalog query for code files
+        
         if target_ext or (is_code_related and is_listing_query):
             matched_records = []
             if target_ext:
@@ -435,7 +435,7 @@ class MeridianOrchestrator:
                         )
                         documents.append(code_doc)
 
-        # Case B: Semantic / symbol lookup (searching for exact code files or functions)
+        
         code_hits = code_registry.search(
             query=question,
             product_code=router_out.product_code,
@@ -476,7 +476,7 @@ class MeridianOrchestrator:
         start_time = time.time()
         logs: List[str] = [f"Incoming user question: {question}"]
 
-        # 1. Router Agent
+        
         router_out = self.router_agent.route(question)
         logs.append(
             f"Router extracted: product={router_out.product_name} ({router_out.product_code}), "
@@ -484,7 +484,7 @@ class MeridianOrchestrator:
             f"rewrite='{router_out.query_rewrite}'"
         )
 
-        # 2. RAG Search + Technical Attachment Enrichment + Code Registry
+        
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
         retrieved_docs = self._enrich_with_attachments(retrieved_docs, router_out)
         retrieved_docs = self._enrich_with_code_assets(question, router_out, retrieved_docs)
@@ -492,7 +492,7 @@ class MeridianOrchestrator:
             retrieved_docs = list(extra_documents) + retrieved_docs
         logs.append(f"Retrieved and enriched {len(retrieved_docs)} documents.")
 
-        # 3. Answer Agent (Adaptive Model Routing: Lite for simple factoids, Max for complex RAG/attachments)
+        
         is_complex = self.is_complex_query(question, router_out, retrieved_docs)
         answer_model = self.llm_client.config.model_max if is_complex else self.llm_client.config.model_lite
         logs.append(f"Model routing: {'GigaChat-Max (Complex)' if is_complex else 'GigaChat-Lite (Fast-Path)'}")
@@ -505,7 +505,7 @@ class MeridianOrchestrator:
         )
         logs.append(f"Generated answer with {len(answer_out.citations)} citations.")
 
-        # 4. Construct Graph Data for Pyvis visualization (Participant 5)
+        
         graph_nodes, graph_edges = self._build_graph_data(question, retrieved_docs)
 
         latency = time.time() - start_time
@@ -533,14 +533,14 @@ class MeridianOrchestrator:
         start_time = time.time()
         logs: List[str] = [f"Incoming async user question: {question}"]
 
-        # 1. Router Agent
+        
         router_out = await self.router_agent.aroute(question)
         logs.append(
             f"Router extracted: product={router_out.product_name} ({router_out.product_code}), "
             f"need_attachment={router_out.need_attachment}"
         )
 
-        # 2. RAG Search (non-blocking in thread pool) + Attachment Enrichment + Code Registry
+        
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
         retrieved_docs = self._enrich_with_attachments(retrieved_docs, router_out)
         retrieved_docs = self._enrich_with_code_assets(question, router_out, retrieved_docs)
@@ -548,7 +548,7 @@ class MeridianOrchestrator:
             retrieved_docs = list(extra_documents) + retrieved_docs
         logs.append(f"Retrieved and enriched {len(retrieved_docs)} documents.")
 
-        # 3. Answer Agent (Adaptive Model Routing)
+        
         is_complex = self.is_complex_query(question, router_out, retrieved_docs)
         answer_model = self.llm_client.config.model_max if is_complex else self.llm_client.config.model_lite
         logs.append(f"Model routing: {'GigaChat-Max (Complex)' if is_complex else 'GigaChat-Lite (Fast-Path)'}")
@@ -561,7 +561,7 @@ class MeridianOrchestrator:
         )
         logs.append(f"Generated answer with {len(answer_out.citations)} citations.")
 
-        # 4. Construct Graph Data
+        
         graph_nodes, graph_edges = self._build_graph_data(question, retrieved_docs)
 
         latency = time.time() - start_time
@@ -593,17 +593,17 @@ class MeridianOrchestrator:
         
         yield yield_log("Анализирую запрос...")
         
-        # 1. Router Agent
+        
         router_out = await self.router_agent.aroute(question)
         yield yield_log("Ищу информацию в базе знаний...")
         
-        # 2. RAG Search (non-blocking in thread pool) + Attachment Enrichment + Code Registry
+        
         retrieved_docs = await asyncio.to_thread(self.search_engine.search, router_out, 5)
         retrieved_docs = await asyncio.to_thread(self._enrich_with_attachments, retrieved_docs, router_out)
         retrieved_docs = await asyncio.to_thread(self._enrich_with_code_assets, question, router_out, retrieved_docs)
         yield yield_log("Изучаю найденные материалы...")
         
-        # 3. Answer Agent (Adaptive Model Routing)
+        
         is_complex = self.is_complex_query(question, router_out, retrieved_docs)
         answer_model = self.llm_client.config.model_max if is_complex else self.llm_client.config.model_lite
         yield yield_log("Формирую ответ...")
@@ -616,7 +616,7 @@ class MeridianOrchestrator:
         )
         yield yield_log("Подготавливаю результаты к отправке...")
 
-        # 4. Construct Graph Data
+        
         graph_nodes, graph_edges = self._build_graph_data(question, retrieved_docs)
 
         latency = time.time() - start_time
@@ -646,7 +646,7 @@ class MeridianOrchestrator:
         nodes: List[GraphNode] = []
         edges: List[GraphEdge] = []
 
-        # Central question node
+        
         central_id = "user_question"
         nodes.append(
             GraphNode(
@@ -658,7 +658,7 @@ class MeridianOrchestrator:
             )
         )
 
-        # Document nodes & connection edges
+        
         for doc in documents:
             color = PRODUCT_COLOR_PALETTE.get(doc.product_code or "", DEFAULT_PRODUCT_COLOR)
             doc_label = doc.slug or doc.title[:25]
@@ -678,7 +678,7 @@ class MeridianOrchestrator:
                 )
             )
 
-            # Edge from question to document with thickness proportional to score
+            
             edges.append(
                 GraphEdge(
                     source=central_id,

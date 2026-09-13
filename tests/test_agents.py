@@ -180,8 +180,8 @@ class TestPipelineAndOrchestrator:
         assert len(res.sources) > 0
         assert len(res.answer) > 0
         assert len(res.citations) > 0
-        assert len(res.graph_nodes) > 1  # Central question node + doc nodes
-        assert len(res.graph_edges) > 0  # Edges connecting question to docs
+        assert len(res.graph_nodes) > 1  
+        assert len(res.graph_edges) > 0  
 
     def test_orchestrator_async_end_to_end(self, mock_llm_client):
         async def _run():

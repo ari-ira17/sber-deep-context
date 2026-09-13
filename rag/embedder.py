@@ -45,7 +45,7 @@ class TextEmbedder:
         if self._model is None:
             return [0.0] * VECTOR_DIM
         try:
-            # E5 models require 'query: ' prefix for query embeddings
+            
             prefixed = f"query: {text}" if not text.startswith("query:") else text
             vec = self._model.encode(prefixed, normalize_embeddings=True)
             return vec.tolist()
@@ -86,7 +86,7 @@ class TextEmbedder:
             return [[0.0] * VECTOR_DIM for _ in texts]
 
 
-# Singleton instance shared across the application
+
 _default_embedder: Optional[TextEmbedder] = None
 
 

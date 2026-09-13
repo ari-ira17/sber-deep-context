@@ -64,12 +64,12 @@ class SimpleBM25:
         self.doc_lens = [len(tokens) for tokens in self.doc_tokens]
         self.avgdl = sum(self.doc_lens) / max(1, self.corpus_size)
 
-        # Calculate Document Frequencies
+        
         self.df = Counter()
         for tokens in self.doc_tokens:
             self.df.update(set(tokens))
 
-        # Calculate Inverse Document Frequency (IDF)
+        
         self.idf = {}
         for word, freq in self.df.items():
             self.idf[word] = math.log((self.corpus_size - freq + 0.5) / (freq + 0.5) + 1.0)
@@ -145,7 +145,7 @@ class BM25Search:
         if tbl is None:
             return []
 
-        # Construct SQL filter
+        
         sql_filter = where_clause or self.metadata_filter.build_sql_filter(
             product_code=product_code,
             product_name=product_name,
@@ -157,15 +157,15 @@ class BM25Search:
             quality_tag=quality_tag,
         )
 
-        # 1. Try Native LanceDB FTS
+        
         results = self._execute_native_fts(tbl, query_text, top_k=top_k, where_clause=sql_filter)
         if results:
             return results
 
-        # 2. Fallback to In-Memory BM25 if native FTS fails or index is not built
+        
         results = self._execute_fallback_bm25(tbl, query_text, top_k=top_k, where_clause=sql_filter)
 
-        # 3. Broadening fallback if 0 results found with strict filter
+        
         if not results and sql_filter and enable_fallback:
             fallback_filter = self.metadata_filter.build_sql_filter(
                 product_code=product_code,

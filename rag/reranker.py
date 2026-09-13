@@ -35,7 +35,7 @@ class Reranker:
                 kwargs["device"] = self.device
             self._model = CrossEncoder(self.model_name, **kwargs)
         except ImportError:
-            # sentence_transformers not installed in current environment
+            
             self._model = None
         except Exception as e:
             print(f"[Reranker Warning] Could not load model '{self.model_name}': {e}")
@@ -63,11 +63,11 @@ class Reranker:
 
         top_n = top_n or len(documents)
 
-        # 1. Use Neural CrossEncoder if available
+        
         if self._model is not None:
             return self._neural_rerank(query, documents, top_n)
 
-        # 2. Fallback Heuristic Reranker
+        
         return self._fallback_rerank(query, documents, top_n)
 
     def _neural_rerank(
@@ -91,7 +91,7 @@ class Reranker:
             for i, doc in enumerate(documents):
                 doc_copy = dict(doc)
                 raw_score = float(scores[i])
-                # Sigmoid normalization if scores are logits
+                
                 norm_score = 1.0 / (1.0 + math.exp(-raw_score)) if abs(raw_score) > 1.0 else max(0.0, min(1.0, raw_score))
                 doc_copy["rerank_score"] = round(norm_score, 4)
                 doc_copy["score"] = doc_copy["rerank_score"]
@@ -126,17 +126,17 @@ class Reranker:
 
             content_words = set(re.findall(r'[a-zA-Zа-яА-Я0-9_]+', content))
             
-            # Exact word overlap ratio
+            
             overlap_count = len(query_words.intersection(content_words))
             overlap_ratio = overlap_count / max(1, len(query_words))
 
-            # Title match boost
+            
             title_match = 0.3 if any(w in title for w in query_words) else 0.0
 
-            # Pre-existing RRF or Dense/BM25 base score
+            
             base_score = float(doc_copy.get("rrf_score", doc_copy.get("score", 0.5)))
 
-            # Combined heuristic score
+            
             combined_score = 0.5 * overlap_ratio + 0.2 * title_match + 0.3 * base_score
             doc_copy["rerank_score"] = round(combined_score, 4)
             doc_copy["score"] = doc_copy["rerank_score"]
