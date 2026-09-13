@@ -1102,6 +1102,21 @@ video::-webkit-media-controls-time-remaining-display {
   flex-shrink: 0;
 }
 
+.evidence-pill.code-pill {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.evidence-pill.code-pill:hover {
+  border-color: var(--accent);
+  background: rgba(16, 185, 129, 0.15);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.evidence-pill.code-pill svg {
+  color: var(--accent);
+}
+
 /* Ссылки на страницы базы знаний */
 .evidence-link {
   color: var(--accent);

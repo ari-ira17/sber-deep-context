@@ -326,6 +326,114 @@ class MeridianOrchestrator:
 
         return documents
 
+    def _enrich_with_code_assets(
+        self,
+        question: str,
+        router_out: RouterOutput,
+        documents: List[DocumentContext],
+    ) -> List[DocumentContext]:
+        """Detect code queries and enrich context with CodeRegistry entries (Python, C#, ASM, SQL)."""
+        try:
+            from app.code_registry import code_registry
+        except Exception as e:
+            logger.warning(f"Could not import code_registry: {e}")
+            return documents
+
+        lower_q = (question or "").lower()
+        rewrite = (router_out.query_rewrite or "").lower()
+        combined_q = f"{lower_q} {rewrite}"
+
+        # 1. Detect target extension / language
+        target_ext = None
+        if any(term in combined_q for term in ["питон", "python", ".py"]):
+            target_ext = "py"
+        elif any(term in combined_q for term in ["си шарп", "c#", "csharp", ".cs"]):
+            target_ext = "cs"
+        elif any(term in combined_q for term in ["ассемблер", "asm", "асм", ".asm"]):
+            target_ext = "asm"
+        elif any(term in combined_q for term in ["sql", "скл", ".sql"]):
+            target_ext = "sql"
+
+        is_code_related = bool(target_ext) or any(
+            w in lower_q for w in [
+                "код", "скрипт", "исходник", "файлы кода", "программ", "функци", "манифест"
+            ]
+        )
+
+        is_listing_query = any(
+            w in lower_q for w in [
+                "найди", "какие", "список", "покажи", "перечисли", "файлы", "скрипты", "реестр"
+            ]
+        )
+
+        # Case A: Listing/catalog query for code files
+        if target_ext or (is_code_related and is_listing_query):
+            matched_records = []
+            if target_ext:
+                matched_records = code_registry.filter_by_extension(target_ext, product_code=router_out.product_code)
+            elif router_out.product_code:
+                matched_records = code_registry.filter_by_product(router_out.product_code)
+            elif is_listing_query and any(w in lower_q for w in ["код", "скрипт", "файлы"]):
+                matched_records = code_registry.list_all()
+
+            if matched_records:
+                ext_name = {"py": "Python", "cs": "C#", "asm": "Assembler", "sql": "SQL"}.get(target_ext, "Код")
+                p_label = (
+                    f"для продукта {router_out.product_name} ({router_out.product_code})"
+                    if router_out.product_code
+                    else "в базе знаний"
+                )
+                catalog_md = code_registry.format_catalog_markdown(
+                    matched_records,
+                    title=f"Каталог файлов {ext_name} {p_label}",
+                )
+                catalog_doc = DocumentContext(
+                    doc_id=f"code-catalog-{target_ext or 'all'}",
+                    slug=f"code-catalog-{target_ext or 'all'}",
+                    title=f"Каталог файлов {ext_name}",
+                    product_name=router_out.product_name or "Меридиан",
+                    product_code=router_out.product_code,
+                    section="Каталог кода",
+                    content=catalog_md,
+                    attachment_path=None,
+                    attachment_format="md",
+                    attachment_text=None,
+                    score=1.0,
+                )
+                documents.insert(0, catalog_doc)
+
+        # Case B: Semantic / symbol lookup (searching for exact code files or functions)
+        code_hits = code_registry.search(
+            query=question,
+            product_code=router_out.product_code,
+            extension=target_ext,
+            top_k=2,
+        )
+        for rec in code_hits:
+            if not any(d.slug == rec.filename or d.slug == rec.slug for d in documents):
+                code_doc = DocumentContext(
+                    doc_id=f"code-{rec.slug}",
+                    slug=rec.filename,
+                    title=f"Исходный код: {rec.filename}",
+                    product_name=rec.product_name,
+                    product_code=rec.product_code,
+                    section=f"Исходный код ({rec.extension.upper()})",
+                    content=(
+                        f"# Файл {rec.filename}\n"
+                        f"Язык: {rec.extension.upper()}\n"
+                        f"Назначение: {rec.summary}\n"
+                        f"Символы: {', '.join(rec.symbols)}\n\n"
+                        f"```{rec.extension}\n{rec.content}\n```"
+                    ),
+                    attachment_path=rec.rel_path,
+                    attachment_format=rec.extension,
+                    attachment_text=rec.content,
+                    score=0.95,
+                )
+                documents.insert(0, code_doc)
+
+        return documents
+
     def ask(
         self,
         question: str,
@@ -343,9 +451,10 @@ class MeridianOrchestrator:
             f"rewrite='{router_out.query_rewrite}'"
         )
 
-        # 2. RAG Search + Technical Attachment Enrichment
+        # 2. RAG Search + Technical Attachment Enrichment + Code Registry
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
         retrieved_docs = self._enrich_with_attachments(retrieved_docs, router_out)
+        retrieved_docs = self._enrich_with_code_assets(question, router_out, retrieved_docs)
         if extra_documents:
             retrieved_docs = list(extra_documents) + retrieved_docs
         logs.append(f"Retrieved and enriched {len(retrieved_docs)} documents.")
@@ -398,9 +507,10 @@ class MeridianOrchestrator:
             f"need_attachment={router_out.need_attachment}"
         )
 
-        # 2. RAG Search (non-blocking in thread pool) + Attachment Enrichment
+        # 2. RAG Search (non-blocking in thread pool) + Attachment Enrichment + Code Registry
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
         retrieved_docs = self._enrich_with_attachments(retrieved_docs, router_out)
+        retrieved_docs = self._enrich_with_code_assets(question, router_out, retrieved_docs)
         if extra_documents:
             retrieved_docs = list(extra_documents) + retrieved_docs
         logs.append(f"Retrieved and enriched {len(retrieved_docs)} documents.")
