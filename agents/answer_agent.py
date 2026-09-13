@@ -94,8 +94,13 @@ class AnswerAgent:
         user_prompt = (
             f"Вопрос пользователя:\n{query}\n\n"
             f"Контекст документов из базы знаний Меридиан:\n{context_str}\n\n"
-            f"Сформируй точный ответ по правилам: с опорой на факты, с обязательными ссылками "
-            f"[slug] к каждому утверждению и блоком источников в конце."
+            f"Сформируй точный ответ по правилам:\n"
+            f"1. Напиши весь ответ одним сплошным абзацем без списков и переносов строк.\n"
+            f"2. Не используй заголовки, вступления или заключительные фразы. Сразу пиши по существу.\n"
+            f"3. Подтверждай факты ссылками в формате [slug]. СТРОГО используй оригинальные названия файлов из контекста (например, [p709-passport]). ЗАПРЕЩЕНО писать цифры вроде [1], [2]!\n"
+            f"4. НЕ добавляй в конце блок 'Источники', он сгенерируется автоматически.\n\n"
+            f"ПРИМЕР ИДЕАЛЬНОГО ОТВЕТА:\n"
+            f"Продукт «Орбитариум» имеет код P709 [orbitarium-passport] и относится к направлению «Рыночные сервисы» [orbitarium-passport]. Владельцем указан Команда Спектр [orbitarium-teams]. Для него действует методика версии 2 [orbitarium-accounting], а жизненный цикл страницы обозначен как active [orbitarium-accounting]."
         )
 
         selected_model = model or (self.llm.config.model_max if is_complex else self.llm.config.model_lite)
@@ -131,8 +136,13 @@ class AnswerAgent:
         user_prompt = (
             f"Вопрос пользователя:\n{query}\n\n"
             f"Контекст документов из базы знаний Меридиан:\n{context_str}\n\n"
-            f"Сформируй точный ответ по правилам: с опорой на факты, с обязательными ссылками "
-            f"[slug] к каждому утверждению и блоком источников в конце."
+            f"Сформируй точный ответ по правилам:\n"
+            f"1. Напиши весь ответ одним сплошным абзацем без списков и переносов строк.\n"
+            f"2. Не используй заголовки, вступления или заключительные фразы. Сразу пиши по существу.\n"
+            f"3. Подтверждай факты ссылками в формате [slug]. СТРОГО используй оригинальные названия файлов из контекста (например, [p709-passport]). ЗАПРЕЩЕНО писать цифры вроде [1], [2]!\n"
+            f"4. НЕ добавляй в конце блок 'Источники', он сгенерируется автоматически.\n\n"
+            f"ПРИМЕР ИДЕАЛЬНОГО ОТВЕТА:\n"
+            f"Продукт «Орбитариум» имеет код P709 [orbitarium-passport] и относится к направлению «Рыночные сервисы» [orbitarium-passport]. Владельцем указан Команда Спектр [orbitarium-teams]. Для него действует методика версии 2 [orbitarium-accounting], а жизненный цикл страницы обозначен как active [orbitarium-accounting]."
         )
 
         selected_model = model or (self.llm.config.model_max if is_complex else self.llm.config.model_lite)
@@ -184,26 +194,25 @@ class AnswerAgent:
         raw_text: str,
         documents: List[DocumentContext],
     ) -> AnswerOutput:
-        """Extract citations, identify cited sources, and evaluate grounding."""
-        # Extract all [slug-name] mentions from answer
+        # Extract all [slug-name] mentions from answer preserving order
         slug_map = {doc.slug: doc for doc in documents}
-        found_slugs: Set[str] = set()
+        found_slugs: List[str] = []
 
         # Regex for [slug] patterns
         matches = re.findall(r"\[([a-zA-Z0-9_\-\.]+)\]", raw_text)
         for m in matches:
             clean_m = m.strip()
-            if clean_m in slug_map:
-                found_slugs.add(clean_m)
+            if clean_m in slug_map and clean_m not in found_slugs:
+                found_slugs.append(clean_m)
 
         # Also search for slugs without brackets if mentioned
         for slug in slug_map:
             if slug in raw_text and slug not in found_slugs:
-                found_slugs.add(slug)
+                found_slugs.append(slug)
 
         # If LLM didn't include citations but answer is based on top doc, associate top doc
         if not found_slugs and documents:
-            found_slugs.add(documents[0].slug)
+            found_slugs.append(documents[0].slug)
 
         cited_sources = [slug_map[s] for s in found_slugs if s in slug_map]
 
@@ -227,7 +236,7 @@ class AnswerAgent:
 
         return AnswerOutput(
             answer=raw_text,
-            citations=sorted(list(found_slugs)),
+            citations=found_slugs,
             sources=cited_sources,
             has_answer=has_answer,
             confidence=round(confidence, 2),
