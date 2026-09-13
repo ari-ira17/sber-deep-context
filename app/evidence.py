@@ -740,6 +740,50 @@ class EvidenceService:
         # 2. Intercept wiki links and safeguard external URLs
         enhanced = self.transform_wiki_links(enhanced)
 
+        # 3. Collapse adjacent citation links like [1][2][3][4][5] into concise ranges like [1–5] or [1, 2]
+        def collapse_adjacent_citations(m: re.Match) -> str:
+            raw_group = m.group(0)
+            # Find all (index, slug) pairs
+            items = re.findall(r'href="#source-(\d+)"[^>]*onclick="openEvidenceInspector\(\'([^\']+)\'\)"[^>]*>\[\d+\]</a>', raw_group)
+            if not items:
+                return raw_group
+            
+            unique_items = []
+            seen = set()
+            for idx_str, slug in items:
+                idx = int(idx_str)
+                if idx not in seen:
+                    seen.add(idx)
+                    unique_items.append((idx, slug))
+            
+            if len(unique_items) == 1:
+                idx, slug = unique_items[0]
+                return (
+                    f'<a href="#source-{idx}" class="citation-link" '
+                    f'onclick="openEvidenceInspector(\'{slug}\')" '
+                    f'title="Источник: {slug}" style="text-decoration: none; color: #3b82f6; font-weight: 500;">[{idx}]</a>'
+                )
+            
+            sorted_indices = sorted([u[0] for u in unique_items])
+            min_idx, max_idx = sorted_indices[0], sorted_indices[-1]
+            first_slug = unique_items[0][1]
+            all_slugs_str = ", ".join([u[1] for u in unique_items])
+            
+            if len(sorted_indices) >= 3 and sorted_indices == list(range(min_idx, max_idx + 1)):
+                label = f"[{min_idx}–{max_idx}]"
+            else:
+                label = f"[{', '.join(str(i) for i in sorted_indices)}]"
+            
+            return (
+                f'<a href="#source-{min_idx}" class="citation-link" '
+                f'onclick="openEvidenceInspector(\'{first_slug}\')" '
+                f'title="Источники: {all_slugs_str}" style="text-decoration: none; color: #3b82f6; font-weight: 500;">{label}</a>'
+            )
+
+        # Match 2 or more adjacent citation links (allowing whitespace/newlines between them)
+        cite_link_pattern = r'(?:<a href="#source-\d+" class="citation-link"[^>]*>\[\d+\]</a>\s*){2,}'
+        enhanced = re.sub(cite_link_pattern, collapse_adjacent_citations, enhanced)
+
         return enhanced
 
 
