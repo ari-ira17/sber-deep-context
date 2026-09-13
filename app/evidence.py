@@ -296,7 +296,8 @@ class EvidenceService:
                 if disk_path.exists():
                     file_exists_on_disk = True
                     if att_format in ["png", "jpg", "jpeg", "webp", "gif"]:
-                        image_url = f"/attachments/{rel_file_path.replace('\\', '/')}"
+                        norm_rel = rel_file_path.replace('\\', '/')
+                        image_url = f"/attachments/{norm_rel}"
 
             # Check for tabular data (CSV / TSV)
             table_data = None

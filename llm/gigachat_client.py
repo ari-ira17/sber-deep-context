@@ -118,6 +118,13 @@ class GigaChatClient:
     ) -> GigaChatResponse:
         """Synchronous completion with 1-stream rate limiting and retry."""
         selected_model = model or self.config.model_lite
+        
+        # Ensure there is an event loop in this thread (especially when called via run_in_executor)
+        # because the gigachat SDK (or its underlying httpx client) may rely on get_event_loop().
+        try:
+            asyncio.get_event_loop()
+        except RuntimeError:
+            asyncio.set_event_loop(asyncio.new_event_loop())
 
         # 1-stream global lock across all threads
         with self._sync_lock:
