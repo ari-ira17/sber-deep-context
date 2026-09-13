@@ -424,25 +424,18 @@ class EvidenceService:
                 if not any(prefix in raw_slug for prefix in ["iskra", "rosinka", "yantar", "mostik", "tihaya", "lavka", "kometa", "prizma", "orbitarium", "parus", "bastion", "ritm", "zontik", "sozvezdie", "mozaika", "mahovik", "pergament", "oblachny", "p70", "p71", "passport", "guide", "spec", "events"]):
                     return match.group(0)
 
-            safe_slug = html.escape(raw_slug)
-            doc_meta = self.by_slug.get(raw_slug, {})
-            p_code = doc_meta.get("product_code", "")
-            badge_color = PRODUCT_COLOR_PALETTE.get(p_code, "var(--accent)")
+            index = -1
+            if active_citations and raw_slug in active_citations:
+                index = active_citations.index(raw_slug) + 1
+            else:
+                return match.group(0)
 
+            safe_slug = html.escape(raw_slug)
+            
             return (
-                f'<button type="button" class="evidence-pill" '
+                f'<a href="#source-{index}" class="citation-link" '
                 f'onclick="openEvidenceInspector(\'{safe_slug}\')" '
-                f'data-slug="{safe_slug}" '
-                f'title="Открыть первоисточник [{safe_slug}] в Evidence Inspector">'
-                f'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">'
-                f'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>'
-                f'<polyline points="14 2 14 8 20 8"></polyline>'
-                f'<line x1="16" y1="13" x2="8" y2="13"></line>'
-                f'<line x1="16" y1="17" x2="8" y2="17"></line>'
-                f'</svg>'
-                f'<span class="pill-slug">{safe_slug}</span>'
-                f'<span class="pill-dot" style="background-color: {badge_color};"></span>'
-                f'</button>'
+                f'title="Источник: {safe_slug}" style="text-decoration: none; color: #3b82f6; font-weight: 500;">[{index}]</a>'
             )
 
         # Regex for [slug] patterns
