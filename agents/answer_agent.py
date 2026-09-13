@@ -90,10 +90,13 @@ class AnswerAgent:
                 confidence=0.0,
             )
 
-        context_str = self._format_context(documents)
-        has_code = any(doc.doc_id.startswith("code-") or "Исходный код" in (doc.section or "") for doc in documents)
+        # Check if the user is asking for a list/catalog of files vs a specific explanation
+        query_lower = query.lower()
+        is_list_intent = any(w in query_lower for w in ["список", "каталог", "перечень", "какие файлы", "какие скрипты", "файлы", "скрипты"])
+        has_code_docs = any(doc.doc_id.startswith("code-") or "Исходный код" in (doc.section or "") for doc in documents)
+        is_code_list = is_list_intent and has_code_docs
         
-        if has_code:
+        if is_code_list:
             rules = (
                 "1. ФОРМАТ ДЛЯ КОДА: Выведи ответ с красивым форматированием. Обязательно добавь заголовок (например, ### Питон-файлы по продукту...) и вступительный текст.\n"
                 "2. Форматируй каждый файл в виде списка: название файла жирным (**file.py**:), со следующей строки пиши его описание, а еще ниже с новой строки указывай 'Источник: [slug_файла]'.\n"
@@ -164,10 +167,13 @@ class AnswerAgent:
                 confidence=0.0,
             )
 
-        context_str = self._format_context(documents)
-        has_code = any(doc.doc_id.startswith("code-") or "Исходный код" in (doc.section or "") for doc in documents)
+        # Check if the user is asking for a list/catalog of files vs a specific explanation
+        query_lower = query.lower()
+        is_list_intent = any(w in query_lower for w in ["список", "каталог", "перечень", "какие файлы", "какие скрипты", "файлы", "скрипты"])
+        has_code_docs = any(doc.doc_id.startswith("code-") or "Исходный код" in (doc.section or "") for doc in documents)
+        is_code_list = is_list_intent and has_code_docs
         
-        if has_code:
+        if is_code_list:
             rules = (
                 "1. ФОРМАТ ДЛЯ КОДА: Выведи ответ с красивым форматированием. Обязательно добавь заголовок (например, ### Питон-файлы по продукту...) и вступительный текст.\n"
                 "2. Форматируй каждый файл в виде списка: название файла жирным (**file.py**:), со следующей строки пиши его описание, а еще ниже с новой строки указывай 'Источник: [slug_файла]'.\n"
