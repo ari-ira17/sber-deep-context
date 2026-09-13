@@ -104,14 +104,37 @@ class StandaloneSearchEngine:
                     top_k=top_k,
                     return_contexts=True,
                 )
-                if res is not None:
+                if res:
                     return res
             except Exception as e:
                 logger.warning(f"RAG search error: {e}. Falling back to StandaloneSearchEngine.")
                 pass
 
-        # Decoupled Standalone Search Engine: Only generate mock documents if product was recognized
+        # Decoupled Standalone Search Engine: If product was not recognized, check for catalog query
         if not router_output.product_code and not router_output.product_name:
+            query_str = (router_output.query_rewrite or "").lower()
+            if any(w in query_str for w in ["продукт", "каталог", "система", "сервис", "список", "перечень", "все"]):
+                overview_lines = [
+                    "# Каталог продуктов системы Меридиан",
+                    "В архитектурный контур Меридиан входит 18 ключевых продуктов:\n",
+                    "| Код | Название | Направление | Команда разработки | Паспорт |",
+                    "| :--- | :--- | :--- | :--- | :--- |",
+                ]
+                for c, (pname, psec, powner) in MERIDIAN_CATALOG.items():
+                    overview_lines.append(f"| {c} | **{pname}** | {psec} | {powner} | [{pname.lower()}-passport] |")
+                
+                return [
+                    DocumentContext(
+                        doc_id="doc-meridian-catalog-001",
+                        slug="meridian-catalog-overview",
+                        title="Каталог продуктов системы Меридиан",
+                        product_name="Меридиан",
+                        product_code="CATALOG",
+                        section="Общий каталог",
+                        content="\n".join(overview_lines),
+                        score=1.0,
+                    )
+                ]
             return []
 
         code = router_output.product_code or "P701"
@@ -303,7 +326,11 @@ class MeridianOrchestrator:
 
         return documents
 
-    def ask(self, question: str) -> OrchestratorResponse:
+    def ask(
+        self,
+        question: str,
+        extra_documents: Optional[List[DocumentContext]] = None,
+    ) -> OrchestratorResponse:
         """Process user question through full end-to-end pipeline synchronously."""
         start_time = time.time()
         logs: List[str] = [f"Incoming user question: {question}"]
@@ -319,6 +346,8 @@ class MeridianOrchestrator:
         # 2. RAG Search + Technical Attachment Enrichment
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
         retrieved_docs = self._enrich_with_attachments(retrieved_docs, router_out)
+        if extra_documents:
+            retrieved_docs = list(extra_documents) + retrieved_docs
         logs.append(f"Retrieved and enriched {len(retrieved_docs)} documents.")
 
         # 3. Answer Agent (Adaptive Model Routing: Lite for simple factoids, Max for complex RAG/attachments)
@@ -353,7 +382,11 @@ class MeridianOrchestrator:
             logs=logs,
         )
 
-    async def aask(self, question: str) -> OrchestratorResponse:
+    async def aask(
+        self,
+        question: str,
+        extra_documents: Optional[List[DocumentContext]] = None,
+    ) -> OrchestratorResponse:
         """Process user question through full end-to-end pipeline asynchronously."""
         start_time = time.time()
         logs: List[str] = [f"Incoming async user question: {question}"]
@@ -368,6 +401,8 @@ class MeridianOrchestrator:
         # 2. RAG Search (non-blocking in thread pool) + Attachment Enrichment
         retrieved_docs = self.search_engine.search(router_out, top_k=5)
         retrieved_docs = self._enrich_with_attachments(retrieved_docs, router_out)
+        if extra_documents:
+            retrieved_docs = list(extra_documents) + retrieved_docs
         logs.append(f"Retrieved and enriched {len(retrieved_docs)} documents.")
 
         # 3. Answer Agent (Adaptive Model Routing)

@@ -193,8 +193,85 @@ class EvidenceService:
                 return v
         return None
 
+    def _get_sandbox_evidence(self, slug: str, highlight_term: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """Build evidence inspector payload for user uploaded sandbox document."""
+        from app.db import chat_history
+        source_id = slug.replace("sandbox-", "")
+        src = chat_history.get_chat_source(source_id)
+        if not src:
+            return None
+
+        filename = src["filename"]
+        ftype = src["file_type"].lower()
+        content = src["text_content"] or ""
+        meta = src.get("parsed_meta", {})
+
+        rendered_html = markdown.markdown(
+            content,
+            extensions=["extra", "tables", "fenced_code", "nl2br"]
+        )
+
+        table_data = None
+        code_html = None
+        if ftype in ["csv", "tsv"] or meta.get("type") == "table":
+            if meta.get("headers") and meta.get("rows"):
+                table_data = {
+                    "type": "table",
+                    "headers": meta["headers"],
+                    "rows": meta["rows"],
+                    "total_rows": meta.get("total_rows", len(meta["rows"])),
+                }
+            else:
+                table_data = parse_table_data(content)
+        elif ftype in ["py", "js", "ts", "json", "yaml", "yml", "sql", "html", "css", "xml", "asm", "sh", "bat"] or meta.get("type") == "code":
+            code_html = format_code_with_lines(content, lang=ftype)
+
+        attachment_info = {
+            "path": src["file_path"],
+            "filename": filename,
+            "format": ftype.upper(),
+            "raw_text": content,
+            "table_data": table_data,
+            "code_html": code_html,
+            "image_url": None,
+            "file_exists": True,
+        }
+
+        sibling_docs = []
+        for s in chat_history.list_chat_sources(src["chat_id"]):
+            if s["id"] != src["id"]:
+                sibling_docs.append({
+                    "slug": f"sandbox-{s['id']}",
+                    "section": "Песочница",
+                    "topic": s["file_type"].upper(),
+                    "title": f"📎 {s['filename']}",
+                })
+
+        return {
+            "slug": slug,
+            "title": f"📎 {filename}",
+            "product_code": "ФАЙЛ",
+            "product_name": "Пользовательский файл",
+            "product_color": "#8B5CF6",
+            "section": "Песочница чата",
+            "owner": "Пользователь",
+            "lifecycle": "active",
+            "quality_tags": ["сессионный_файл", ftype.upper()],
+            "updated_at": src["created_at"][:10],
+            "valid_from": src["created_at"][:10],
+            "doc_html": rendered_html,
+            "doc_raw_markdown": content,
+            "attachment": attachment_info,
+            "has_attachment": bool(table_data or code_html or ftype in ["pdf", "docx", "csv", "tsv"]),
+            "related_documents": sibling_docs,
+            "highlight_term": highlight_term or "",
+        }
+
     def get_evidence(self, slug: str, highlight_term: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Retrieve full audit-grade evidence details for a given slug."""
+        if slug.startswith("sandbox-"):
+            return self._get_sandbox_evidence(slug, highlight_term=highlight_term)
+
         item = self.get_document_raw(slug)
         if not item:
             return None
@@ -417,6 +494,26 @@ class EvidenceService:
         # 1. Replace [slug] with interactive evidence badges
         def replace_slug_cite(match: re.Match) -> str:
             raw_slug = match.group(1).strip()
+            if raw_slug.startswith("sandbox-"):
+                sid = raw_slug.replace("sandbox-", "")
+                from app.db import chat_history
+                src = chat_history.get_chat_source(sid)
+                label = src["filename"] if src else raw_slug
+                safe_label = html.escape(label)
+                safe_slug = html.escape(raw_slug)
+                return (
+                    f'<button type="button" class="evidence-pill" '
+                    f'onclick="openEvidenceInspector(\'{safe_slug}\')" '
+                    f'data-slug="{safe_slug}" '
+                    f'title="Открыть сессионный файл [{safe_label}] в Evidence Inspector">'
+                    f'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">'
+                    f'<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>'
+                    f'</svg>'
+                    f'<span class="pill-slug">📎 {safe_label}</span>'
+                    f'<span class="pill-dot" style="background-color: #8B5CF6;"></span>'
+                    f'</button>'
+                )
+
             # Verify if this is a known slug in our corpus or active citations
             is_valid = raw_slug in self.all_slugs or raw_slug in active_set
             if not is_valid:

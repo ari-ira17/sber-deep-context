@@ -87,11 +87,8 @@
           hx-post="/ask" 
           hx-target="#chat-history" 
           hx-swap="beforeend"
-          hx-on::after-request="this.reset(); window.clearAttachments();">
+          hx-on::after-request="this.reset();">
         <input type="hidden" name="chat_id" id="chat-id-input" value="{{ active_chat_id or '' }}">
-          
-        <!-- Превью прикрепленных файлов -->
-        <div class="attachments-preview" id="attachments-preview"></div>
           
         <!-- Кастомная подсказка ошибки -->
         <div class="custom-tooltip" id="empty-error">
@@ -171,43 +168,16 @@
             });
         }
 
-        // --- 2. Логика файлов ---
+        // --- 2. Логика прикрепления файлов песочницы ---
         const fileInput = document.getElementById('file-upload');
-        const attachmentsPreview = document.getElementById('attachments-preview');
-        let selectedFiles = [];
-
-        fileInput.addEventListener('change', function(e) {
-            Array.from(e.target.files).forEach(file => {
-                selectedFiles.push(file);
-            });
-            renderAttachments();
-            fileInput.value = ''; 
-        });
-
-        function renderAttachments() {
-            attachmentsPreview.innerHTML = '';
-            selectedFiles.forEach((file, index) => {
-                const pill = document.createElement('div');
-                pill.className = 'attachment-pill';
-                const shortName = file.name.length > 20 ? file.name.substring(0, 20) + '...' : file.name;
-                pill.innerHTML = `
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
-                    <span>${shortName}</span>
-                    <svg class="remove-file" onclick="removeFile(${index})" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                `;
-                attachmentsPreview.appendChild(pill);
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                if (window.handleSidebarFileUpload) {
+                    window.handleSidebarFileUpload(e.target.files);
+                }
+                fileInput.value = '';
             });
         }
-
-        window.removeFile = function(index) {
-            selectedFiles.splice(index, 1);
-            renderAttachments();
-        };
-
-        window.clearAttachments = function() {
-            selectedFiles = [];
-            renderAttachments();
-        };
 
         // --- 3. Логика Микрофона (Визуализатор, Счетчик, Отмена) ---
         const voiceBtn = document.getElementById('voice-btn');

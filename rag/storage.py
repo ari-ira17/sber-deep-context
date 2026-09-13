@@ -134,12 +134,31 @@ class LanceDBStorage:
             return []
 
     def get_table(self):
-        """Get or open LanceDB table."""
+        """Get or open LanceDB table. Auto-ingests from dataset_with_vectors.json if table is missing."""
         if self._table is not None:
             return self._table
         if self.table_name in self.get_table_names():
             self._table = self.db.open_table(self.table_name)
             return self._table
+
+        # Auto-heal: If table does not exist in LanceDB, auto-ingest from dataset_with_vectors.json
+        vectors_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "dataset_with_vectors.json")
+        if os.path.exists(vectors_path):
+            try:
+                import json
+                import logging
+                logging.getLogger(__name__).info("LanceDB table missing. Auto-ingesting from dataset_with_vectors.json...")
+                with open(vectors_path, "r", encoding="utf-8") as f:
+                    records = json.load(f)
+                tbl = self.create_table(records=records, mode="overwrite")
+                self.create_scalar_indices(tbl)
+                self._table = tbl
+                logging.getLogger(__name__).info("LanceDB table auto-ingested successfully.")
+                return self._table
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Auto-ingest failed: {e}")
+
         return None
 
     def create_table(self, records: Optional[List[Dict[str, Any]]] = None, mode: str = "overwrite"):

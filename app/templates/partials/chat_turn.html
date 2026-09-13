@@ -24,6 +24,10 @@
         if (window.location.pathname === '/' || !window.location.pathname.startsWith('/chats/')) {
             window.history.pushState({}, '', '/chats/{{ chat_id }}');
         }
+        const srcContainer = document.getElementById('sidebar-sources-container');
+        if (srcContainer) {
+            srcContainer.setAttribute('hx-get', '/api/chats/{{ chat_id }}/sources/html');
+        }
     })();
 </script>
 {% endif %}
