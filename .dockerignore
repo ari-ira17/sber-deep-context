@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.git/
+.env
+
+# Мы игнорируем базы данных и исходники базы знаний при сборке,
+# так как они будут пробрасываться через volumes в docker-compose
+data/
+meridian_hackathon_knowledge_base/
