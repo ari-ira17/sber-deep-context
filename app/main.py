@@ -457,5 +457,39 @@ async def get_evidence_api(slug: str, highlight: Optional[str] = None):
     if not ev:
         return {"error": "Document not found", "slug": slug}
     return ev
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
+import uuid
+import sys
 
+class ExportRequest(BaseModel):
+    content: str
+    format: str
 
+@app.post("/api/export")
+async def export_message(req: ExportRequest):
+    """Экспорт через MCP сервер (mcp/server.py)"""
+    mcp_path = os.path.join(os.path.dirname(__file__), "..", "mcp")
+    if mcp_path not in sys.path:
+        sys.path.append(mcp_path)
+    
+    try:
+        from server import export_to_file
+        
+        file_title = f"export_{uuid.uuid4().hex[:8]}"
+        result = export_to_file(
+            title=file_title,
+            content=req.content,
+            format_type=req.format,
+            subfolder="downloads"
+        )
+        
+        if "Абсолютный путь:" in result:
+            file_path = result.split("Абсолютный путь:")[1].strip()
+            if os.path.exists(file_path):
+                filename = f"Ответ_Квантум.{req.format}"
+                return FileResponse(path=file_path, filename=filename, media_type='application/octet-stream')
+    except Exception as e:
+        logger.exception("Export failed")
+        
+    return {"error": "Не удалось создать файл через MCP сервер"}
