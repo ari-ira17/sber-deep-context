@@ -4,12 +4,23 @@
     <div class="message-content">{{ query }}</div>
 </div>
 
-<!-- 2. Заглушка для ответа бота с лоадером -->
-<div class="message bot-message" hx-get="/bot_reply?query={{ query | urlencode }}{% if chat_id %}&chat_id={{ chat_id }}{% endif %}" hx-trigger="load" hx-swap="outerHTML">
-    <div class="avatar"><img src="/static/img/sbercat.jpg" alt="Сберкот"></div>
-    <div class="message-content">
-        <div class="loader-dots">
-            <span></span><span></span><span></span>
+<!-- 2. Заглушка для ответа бота с потоковым выводом логов -->
+<div class="bot-reply-wrapper" hx-ext="sse" sse-connect="/bot_reply_sse?query={{ query | urlencode }}{% if chat_id %}&chat_id={{ chat_id }}{% endif %}" sse-swap="final" hx-swap="outerHTML">
+    <div class="message bot-message">
+        <div class="avatar"><img src="/static/img/sbercat.jpg" alt="Сберкот"></div>
+        <div class="message-content" style="width: 100%;">
+            <div style="margin-bottom: 15px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <div style="color: var(--text-color); font-weight: 500; font-size: 0.95em; margin-bottom: 8px;">Агент в процессе работы...</div>
+                <div sse-swap="log" hx-swap="innerHTML" style="color: var(--text-muted); font-size: 0.9em;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #3b82f6;"></span>
+                        Приступаю к задаче...
+                    </div>
+                </div>
+            </div>
+            <div class="loader-dots">
+                <span></span><span></span><span></span>
+            </div>
         </div>
     </div>
 </div>

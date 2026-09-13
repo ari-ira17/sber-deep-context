@@ -12,6 +12,7 @@ import os
 import time
 import json
 import logging
+import asyncio
 from pathlib import Path
 from typing import Optional, List, Dict, Any, Callable
 from pydantic import BaseModel, Field
@@ -401,6 +402,68 @@ class MeridianOrchestrator:
             graph_edges=graph_edges,
             logs=logs,
         )
+
+    async def astream_ask(self, question: str):
+        """Process user question through full end-to-end pipeline asynchronously and yield progress."""
+        start_time = time.time()
+        logs: List[str] = []
+
+        def yield_log(msg: str):
+            logs.append(msg)
+            return {"type": "log", "content": msg}
+
+        yield yield_log(f"Получен запрос: {question}")
+        await asyncio.sleep(0.8)
+
+        yield yield_log("Анализирую запрос...")
+        await asyncio.sleep(0.8)
+        
+        # 1. Router Agent
+        router_out = await self.router_agent.aroute(question)
+        yield yield_log("Ищу информацию в базе знаний...")
+        await asyncio.sleep(0.8)
+
+        # 2. RAG Search (non-blocking in thread pool) + Attachment Enrichment
+        retrieved_docs = await asyncio.to_thread(self.search_engine.search, router_out, 5)
+        retrieved_docs = await asyncio.to_thread(self._enrich_with_attachments, retrieved_docs, router_out)
+        yield yield_log("Изучаю найденные материалы...")
+        await asyncio.sleep(0.8)
+
+        # 3. Answer Agent (Adaptive Model Routing)
+        is_complex = self.is_complex_query(question, router_out, retrieved_docs)
+        answer_model = self.llm_client.config.model_max if is_complex else self.llm_client.config.model_lite
+        yield yield_log("Формирую ответ...")
+        await asyncio.sleep(0.8)
+
+        answer_out = await self.answer_agent.agenerate_answer(
+            query=question,
+            documents=retrieved_docs,
+            model=answer_model,
+            is_complex=is_complex,
+        )
+        yield yield_log("Подготавливаю результаты к отправке...")
+        await asyncio.sleep(1.0)
+
+        # 4. Construct Graph Data
+        graph_nodes, graph_edges = self._build_graph_data(question, retrieved_docs)
+
+        latency = time.time() - start_time
+        final_resp = OrchestratorResponse(
+            question=question,
+            answer=answer_out.answer,
+            citations=answer_out.citations,
+            sources=retrieved_docs,
+            router_data=router_out,
+            has_answer=answer_out.has_answer,
+            confidence=answer_out.confidence,
+            latency_sec=round(latency, 3),
+            is_mock=self.llm_client.config.mock_mode,
+            graph_nodes=graph_nodes,
+            graph_edges=graph_edges,
+            logs=logs,
+        )
+        
+        yield {"type": "result", "data": final_resp}
 
     def _build_graph_data(
         self,

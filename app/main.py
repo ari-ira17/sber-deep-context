@@ -14,7 +14,7 @@ elif os.path.exists(".env"):
 from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 import markdown
 
 from agents.orchestrator import MeridianOrchestrator, OrchestratorResponse
@@ -205,6 +205,88 @@ async def bot_reply(request: Request, query: str, chat_id: Optional[str] = None)
     # Отправляем триггер HTMX для мгновенного обновления сайдбара
     response.headers["HX-Trigger"] = "refreshSidebar"
     return response
+
+
+@app.get("/bot_reply_sse")
+async def bot_reply_sse(request: Request, query: str, chat_id: Optional[str] = None):
+    """
+    Основной RAG-пайплайн с потоковым выводом логов через Server-Sent Events (SSE).
+    """
+    clean_query = query.strip()
+    
+    async def event_generator():
+        try:
+            async for event in orchestrator.astream_ask(clean_query):
+                if event["type"] == "log":
+                    msg = event["content"]
+                    html_log = f'<div style="display: flex; align-items: center; gap: 8px;"><span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #3b82f6;"></span>{html.escape(msg)}</div>'
+                    yield f"event: log\ndata: {html_log}\n\n"
+                
+                elif event["type"] == "result":
+                    resp: OrchestratorResponse = event["data"]
+                    graph_cache[clean_query] = resp
+                    raw_answer = resp.answer
+
+                    html_answer = markdown.markdown(
+                        resp.answer,
+                        extensions=["extra", "tables", "fenced_code", "nl2br"]
+                    )
+
+                    html_answer = evidence_service.enhance_citations(html_answer, active_citations=resp.citations)
+
+                    sources = []
+                    for doc in resp.sources:
+                        if 0.0 <= doc.score <= 1.0:
+                            score_pct = f"{int(round(doc.score * 100))}%"
+                        else:
+                            score_pct = f"{round(doc.score, 2)}"
+
+                        att = doc.attachment_format or ""
+                        if att.startswith("."):
+                            att = att[1:]
+
+                        sources.append({
+                            "code": doc.product_code or "—",
+                            "name": doc.product_name or doc.title or "Документ",
+                            "section": doc.section or "Общий раздел",
+                            "score": score_pct,
+                            "attachment": att,
+                            "slug": doc.slug,
+                        })
+
+                    if chat_id:
+                        chat_history.add_message(
+                            chat_id=chat_id,
+                            role="assistant",
+                            content=raw_answer,
+                            html_content=html_answer,
+                            sources=sources,
+                        )
+                    
+                    final_html = templates.TemplateResponse(
+                        request=request,
+                        name="partials/bot_message.html",
+                        context={
+                            "html_answer": html_answer,
+                            "sources": sources,
+                            "query": clean_query,
+                            "logs": resp.logs
+                        }
+                    ).body.decode("utf-8")
+                    
+                    final_html += '<script>htmx.trigger("body", "refreshSidebar");</script>'
+                    
+                    lines = final_html.splitlines()
+                    data_str = "\n".join(f"data: {line}" for line in lines if line.strip())
+                    yield f"event: final\n{data_str}\n\n"
+                    
+        except Exception as e:
+            logger.exception("Error processing query in SSE: %s", clean_query)
+            error_html = f"<div class='message bot-message'><div class='avatar'><img src='/static/img/sbercat.jpg'></div><div class='message-content'><p style='color: #ef4444;'>Ошибка: {html.escape(str(e))}</p></div></div>"
+            error_html += '<script>htmx.trigger("body", "refreshSidebar");</script>'
+            yield f"event: final\ndata: {error_html}\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
 @app.get("/graph", response_class=HTMLResponse)
