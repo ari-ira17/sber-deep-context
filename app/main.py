@@ -313,7 +313,8 @@ async def bot_reply_sse(request: Request, query: str, chat_id: Optional[str] = N
     
     async def event_generator():
         try:
-            async for event in orchestrator.astream_ask(clean_query):
+            sandbox_docs = sandbox_service.search_sandbox_sources(query=clean_query, top_k=3)
+            async for event in orchestrator.astream_ask(clean_query, extra_documents=sandbox_docs):
                 if event["type"] == "log":
                     msg = event["content"]
                     html_log = f'<div style="display: flex; align-items: center; gap: 8px;"><span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #3b82f6;"></span>{html.escape(msg)}</div>'

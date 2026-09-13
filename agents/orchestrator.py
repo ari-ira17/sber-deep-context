@@ -580,7 +580,7 @@ class MeridianOrchestrator:
             logs=logs,
         )
 
-    async def astream_ask(self, question: str):
+    async def astream_ask(self, question: str, extra_documents: List[DocumentContext] = None):
         """Process user question through full end-to-end pipeline asynchronously and yield progress."""
         start_time = time.time()
         logs: List[str] = []
@@ -601,6 +601,8 @@ class MeridianOrchestrator:
         retrieved_docs = await asyncio.to_thread(self.search_engine.search, router_out, 5)
         retrieved_docs = await asyncio.to_thread(self._enrich_with_attachments, retrieved_docs, router_out)
         retrieved_docs = await asyncio.to_thread(self._enrich_with_code_assets, question, router_out, retrieved_docs)
+        if extra_documents:
+            retrieved_docs = list(extra_documents) + retrieved_docs
         yield yield_log("Изучаю найденные материалы...")
         
         
