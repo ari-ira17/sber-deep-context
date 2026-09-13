@@ -167,6 +167,8 @@ class AnswerAgent:
                 confidence=0.0,
             )
 
+        context_str = self._format_context(documents)
+
         # Check if the user is asking for a list/catalog of files vs a specific explanation
         query_lower = query.lower()
         is_list_intent = any(w in query_lower for w in ["список", "каталог", "перечень", "какие файлы", "какие скрипты", "файлы", "скрипты"])
