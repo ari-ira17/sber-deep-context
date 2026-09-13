@@ -34,30 +34,33 @@
         </div>
     </div>
     
-    <div class="source-badges">
-        {% for source in sources %}
-        <div class="source-badge" onclick="openEvidenceInspector('{{ source.slug }}')" title="Открыть первоисточник [{{ source.slug }}] в инспекторе">
-            <div class="source-badge-header">
-                <span class="badge-code">{{ source.code }}</span>
-                <span class="badge-score">Score: {{ source.score }}</span>
-            </div>
-            <div class="badge-name">{{ source.name }}</div>
-            <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.35rem;">Раздел: {{ source.section }}</div>
-            
-            {% if source.attachment %}
-            <div style="font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 4px; font-weight: 500;">
-                📎 Вложение: .{{ source.attachment }}
-            </div>
-            {% endif %}
-
-            <div class="source-inspect-hint">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <span>Инспектор первоисточника ↗</span>
-            </div>
+    <!-- Раздел Источники -->
+    <div class="sources-list-wrapper" style="margin-top: 0.75rem;">
+        <div style="font-weight: 600; font-size: 0.88rem; color: var(--text-main); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Источники:</span>
         </div>
-        {% endfor %}
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            {% for source in sources %}
+            <div id="source-{{ loop.index }}" style="display: flex; align-items: center; gap: 8px; scroll-margin-top: 20px;">
+                <span style="font-weight: 700; color: var(--accent); font-size: 0.85rem; min-width: 24px;">[{{ loop.index }}]</span>
+                <button type="button" class="evidence-pill" onclick="openEvidenceInspector('{{ source.slug }}')" data-slug="{{ source.slug }}" title="Открыть {{ source.name }} ({{ source.slug }}) в инспекторе">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span class="pill-slug">{{ source.name }}</span>
+                    {% if source.code and source.code != '—' %}
+                    <span style="font-size: 0.75rem; opacity: 0.75; margin-left: 2px;">({{ source.code }})</span>
+                    {% endif %}
+                </button>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
