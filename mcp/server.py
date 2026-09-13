@@ -6,10 +6,18 @@ from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 try:
     from mcp.server.fastmcp import FastMCP as Server
+    mcp = Server("File Exporter Server")
 except ImportError:
-    from mcp.server.mcpserver import MCPServer as Server
+    # Dummy mock if mcp is not installed
+    class DummyServer:
+        def tool(self):
+            def decorator(func):
+                return func
+            return decorator
+        def run(self):
+            print("MCP is not installed. Run with Python >=3.10 and 'pip install mcp'")
+    mcp = DummyServer()
 
-mcp = Server("File Exporter Server")
 BASE_EXPORT_DIR = Path.cwd() / "exported_docs"
 
 def sanitize_filename(name: str) -> str:
@@ -51,7 +59,7 @@ def export_to_file(
         file_path = target_dir / f"{safe_title}.{ext}"
         
         if ext == "md":
-            file_content = f"# {title}\n\n{content}"
+            file_content = content
             file_path.write_text(file_content, encoding="utf-8")
             
         elif ext == "docx":
@@ -61,11 +69,6 @@ def export_to_file(
             style_normal = doc.styles['Normal']
             style_normal.font.name = 'Times New Roman'
             style_normal.font.size = Pt(14)
-            
-            # Применяем шрифт к конкретному фрагменту (run), а не к глобальному стилю
-            heading = doc.add_heading(level=1)
-            run = heading.add_run(title)
-            run.font.name = 'Times New Roman'
             
             lines = content.split("\n")
             table_rows = []

@@ -780,8 +780,8 @@ class EvidenceService:
                 f'title="Источники: {all_slugs_str}" style="text-decoration: none; color: #3b82f6; font-weight: 500;">{label}</a>'
             )
 
-        # Match 2 or more adjacent citation links (allowing whitespace/newlines between them)
-        cite_link_pattern = r'(?:<a href="#source-\d+" class="citation-link"[^>]*>\[\d+\]</a>\s*){2,}'
+        # Match 2 or more adjacent citation links (allowing whitespace/newlines/commas between them)
+        cite_link_pattern = r'(?:<a href="#source-\d+" class="citation-link"[^>]*>\[\d+\]</a>[\s,]*){2,}'
         enhanced = re.sub(cite_link_pattern, collapse_adjacent_citations, enhanced)
 
         return enhanced

@@ -188,3 +188,9 @@ __MACOSX/
 .env.*
 api.env
 *.env
+
+# Exported docs
+mcp/exported_docs/
+mcp/*.docx
+mcp/*.md
+
