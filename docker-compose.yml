@@ -7,9 +7,7 @@ services:
     ports:
       - "8017:8017"
     volumes:
-      # Пробрасываем данные БД и загруженные файлы песочницы, чтобы они не терялись
       - ./data:/app/data
-      # Пробрасываем базу знаний с вложениями
       - ./meridian_hackathon_knowledge_base:/app/meridian_hackathon_knowledge_base
     env_file:
       - .env
