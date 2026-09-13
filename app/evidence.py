@@ -301,7 +301,7 @@ class EvidenceService:
 
             # Check for tabular data (CSV / TSV)
             table_data = None
-            if att_format in ["csv", "tsv"] or "|" in attachment_text:
+            if att_format in ["csv", "tsv"] or "|" in attachment_text or ";" in attachment_text:
                 table_data = parse_table_data(attachment_text)
 
             # Check for code (ASM, Python, C#, JSON)
