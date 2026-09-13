@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt && \
 COPY . .
 
 # Открываем порт для uvicorn
-EXPOSE 8009
+EXPOSE 8017
 
 # Запускаем сервер
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8009"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8017"]

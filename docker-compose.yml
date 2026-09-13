@@ -5,7 +5,7 @@ services:
     build: .
     container_name: sber-deep-context
     ports:
-      - "8009:8009"
+      - "8017:8017"
     volumes:
       # Пробрасываем данные БД и загруженные файлы песочницы, чтобы они не терялись
       - ./data:/app/data
